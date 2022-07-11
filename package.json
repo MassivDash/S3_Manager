@@ -25,6 +25,7 @@
     "vite": "^2.9.9"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.0.1"
+    "@tauri-apps/api": "^1.0.1",
+    "svelte-navigator": "^3.1.6"
   }
 }
