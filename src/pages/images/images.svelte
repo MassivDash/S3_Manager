@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { invoke } from "@tauri-apps/api";
-  import { Link } from "svelte-navigator";
-
+  import { Link, useFocus } from "svelte-navigator";
+  const registerFocus = useFocus();
   let response;
   onMount(async () => {
     const res = await invoke("get_all_images");
@@ -10,7 +10,7 @@
   });
 </script>
 
-<div>
+<div use:registerFocus>
   {#if !response}
     <div>Loading ...</div>
   {/if}

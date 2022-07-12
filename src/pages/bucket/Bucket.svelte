@@ -1,8 +1,9 @@
 <script lang="ts">
-  export let handleClick: (value) => void;
+  	import { useFocus } from "svelte-navigator";
+    const registerFocus = useFocus();
 </script>
 
-<div id="Bucket">Bucket</div>
+<div use:registerFocus id="Bucket">Bucket</div>
 
 <style>
   #Bucket {
