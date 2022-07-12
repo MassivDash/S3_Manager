@@ -1,24 +1,26 @@
+
 use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
 
-use super::client::create_client;
+use crate::lib::s3::presigned_url::get_presigned_url;
+use crate::lib::s3::client::create_client;
 
 #[derive(Serialize, Deserialize, Clone)]
-struct BucketObject {
+struct ImgBucketObject {
     pub key: String,
-    pub extension: String,
+    pub url: String,
     pub size: i64,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-struct Bucket {
+struct ImgBucket {
     pub name: String,
-    pub files: Vec<BucketObject>,
+    pub files: Vec<ImgBucketObject>,
     pub total_files: usize,
 }
 
 #[tauri::command]
-pub async fn buckets() -> String {
+pub async fn get_all_images() -> String {
     let client = create_client().await.unwrap();
     let resp = client.list_buckets().send().await;
     match resp {
@@ -26,8 +28,8 @@ pub async fn buckets() -> String {
             let buckets = resp.buckets().unwrap();
             let mut my_buckets = Vec::new();
             for bucket in buckets {
-                let files = get_objects(&client, bucket.name().unwrap_or_default()).await;
-                my_buckets.push(Bucket {
+                let files = show_objects(&client, bucket.name().unwrap_or_default()).await;
+                my_buckets.push(ImgBucket {
                     name: bucket.name().unwrap_or_default().to_string(),
                     files: files.clone(),
                     total_files: files.len().clone(),
@@ -39,23 +41,39 @@ pub async fn buckets() -> String {
     }
 }
 
-async fn get_objects(client: &Client, bucket: &str) -> Vec<BucketObject> {
+async fn show_objects(client: &Client, bucket: &str) -> Vec<ImgBucketObject> {
     let resp = client.list_objects_v2().bucket(bucket).send().await;
-    let mut files: Vec<BucketObject> = Vec::new();
+    let mut files: Vec<ImgBucketObject> = Vec::new();
     if let Ok(resp) = resp {
         let contents = resp.contents().unwrap();
         println!("{}", contents.len());
         for object in contents {
-            
-                files.push(BucketObject {
+            if check_if_file_is_image(object.key().unwrap_or_default()) {
+                files.push(ImgBucketObject {
                     key: object.key().unwrap_or_default().to_string(),
-                    extension: object.key().unwrap_or_default().split(".").last().unwrap_or_default().to_string().to_lowercase(),
+                    url: get_presigned_url(
+                        client,
+                        bucket,
+                        &object.key().unwrap_or_default().to_string(),
+                        900,
+                    )
+                    .await
+                    .unwrap(),
                     size: object.size(),
                 });
             }
+        }
         return files;
     } else {
         files
     }
 }
 
+fn check_if_file_is_image(key: &str) -> bool {
+    println!("{}", key);
+    let extension = key.split('.').last().unwrap().to_lowercase().to_string();
+    match extension.as_str() {
+        "jpg" | "jpeg"| "png" | "gif" | "bmp" => true,
+        _ => false,
+    }
+}

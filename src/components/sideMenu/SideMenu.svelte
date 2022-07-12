@@ -8,5 +8,5 @@
     <Link to="photos">Photos</Link>
     <Link to="buckets">Buckets</Link>
   </nav>
-  </header>
+</header>
 
