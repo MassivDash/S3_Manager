@@ -1,6 +1,6 @@
 <script lang="ts">
-  import '../sideMenu/SideMenu.svelte';
-import SideMenu from '../sideMenu/SideMenu.svelte';
+  import '../sideMenu/sideMenu.svelte';
+import SideMenu from '../sideMenu/sideMenu.svelte';
 </script>
 
 

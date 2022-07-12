@@ -6,28 +6,26 @@ use crate::lib::s3::presigned_url::get_presigned_url;
 use crate::lib::s3::client::create_client;
 
 #[derive(Serialize, Deserialize, Clone)]
-struct ImgBucketObject {
+pub struct ImgBucketObject {
     pub key: String,
     pub url: String,
     pub size: i64,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-struct ImgBucket {
+pub struct ImgBucket {
     pub name: String,
     pub files: Vec<ImgBucketObject>,
     pub total_files: usize,
 }
 
 #[tauri::command]
-pub async fn get_all_images() -> String {
+pub async fn get_all_images() -> Vec<ImgBucket> {
     let client = create_client().await.unwrap();
-    let resp = client.list_buckets().send().await;
-    match resp {
-        Ok(resp) => {
-            let buckets = resp.buckets().unwrap();
-            let mut my_buckets = Vec::new();
-            for bucket in buckets {
+    let resp = client.list_buckets().send().await.unwrap();
+    let buckets = resp.buckets().unwrap();
+    let mut my_buckets = Vec::new();
+        for bucket in buckets {
                 let files = show_objects(&client, bucket.name().unwrap_or_default()).await;
                 my_buckets.push(ImgBucket {
                     name: bucket.name().unwrap_or_default().to_string(),
@@ -35,10 +33,8 @@ pub async fn get_all_images() -> String {
                     total_files: files.len().clone(),
                 });
             }
-            return serde_json::to_string(&my_buckets).unwrap();
-        }
-        Err(err) => format!("{}", err.to_string()),
-    }
+    return my_buckets;
+        
 }
 
 async fn show_objects(client: &Client, bucket: &str) -> Vec<ImgBucketObject> {

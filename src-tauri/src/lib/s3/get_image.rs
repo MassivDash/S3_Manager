@@ -10,7 +10,6 @@ pub struct SingleImgObject {
 
 #[tauri::command]
 pub async fn get_image(bucket: String, key: String) -> SingleImgObject {
-    println!("{}, {}", bucket, key);
     let client = create_client().await.unwrap();
     let img = SingleImgObject {
         key: key.to_string(),
@@ -23,7 +22,5 @@ pub async fn get_image(bucket: String, key: String) -> SingleImgObject {
         .await
         .unwrap(),
     };
-    println!("{}", img.url);
     return img;
-
 }

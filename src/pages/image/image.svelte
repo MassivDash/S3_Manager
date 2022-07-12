@@ -26,7 +26,6 @@
   
 </script>
 
-<div id="photo">photo</div>
 {#if !response?.url}
   <div>Loading...</div>
 {:else}

@@ -1,13 +1,15 @@
 <script lang="ts">
-  export let handleClick: (value) => void;
+  import { Link } from "svelte-navigator";
+  export let path;
+  export let name;
 </script>
 
-<div id="SideItem">
-    SideItem
-</div>
+<Link to={path}>
+    <div class="sideItem">{name}</div>
+</Link>
 
 <style>
-    #SideItem {
+    .sideItem {
         color: red;
     }
 </style>
