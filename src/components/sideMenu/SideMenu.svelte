@@ -1,12 +1,30 @@
 <script lang="ts">
-  import { Link } from "svelte-navigator";
+  import MenuItem from "./sideItem.svelte";
+
+  const menuItems: {
+    name: string;
+    path: string;
+  }[] = [
+    {
+      name: "Home",
+      path: "/",
+    },
+    {
+      name: "All photos",
+      path: "/photos"
+    },
+    {
+      name: "Buckets explorer",
+      path: "/buckets"
+    },
+  ];
 </script>
 
 <header>
   <nav>
-    <Link to="/">Home</Link>
-    <Link to="photos">Photos</Link>
-    <Link to="buckets">Buckets</Link>
+    {#each menuItems as item}
+      <MenuItem name={item.name} path={item.path} />
+    {/each}
   </nav>
 </header>
 
