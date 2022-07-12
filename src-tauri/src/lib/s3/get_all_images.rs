@@ -8,6 +8,7 @@ use crate::lib::s3::client::create_client;
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ImgBucketObject {
     pub key: String,
+    pub name: String,
     pub url: String,
     pub size: i64,
 }
@@ -46,7 +47,8 @@ async fn show_objects(client: &Client, bucket: &str) -> Vec<ImgBucketObject> {
         for object in contents {
             if check_if_file_is_image(object.key().unwrap_or_default()) {
                 files.push(ImgBucketObject {
-                    key: object.key().unwrap_or_default().to_string(),
+                    key: object.key().unwrap().to_string(),
+                    name: object.key().unwrap().split("/").last().unwrap_or_default().to_string(),
                     url: get_presigned_url(
                         client,
                         bucket,

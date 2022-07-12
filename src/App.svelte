@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { Router, Route, Link } from "svelte-navigator";
-  import Counter from "./lib/Counter.svelte";
+  import { Router, Route } from "svelte-navigator";
   import Layout from "./components/layout/layout.svelte";
   import Images from "./pages/images/images.svelte";
   import Image from "./pages/image/image.svelte";
@@ -9,7 +8,7 @@
 <Router>
   <Layout>
     <Route path="/">
-			<Counter />
+			Home
 		</Route>
     <Route path="photos/*">
 			<Route path="/">
