@@ -2,7 +2,7 @@
 use aws_sdk_s3::{presigning::config::PresigningConfig, Client};
 use std::{time::Duration, error::Error};
 
-pub async fn get_object(
+pub async fn get_presigned_url(
     client: &Client,
     bucket: &str,
     object: &str,

@@ -1,8 +1,15 @@
 <script lang="ts">
-  export let handleClick: (value) => void;
+  import '../sideMenu/SideMenu.svelte';
+import SideMenu from '../sideMenu/SideMenu.svelte';
 </script>
 
-<div id="Layout">Layout</div>
+
+<div id="Layout">
+  <SideMenu />
+  <main>
+    <slot />
+  </main>       
+</div>
 
 <style>
   #Layout {
