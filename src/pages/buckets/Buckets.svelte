@@ -3,7 +3,7 @@
   const registerFocus = useFocus();
 </script>
 
-<div use:registerFocus id="Buckets">Buckets</div>
+<div use:registerFocus class="outline-none" id="Buckets">Buckets</div>
 
 <style>
   #Buckets {

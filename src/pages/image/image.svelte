@@ -32,8 +32,3 @@
   <img src={response.url} alt={response.key} />
 {/if}
 
-<style>
-  #photo {
-    color: red;
-  }
-</style>

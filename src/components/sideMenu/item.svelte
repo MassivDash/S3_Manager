@@ -1,27 +1,12 @@
 <script lang="ts">
-  import { Link } from "svelte-navigator";
+  import { Link, useLocation } from "svelte-navigator";
   export let path;
   export let name;
-  export let icon; 
-
-  import bucket from '../icons/bucket.svg';
-  import home from '../icons/home.svg'
-  import photo from '../icons/photo.svg'
-
-  const icons = {
-    bucket,
-    home,
-    photo
-  }
+  const location = useLocation();
 </script>
 
-<Link to={path} class="flex flex-col justify-center items-center">
-    {@html (icons[icon])}
-    <div class="sideItem">{name}</div>
+<Link to={path} class={`font-roboto text-xs flex flex-col justify-between items-center p-2 h-16 ${path === $location.pathname ? "text-amber-700 border-r-2 border-amber-600" : ""}`}>
+    <slot />
+  <div class="text-current mt-2">{name}</div>
 </Link>
 
-<style>
-    .sideItem {
-        color: red;
-    }
-</style>

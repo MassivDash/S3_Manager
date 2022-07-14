@@ -1,4 +1,5 @@
-use aws_sdk_s3::Client;
+use aws_sdk_s3::{Client};
+use cached::proc_macro::once;
 use serde::{Deserialize, Serialize};
 
 use super::client::create_client;
@@ -8,6 +9,7 @@ struct BucketObject {
     pub key: String,
     pub extension: String,
     pub size: i64,
+    pub last_modified: i64,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -39,18 +41,20 @@ pub async fn buckets() -> String {
     }
 }
 
+// Cache the results, so we don't have to make a request every time.
+#[once(time=900)] // 15 minutes
 async fn get_objects(client: &Client, bucket: &str) -> Vec<BucketObject> {
+    println!("{}", bucket);
     let resp = client.list_objects_v2().bucket(bucket).send().await;
     let mut files: Vec<BucketObject> = Vec::new();
     if let Ok(resp) = resp {
         let contents = resp.contents().unwrap();
-        println!("{}", contents.len());
         for object in contents {
-            
                 files.push(BucketObject {
                     key: object.key().unwrap_or_default().to_string(),
                     extension: object.key().unwrap_or_default().split(".").last().unwrap_or_default().to_string().to_lowercase(),
                     size: object.size(),
+                    last_modified: object.last_modified().unwrap().clone().secs(),
                 });
             }
         return files;
