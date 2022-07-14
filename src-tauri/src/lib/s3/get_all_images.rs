@@ -1,4 +1,5 @@
 
+use cached::proc_macro::once;
 use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
 
@@ -11,6 +12,7 @@ pub struct ImgBucketObject {
     pub name: String,
     pub url: String,
     pub size: i64,
+    pub last_modified: i64,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -38,6 +40,8 @@ pub async fn get_all_images() -> Vec<ImgBucket> {
         
 }
 
+// Cache the results, so we don't have to make a request every time.
+#[once(time=900)] // 15 minutes
 async fn show_objects(client: &Client, bucket: &str) -> Vec<ImgBucketObject> {
     let resp = client.list_objects_v2().bucket(bucket).send().await;
     let mut files: Vec<ImgBucketObject> = Vec::new();
@@ -53,11 +57,12 @@ async fn show_objects(client: &Client, bucket: &str) -> Vec<ImgBucketObject> {
                         client,
                         bucket,
                         &object.key().unwrap_or_default().to_string(),
-                        900,
+                        9000,
                     )
                     .await
                     .unwrap(),
                     size: object.size(),
+                    last_modified: object.last_modified().unwrap().clone().secs(),
                 });
             }
         }
