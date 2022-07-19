@@ -4,33 +4,34 @@
   import Images from "./pages/images/images.svelte";
   import Image from "./pages/image/image.svelte";
   import  './tailwind.css';
+  import FadeInRoute from "./components/fadeIn/fadeInRoute.svelte";
 </script>
 
 <Router>
   <Layout>
-    <Route path="/">
+    <FadeInRoute path="/">
 			Home for 4 sure
-		</Route>
-    <Route path="files">
+		</FadeInRoute>
+    <FadeInRoute path="files">
 			files
-		</Route>
-    <Route path="images/*">
-			<Route path="/">
+		</FadeInRoute>
+    <FadeInRoute path="images/*">
+			<FadeInRoute path="/">
        <Images />
-			</Route>
-			<Route path=":bucket/*key">
+			</FadeInRoute>
+			<FadeInRoute path=":bucket/*key">
         <Image />
-      </Route>
-		</Route>
-    <Route path="movies">
+      </FadeInRoute>
+		</FadeInRoute>
+    <FadeInRoute path="movies">
 			Movies
-		</Route>
-    <Route path="buckets">
+		</FadeInRoute>
+    <FadeInRoute path="buckets">
 			buckets
-		</Route>
-    <Route path="settings">
+		</FadeInRoute>
+    <FadeInRoute path="settings">
 			settings
-		</Route>
+		</FadeInRoute>
   </Layout>
 </Router>
 

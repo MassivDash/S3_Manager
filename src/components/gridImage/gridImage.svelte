@@ -40,7 +40,7 @@
       </div>
       <div class="text-right">
         <p class="text-gray-800 font-bold">last modified: </p>
-        <p class="text-gray-700">{new Date(last_modified).toLocaleString()}</p>
+        <p class="text-gray-700">{new Date(last_modified * 1000).toLocaleString().split(",")[0]}</p>
       </div>
     </div>
   </Link>

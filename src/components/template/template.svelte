@@ -7,7 +7,7 @@
   <div class="relative w-24">
     <SideMenu />
   </div>
-  <main class="w-full bg-stone-100 overflow-y-auto p-4"> 
+  <main class="w-full bg-stone-100 overflow-y-auto p-4 relative"> 
     <slot />
   </main>
 </div>
