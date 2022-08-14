@@ -47,7 +47,6 @@ async fn show_objects(client: &Client, bucket: &str) -> Vec<ImgBucketObject> {
     let mut files: Vec<ImgBucketObject> = Vec::new();
     if let Ok(resp) = resp {
         let contents = resp.contents().unwrap();
-        println!("{}", contents.len());
         for object in contents {
             if check_if_file_is_image(object.key().unwrap_or_default()) {
                 files.push(ImgBucketObject {
