@@ -30,7 +30,7 @@ pub struct Bucket {
 }
 
 #[tauri::command]
-pub async fn get_buckets() -> Vec<Bucket> {
+pub async fn get_files() -> Vec<Bucket> {
     let client = create_client().await.unwrap();
     let resp = client.list_buckets().send().await.unwrap();
     let buckets = resp.buckets().unwrap();
