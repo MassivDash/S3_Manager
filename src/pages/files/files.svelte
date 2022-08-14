@@ -66,13 +66,15 @@
       <div class="text-blue-800">{bucket.name}</div>
           {#each bucket.folders as folder}
             <div>{folder.name}</div>
+            <div>
             {#each folder.files as file}
               <div class="flex h-9 justify-start items-center my-4">
-                <div class="w-1/4 text-center text-gray-500">
+                <div class="text-center text-gray-500">
                   {file.name}
                 </div>
               </div>
             {/each}
+          </div>
           {/each}
     {/each}
   {/if}

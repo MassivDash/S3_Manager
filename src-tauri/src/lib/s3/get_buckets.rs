@@ -39,13 +39,13 @@ pub async fn get_buckets() -> Vec<Bucket> {
         let files = get_objects(&client, bucket.name().unwrap_or_default()).await;
         let mut folders: Vec<BucketFolder> = Vec::new();
         let get_folders: Vec<String> = files.clone().into_iter().map(|x| x.folder.clone()).unique().collect();
-        println!("{:?}", get_folders);
         for folder in get_folders {
+            let folder_files: Vec<BucketObject> = files.clone().into_iter().filter(|x| x.folder == folder).filter(|x| !x.name.ends_with("/")).collect();
             folders.push(BucketFolder {
                 name: folder.clone(),
-                files: files.clone().into_iter().filter(|x| x.folder == folder).collect(),
-                total_files: files.len(),
-                total_size: files.iter().fold(0, |acc, x| acc + x.size),
+                files: folder_files.clone(),
+                total_files: folder_files.clone().len(),
+                total_size: folder_files.iter().fold(0, |acc, x| acc + x.size),
             });
         }
         my_buckets.push(Bucket {
@@ -71,11 +71,7 @@ async fn get_objects(client: &Client, bucket: &str) -> Vec<BucketObject> {
             files.push(BucketObject {
                 key: object.key().unwrap_or_default().to_string(),
                 folder: object.key().unwrap_or_default().split("/").nth(0).unwrap_or_default().to_string(),
-                name: object
-                    .key()
-                    .unwrap()
-
-                    .to_string(),
+                name: object.key().unwrap().split("/").last().unwrap_or_default().to_string(),
                 extension: object
                     .key()
                     .unwrap_or_default()
