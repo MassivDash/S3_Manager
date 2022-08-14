@@ -46,7 +46,7 @@
   console.log(filteredList, value);
 
   onMount(async () => {
-    const res: Bucket[] = await invoke("get_buckets");
+    const res: Bucket[] = await invoke("get_files");
     response = res;
     console.log(res);
   });

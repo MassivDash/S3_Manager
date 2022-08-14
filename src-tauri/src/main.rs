@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use crate::lib::s3::get_buckets::get_buckets;
+use crate::lib::s3::get_files::get_files;
 use crate::lib::s3::get_all_images::get_all_images;
 use crate::lib::s3::get_image::get_image;
 
@@ -30,7 +30,7 @@ fn main() {
     let context = tauri::generate_context!();
     tauri::Builder::default()
         .menu(tauri::Menu::os_default(&context.package_info().name))
-        .invoke_handler(tauri::generate_handler![get_buckets, get_all_images, get_image])
+        .invoke_handler(tauri::generate_handler![get_files, get_all_images, get_image])
         .run(context)
         .expect("error while running tauri application");
 }
