@@ -23,6 +23,7 @@ aws-sdk-s3 = "0.15.0"
 tokio = { version = "1", features = ["full", "macros"] }
 cached = "0.36.0"
 thiserror = "*"
+itertools = "*"
 
 [features]
 # by default Tauri runs in production mode
