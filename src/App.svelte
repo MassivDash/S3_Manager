@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { Router, Route } from "svelte-navigator";
+  import { Router } from "svelte-navigator";
   import Layout from "./components/template/template.svelte";
   import Images from "./pages/images/images.svelte";
   import Image from "./pages/image/image.svelte";
+  import Files from './pages/files/files.svelte';
   import  './tailwind.css';
   import FadeInRoute from "./components/fadeIn/fadeInRoute.svelte";
 </script>
@@ -13,7 +14,7 @@
 			Home for 4 sure
 		</FadeInRoute>
     <FadeInRoute path="files">
-			files
+			<Files />
 		</FadeInRoute>
     <FadeInRoute path="images/*">
 			<FadeInRoute path="/">
