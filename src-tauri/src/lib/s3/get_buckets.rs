@@ -1,10 +1,11 @@
 use aws_sdk_s3::Client;
 use cached::proc_macro::once;
 use serde::{Deserialize, Serialize};
+use itertools::Itertools;
 
 use super::client::create_client;
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct BucketObject {
     pub key: String,
     pub name: String,
@@ -13,11 +14,18 @@ pub struct BucketObject {
     pub size: i64,
     pub last_modified: i64,
 }
-
-#[derive(Serialize, Deserialize, Clone)]
-pub struct Bucket {
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct BucketFolder {
     pub name: String,
     pub files: Vec<BucketObject>,
+    pub total_files: usize,
+    pub total_size: i64,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Bucket {
+    pub name: String,
+    pub folders: Vec<BucketFolder>,
     pub total_files: usize,
 }
 
@@ -29,9 +37,20 @@ pub async fn get_buckets() -> Vec<Bucket> {
     let mut my_buckets = Vec::new();
     for bucket in buckets {
         let files = get_objects(&client, bucket.name().unwrap_or_default()).await;
+        let mut folders: Vec<BucketFolder> = Vec::new();
+        let get_folders: Vec<String> = files.clone().into_iter().map(|x| x.folder.clone()).unique().collect();
+        println!("{:?}", get_folders);
+        for folder in get_folders {
+            folders.push(BucketFolder {
+                name: folder.clone(),
+                files: files.clone().into_iter().filter(|x| x.folder == folder).collect(),
+                total_files: files.len(),
+                total_size: files.iter().fold(0, |acc, x| acc + x.size),
+            });
+        }
         my_buckets.push(Bucket {
             name: bucket.name().unwrap_or_default().to_string(),
-            files: files.clone(),
+            folders: folders,
             total_files: files.len().clone(),
         });
     }
@@ -44,13 +63,19 @@ async fn get_objects(client: &Client, bucket: &str) -> Vec<BucketObject> {
     println!("{}", bucket);
     let resp = client.list_objects_v2().bucket(bucket).send().await;
     let mut files: Vec<BucketObject> = Vec::new();
+    
     if let Ok(resp) = resp {
         let contents = resp.contents().unwrap();
+
         for object in contents {
             files.push(BucketObject {
                 key: object.key().unwrap_or_default().to_string(),
                 folder: object.key().unwrap_or_default().split("/").nth(0).unwrap_or_default().to_string(),
-                name: object.key().unwrap().split("/").last().unwrap_or_default().to_string(),
+                name: object
+                    .key()
+                    .unwrap()
+
+                    .to_string(),
                 extension: object
                     .key()
                     .unwrap_or_default()
