@@ -3,7 +3,8 @@ use cached::proc_macro::once;
 use serde::{Deserialize, Serialize};
 use itertools::Itertools;
 
-use super::client::create_client;
+use crate::lib::s3::client::client::create_client;
+
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct BucketObject {

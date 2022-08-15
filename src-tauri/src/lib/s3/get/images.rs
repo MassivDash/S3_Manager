@@ -3,8 +3,8 @@ use cached::proc_macro::once;
 use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
 
-use crate::lib::s3::presigned_url::get_presigned_url;
-use crate::lib::s3::client::create_client;
+use crate::lib::s3::client::client::create_client;
+use crate::lib::s3::utils::presigned_url::get_presigned_url;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ImgBucketObject {

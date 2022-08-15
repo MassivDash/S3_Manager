@@ -1,5 +1,7 @@
-use super::client::create_client;
-use super::presigned_url::get_presigned_url;
+
+use crate::lib::s3::client::client::create_client;
+use crate::lib::s3::utils::presigned_url::get_presigned_url;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone)]
