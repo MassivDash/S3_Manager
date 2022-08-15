@@ -2,11 +2,10 @@
   import { onMount } from "svelte";
   import { invoke } from "@tauri-apps/api";
   import { useFocus } from "svelte-navigator";
-
-  import Dropzone from "svelte-file-dropzone";
-
   import Loader from "../../components/loader/loader.svelte";
   import Search from "src/components/search/search.svelte";
+  import FolderTitle from "src/components/table/folderTitle.svelte";
+  import Table from "src/components/table/table.svelte";
 
   import { open } from "@tauri-apps/api/dialog";
   import { appDir } from "@tauri-apps/api/path";
@@ -61,7 +60,6 @@
     });
 
     files = [...selected];
-    console.log(files, bucketName, folderName);
     const upload = await invoke("put_files", {
       bucketName,
       folderName,
@@ -88,28 +86,24 @@
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div class="flex">
-      <Search bind:value />
+    <div class="flex py-8">
+      <Search bind:value hidelabel=true class="outline-2 border-2 border-orange-600 text-gray-900 focus:outline-orange-600 p-2"/>
     </div>
     {#each filteredList as bucket}
-      <div class="text-blue-800">{bucket.name}</div>
+    <div class="flex h-9 justify-start items-center my-4">
+      <div class="w-1/4 h-1 rounded-md bg-gray-500" />
+      <div class="w-1/4 text-center text-gray-500">
+        bucket: {bucket.name}
+      </div>
+      <div class="h-1 w-2/4 rounded-md bg-gray-500" />
+    </div>
       {#each bucket.folders as folder}
-        <div>{folder.name}</div>
-        <button
-          on:click={() => handleFilesSelect(bucket.name, folder.name)}
-          class="w-full h-full"
-          data-bucket={bucket.name}
-          data-folder={folder.name}>Select Files</button
-        >
+      <div class="bg-white">
+      <FolderTitle folderName={folder.name} handleFilesSelect={() => handleFilesSelect(bucket.name, folder.name)} />
         <div>
-          {#each folder.files as file}
-            <div class="flex h-9 justify-start items-center my-4">
-              <div class="text-center text-gray-500">
-                {file.name}
-              </div>
-            </div>
-          {/each}
+          <Table files={folder.files} />
         </div>
+      </div>
       {/each}
     {/each}
   {/if}
