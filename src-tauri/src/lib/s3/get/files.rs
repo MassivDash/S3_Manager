@@ -31,6 +31,12 @@ pub struct Bucket {
 }
 
 #[tauri::command]
+#[once(time=900)] // 15 minutes
+pub async fn get_cached_files() -> Vec<Bucket>{
+    return get_files().await;
+}
+
+#[tauri::command]
 pub async fn get_files() -> Vec<Bucket> {
     let client = create_client().await.unwrap();
     let resp = client.list_buckets().send().await.unwrap();
@@ -58,8 +64,9 @@ pub async fn get_files() -> Vec<Bucket> {
     return my_buckets;
 }
 
+
+
 // Cache the results, so we don't have to make a request every time.
-#[once(time = 900)] // 15 minutes
 async fn get_objects(client: &Client, bucket: &str) -> Vec<BucketObject> {
     println!("{}", bucket);
     let resp = client.list_objects_v2().bucket(bucket).send().await;

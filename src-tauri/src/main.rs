@@ -3,9 +3,12 @@
     windows_subsystem = "windows"
 )]
 
-use crate::lib::s3::get::files::get_files;
+
+use crate::lib::s3::get::files::{get_files, get_cached_files};
 use crate::lib::s3::get::images::get_all_images;
 use crate::lib::s3::get::image::get_image;
+
+use crate::lib::s3::put::files::put_files;
 
 
 mod lib;
@@ -30,7 +33,7 @@ fn main() {
     let context = tauri::generate_context!();
     tauri::Builder::default()
         .menu(tauri::Menu::os_default(&context.package_info().name))
-        .invoke_handler(tauri::generate_handler![get_files, get_all_images, get_image])
+        .invoke_handler(tauri::generate_handler![get_files, get_cached_files, get_all_images, get_image, put_files])
         .run(context)
         .expect("error while running tauri application");
 }

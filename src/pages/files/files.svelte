@@ -2,9 +2,15 @@
   import { onMount } from "svelte";
   import { invoke } from "@tauri-apps/api";
   import { useFocus } from "svelte-navigator";
+
+  import Dropzone from "svelte-file-dropzone";
+
   import Loader from "../../components/loader/loader.svelte";
   import Search from "src/components/search/search.svelte";
 
+  import { open } from "@tauri-apps/api/dialog";
+  import { appDir } from "@tauri-apps/api/path";
+  // Open a selection dialog for directories
 
   interface File {
     key: string;
@@ -31,19 +37,42 @@
   let response;
   let filteredList;
   let value = "";
-  let folders = [];
 
   $: response;
   $: filteredList = response?.map((bucket: Bucket) => ({
     ...bucket,
-    folders: 
+    folders:
       value === ""
         ? [...bucket.folders]
-        : bucket.folders.map((folder: Folder) => ({...folder, files: folder.files.filter((item) => item.name.indexOf(value) !== -1) }) ),
+        : bucket.folders.map((folder: Folder) => ({
+            ...folder,
+            files: folder.files.filter(
+              (item) => item.name.indexOf(value) !== -1
+            ),
+          })),
   }));
 
+  let files: String[] = [];
 
-  console.log(filteredList, value);
+  async function handleFilesSelect(bucketName, folderName) {
+    const selected = await open({
+      multiple: true,
+      defaultPath: await appDir(),
+    });
+
+    files = [...selected];
+    console.log(files, bucketName, folderName);
+    const upload = await invoke("put_files", {
+      bucketName,
+      folderName,
+      files,
+    });
+
+    if(upload) {
+      const res: Bucket[] = await invoke("get_files");
+      response = res;
+    }
+  }
 
   onMount(async () => {
     const res: Bucket[] = await invoke("get_files");
@@ -64,18 +93,24 @@
     </div>
     {#each filteredList as bucket}
       <div class="text-blue-800">{bucket.name}</div>
-          {#each bucket.folders as folder}
-            <div>{folder.name}</div>
-            <div>
-            {#each folder.files as file}
-              <div class="flex h-9 justify-start items-center my-4">
-                <div class="text-center text-gray-500">
-                  {file.name}
-                </div>
+      {#each bucket.folders as folder}
+        <div>{folder.name}</div>
+        <button
+          on:click={() => handleFilesSelect(bucket.name, folder.name)}
+          class="w-full h-full"
+          data-bucket={bucket.name}
+          data-folder={folder.name}>Select Files</button
+        >
+        <div>
+          {#each folder.files as file}
+            <div class="flex h-9 justify-start items-center my-4">
+              <div class="text-center text-gray-500">
+                {file.name}
               </div>
-            {/each}
-          </div>
+            </div>
           {/each}
+        </div>
+      {/each}
     {/each}
   {/if}
 </div>
