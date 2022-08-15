@@ -3,9 +3,9 @@
     windows_subsystem = "windows"
 )]
 
-use crate::lib::s3::get_files::get_files;
-use crate::lib::s3::get_all_images::get_all_images;
-use crate::lib::s3::get_image::get_image;
+use crate::lib::s3::get::files::get_files;
+use crate::lib::s3::get::images::get_all_images;
+use crate::lib::s3::get::image::get_image;
 
 
 mod lib;
