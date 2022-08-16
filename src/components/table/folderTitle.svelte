@@ -8,8 +8,8 @@
 
 <div
   class="flex bg-orange-50 align-middle justify-between items-center min-w-fit w-full h-14 border-b-2 border-orange-400 my-4 rounded-md"
->
-  <div class="ml-2 flex items-center">
+  >
+  <div class="ml-3 flex items-center">
     <div class="mr-4 text-orange-500">
       <Folder />
     </div>
