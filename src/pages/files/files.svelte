@@ -13,6 +13,7 @@
   import Download from "../../components/icons/download.svelte";
   import Delete from "../../components/icons/delete.svelte";
   import { fade } from "svelte/transition";
+  import Tools from "../../components/tools/tools.svelte";
 
   interface File {
     key: string;
@@ -78,18 +79,24 @@
   onMount(async () => {
     const res: Bucket[] = await invoke("get_files");
     response = res;
-    console.log(res);
   });
 
-  let checkedFiles = [];
-  $: observedFiles = checkedFiles;
-  $: inView = observedFiles.length > 0;
+  interface CheckedFile{
+    key: string;
+    bucket_name: string;
+  }
 
-  const handleCheckbox = (key: String) => {
-    if (checkedFiles.includes(key)) {
-      checkedFiles = [...checkedFiles.filter((item) => item !== key)];
+  let checkedFiles: CheckedFile[] = [];
+
+  const handleCheckbox = (key: string, bucketName: string) => {
+    const checked = {
+      key,
+      bucket_name: bucketName,
+    };
+    if (checkedFiles.includes(checked)) {
+      checkedFiles = [...checkedFiles.filter((item) => item.key !== key)];
     } else {
-      checkedFiles = [...checkedFiles, key];
+      checkedFiles = [...checkedFiles, checked];
     }
   };
 </script>
@@ -111,20 +118,7 @@
       />
 
       {#if checkedFiles && checkedFiles.length > 0}
-        <div id="tool" class="flex transition-opacity ease-in duration-700" in:fade={{ duration: 700 }} out:fade={{ duration: 700 }} >
-          <IconButton
-            onClick={() => console.log(checkedFiles, observedFiles, "hgelloo")}
-            >
-            Download
-            <Download />
-          </IconButton>
-          <IconButton
-            onClick={() => console.log(checkedFiles, observedFiles, "hgelloo")}
-            > 
-            Remove            
-            <Delete />
-          </IconButton>
-        </div>
+      <Tools checkedFiles={checkedFiles} value={value} />
       {/if}
     </div>
     <div class="h-10" />
@@ -146,7 +140,7 @@
               handleFilesSelect(bucket.name, folder.name)}
           />
           <div>
-            <Table files={folder.files} {handleCheckbox} {checkedFiles} />
+            <Table bucketName={bucket.name} files={folder.files} {handleCheckbox} {checkedFiles} />
           </div>
         </div>
       {/each}

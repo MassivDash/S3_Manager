@@ -2,6 +2,7 @@
   import { formatBytes } from "../../lib/date";
   import Checkbox from "./checkbox.svelte";
   export let files;
+  export let bucketName;
   export let handleCheckbox;
   export let checkedFiles;
   const tableHead = ["Name", "Size", "Date Modified"];
@@ -21,7 +22,7 @@
     {#each files as file}
       <tr class="text-gray-700 my-2 py-2 border-orange-100 border-b-2">
         <td id="checkbox" class="ml-4 flex items-bottom justify-center h-10">
-          <Checkbox handleCheckbox={() => handleCheckbox(file.key)} key={file.key} checkedFiles={checkedFiles} />
+          <Checkbox handleCheckbox={() => handleCheckbox(file.key, bucketName)} key={file.key} checkedFiles={checkedFiles} />
         </td>
         <td class="px-2 py-2 w-10/12">{file.name}</td>
         <td class="px-2 py-2 w-2/12" >{formatBytes(file.size)}</td>
