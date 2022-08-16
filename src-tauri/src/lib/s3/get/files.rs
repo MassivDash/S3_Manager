@@ -47,7 +47,7 @@ pub async fn get_files() -> Vec<Bucket> {
         let mut folders: Vec<BucketFolder> = Vec::new();
         let get_folders: Vec<String> = files.clone().into_iter().map(|x| x.folder.clone()).unique().collect();
         for folder in get_folders {
-            let folder_files: Vec<BucketObject> = files.clone().into_iter().filter(|x| x.folder == folder).filter(|x| !x.name.ends_with("/")).collect();
+            let folder_files: Vec<BucketObject> = files.clone().into_iter().filter(|x| x.folder == folder).filter(|x| !x.key.ends_with("/")).collect();
             folders.push(BucketFolder {
                 name: folder.clone(),
                 files: folder_files.clone(),

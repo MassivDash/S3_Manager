@@ -87,7 +87,7 @@
   {/if}
   {#if filteredList && filteredList[0].name}
     <div class="flex py-8">
-      <Search bind:value hidelabel=true class="outline-2 border-2 border-orange-600 text-gray-900 focus:outline-orange-600 p-2"/>
+      <Search bind:value hidelabel=true class="placeholder-gray-700 bg-orange-50 appearance-none outline-none border-2 border-transparent border-spacing-1  focus:border-orange-600 rounded text-gray-900 p-2"/>
     </div>
     {#each filteredList as bucket}
     <div class="flex h-9 justify-start items-center my-4">

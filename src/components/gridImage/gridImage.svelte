@@ -14,22 +14,22 @@
   const height = 32;
 </script>
 
-<div class="px-6 py-2 bg-white rounded-md flex flex-col drop-shadow-xl">
+<div class="px-6 py-2 bg-orange-50 rounded-md flex flex-col drop-shadow-xl m-2">
   <div class="flex w-full justify-between my-2">
-    <button class="mb-4 text-gray-400">
+    <button class="mb-4 text-orange-600">
       <Heart {width} {height} />
     </button>
-    <button class="-mr-2 mb-4 text-gray-400">
+    <button class="-mr-2 mb-4 text-gray-700">
       <More {width} {height} />
     </button>
   </div>
 
-  <Link to="{bucket.name}/{key}" class="flex flex-col justify-center gap-4">
+  <Link to="{bucket.name}/{key}" class="flex flex-col justify-center">
     <img
       data-src={url}
       alt={key}
       use:lazyImage
-      class="rounded-sm max-w-96 max-h-96 object-cover"
+      class="rounded-sm object-cover"
     />
 
     <div class="text-center font-bold text-gray-600">{name}</div>
@@ -39,8 +39,10 @@
         <p class="text-gray-700">{formatBytes(size)}</p>
       </div>
       <div class="text-right">
-        <p class="text-gray-800 font-bold">last modified: </p>
-        <p class="text-gray-700">{new Date(last_modified * 1000).toLocaleString().split(",")[0]}</p>
+        <p class="text-gray-800 font-bold">last modified:</p>
+        <p class="text-gray-700">
+          {new Date(last_modified * 1000).toLocaleString().split(",")[0]}
+        </p>
       </div>
     </div>
   </Link>
