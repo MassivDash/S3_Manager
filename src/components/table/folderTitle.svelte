@@ -4,10 +4,12 @@
 
   export let handleFilesSelect;
   export let folderName = "";
+
+  
 </script>
 
 <div
-  class="flex bg-orange-50 align-middle justify-between items-center min-w-fit w-full h-14 border-b-2 border-orange-400 my-4 rounded-md"
+  class="flex sticky top-20 bg-orange-50 align-middle justify-between items-center min-w-fit w-full h-14 border-b-2 border-orange-400 my-4 rounded-md z-10"
   >
   <div class="ml-3 flex items-center">
     <div class="mr-4 text-orange-500">
@@ -17,6 +19,7 @@
       {folderName}
     </div>
   </div>
+  <div>
   <button
     on:click={handleFilesSelect}
     type="button"
@@ -24,4 +27,5 @@
   >
     <AddSq />
   </button>
+  </div>
 </div>
