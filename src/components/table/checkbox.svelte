@@ -3,8 +3,8 @@
   export let checkedFiles = [];
   export let handleCheckbox;
 
-  let checked = key
-    ? checkedFiles.includes(key)
+  $: checked = key
+    ? checkedFiles.some(item => item.key === key)
     : false;
 
 </script>
