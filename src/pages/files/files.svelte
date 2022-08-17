@@ -1,10 +1,10 @@
 <script lang="ts">
-  import {onMount} from 'svelte';
-  import {invoke} from '@tauri-apps/api';
-  import {useFocus} from 'svelte-navigator';
+  import { onMount } from 'svelte';
+  import { invoke } from '@tauri-apps/api';
+  import { useFocus } from 'svelte-navigator';
   import Loader from '../../components/loader/loader.svelte';
-  import {open, confirm} from '@tauri-apps/api/dialog';
-  import {appDir} from '@tauri-apps/api/path';
+  import { open, confirm } from '@tauri-apps/api/dialog';
+  import { appDir } from '@tauri-apps/api/path';
   // Open a selection dialog for directories
   import Tools from '../../components/tools/tools.svelte';
   import FileTable from 'src/components/fileTable/fileTable.svelte';
@@ -42,8 +42,8 @@
         ? [...bucket.folders]
         : bucket.folders.map((folder: Folder) => ({
             ...folder,
-            files: folder.files.filter(item => item.name.indexOf(value) !== -1)
-          }))
+            files: folder.files.filter(item => item.name.indexOf(value) !== -1),
+          })),
   }));
 
   let files: String[] = [];
@@ -51,14 +51,14 @@
   async function handleFilesSelect(bucketName, folderName) {
     const selected = await open({
       multiple: true,
-      defaultPath: await appDir()
+      defaultPath: await appDir(),
     });
 
     files = [...selected];
     const upload = await invoke('put_files', {
       bucketName,
       folderName,
-      files
+      files,
     });
 
     if (upload) {
@@ -86,7 +86,7 @@
   const handleCheckbox = (key: string, bucketName: string) => {
     const checked = {
       key,
-      bucket_name: bucketName
+      bucket_name: bucketName,
     };
     if (checkedFiles.some(item => item.key === checked.key)) {
       checkedFiles = [...checkedFiles.filter(item => item.key !== key)];
@@ -98,12 +98,12 @@
   async function handleDownload(checkedFiles) {
     const dirPath = await open({
       directory: true,
-      title: 'Select a directory'
+      title: 'Select a directory',
     });
     if (dirPath) {
       const success = await invoke('save_files', {
         keys: checkedFiles,
-        dir: dirPath
+        dir: dirPath,
       });
       if (success) {
         resetCheckedFiles();
@@ -114,10 +114,10 @@
   async function handleDelete(checkedFiles) {
     const confirmed = await confirm(
       'This action cannot be reverted. Are you sure you want to delete?',
-      {title: 'Delete files ?', type: 'warning'}
+      { title: 'Delete files ?', type: 'warning' },
     );
     if (confirmed) {
-      const success = await invoke('delete_files', {keys: checkedFiles});
+      const success = await invoke('delete_files', { keys: checkedFiles });
       if (success) {
         resetCheckedFiles();
         const res: Bucket[] = await invoke('get_files');

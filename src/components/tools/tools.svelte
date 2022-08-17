@@ -4,7 +4,7 @@
   import Download from 'src/components/icons/download.svelte';
   import Delete from 'src/components/icons/delete.svelte';
 
-  import {fade} from 'svelte/transition';
+  import { fade } from 'svelte/transition';
 
   export let checkedFiles;
   export let handleDelete;
@@ -25,8 +25,8 @@
     <div
       id="tool"
       class="flex transition-opacity text-gray-600 ease-in duration-700"
-      in:fade={{duration: 700}}
-      out:fade={{duration: 700}}
+      in:fade={{ duration: 700 }}
+      out:fade={{ duration: 700 }}
     >
       <IconButton onClick={() => handleDownload(checkedFiles)}>
         Download

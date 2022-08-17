@@ -1,20 +1,23 @@
+
+
 module.exports = {
-  parser: '@typescript-eslint/parser', // add the TypeScript parser
-  plugins: [
-    'svelte3',
-    '@typescript-eslint',
-    'prettier', // add the TypeScript plugin
-  ],
-  extends: ['prettier'],
-  overrides: [
-    // this stays the same
-    {
-      files: ['*.svelte'],
-      processor: 'svelte3/svelte3',
+  root: true,
+  parser: '@typescript-eslint/parser',
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
+  plugins: ['svelte3', '@typescript-eslint', 'prettier'],
+  overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
+  settings: {
+    'svelte3/typescript': true,
+    'svelte3/ignore-styles': (attributes) => {
+      // https://github.com/sveltejs/eslint-plugin-svelte3/issues/10
+      return attributes && attributes.lang && attributes.lang !== 'css'
     },
-  ],
+  },
+  parserOptions: {
+    sourceType: 'module',
+    ecmaVersion: 2019,
+  },
   rules: {
-    'prettier/prettier': ['error'],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',
@@ -25,9 +28,10 @@ module.exports = {
       'error',
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
     ],
-    'no-console': ['error', { allow: ['warn', 'error'] }],
   },
-  settings: {
-    'svelte3/typescript': () => require('typescript'), // pass the TypeScript package to the Svelte plugin
+  env: {
+    browser: true,
+    es2017: true,
+    node: true,
   },
-};
+}

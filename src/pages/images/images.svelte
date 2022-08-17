@@ -1,11 +1,11 @@
 <script lang="ts">
-  import {onMount} from 'svelte';
-  import {invoke} from '@tauri-apps/api';
-  import {useFocus} from 'svelte-navigator';
+  import { onMount } from 'svelte';
+  import { invoke } from '@tauri-apps/api';
+  import { useFocus } from 'svelte-navigator';
   import Loader from '../../components/loader/loader.svelte';
   import Search from 'src/components/search/search.svelte';
   import GridImage from 'src/components/gridImage/gridImage.svelte';
-  import {tick} from 'svelte';
+  import { tick } from 'svelte';
 
   const registerFocus = useFocus();
   let response;
@@ -21,7 +21,7 @@
     files:
       value === ''
         ? bucket.files
-        : bucket.files.filter(item => item.name.indexOf(value) !== -1)
+        : bucket.files.filter(item => item.name.indexOf(value) !== -1),
   }));
 
   const getTailwindClass = col => {

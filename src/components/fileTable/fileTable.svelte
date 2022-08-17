@@ -2,7 +2,7 @@
   import FolderTitle from 'src/components/table/folderTitle.svelte';
   import Table from 'src/components/table/table.svelte';
 
-  import {fade} from 'svelte/transition';
+  import { fade } from 'svelte/transition';
 
   export let handleFilesSelect: (value) => void;
   export let folder;
@@ -26,8 +26,8 @@
   {#if !fold}
     <div
       class="flex transition-opacity text-gray-600 ease-in duration-700"
-      in:fade={{duration: 700}}
-      out:fade={{duration: 700}}
+      in:fade={{ duration: 700 }}
+      out:fade={{ duration: 700 }}
     >
       <Table
         bucketName={bucket.name}

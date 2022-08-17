@@ -3,9 +3,9 @@
     key: string;
     url: string;
   }
-  import {onMount} from 'svelte';
-  import {invoke} from '@tauri-apps/api';
-  import {useParams} from 'svelte-navigator';
+  import { onMount } from 'svelte';
+  import { invoke } from '@tauri-apps/api';
+  import { useParams } from 'svelte-navigator';
 
   let bucket;
   let key;
@@ -17,7 +17,7 @@
   onMount(async () => {
     const res: ImageObject = await invoke('get_image', {
       bucket: bucket,
-      key: key
+      key: key,
     });
     response = res;
   });
