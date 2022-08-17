@@ -3,8 +3,8 @@ pre-commit:
   parallel: false
   commands:
     eslint:
-      glob:  "*.{.svelte, ts, js}"
-      run: ./node_modules/.bin/eslint --fix 
+      glob:  "*.{svelte, ts, js}"
+      run: ./node_modules/.bin/eslint --fix {staged_files}
     prettier:
-      glob:  "*.{.svelte, ts, js}"
+      glob:  "*.{svelte, ts, js}"
       run: ./node_modules/.bin/prettier --write {staged_files}
