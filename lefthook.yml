@@ -1,0 +1,9 @@
+
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      run: npm run lint
+    prettier:
+      tags: "prettier"
+      run: npm run format

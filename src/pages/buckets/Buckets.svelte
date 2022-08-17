@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useFocus } from "svelte-navigator";
+  import {useFocus} from 'svelte-navigator';
   const registerFocus = useFocus();
 </script>
 

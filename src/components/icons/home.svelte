@@ -1,7 +1,11 @@
-
 <script lang="ts">
-    export let width = 24
-    export let height = 24
-  </script>
+  export let width = 24;
+  export let height = 24;
+</script>
 
-<svg xmlns="http://www.w3.org/2000/svg" {height} {width} viewBox="0 0 48 48"><path fill="currentColor" d="M8 42V18L24.1 6 40 18v24H28.3V27.75h-8.65V42Zm3-3h5.65V24.75H31.3V39H37V19.5L24.1 9.75 11 19.5Zm13-14.65Z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" {height} {width} viewBox="0 0 48 48"
+  ><path
+    fill="currentColor"
+    d="M8 42V18L24.1 6 40 18v24H28.3V27.75h-8.65V42Zm3-3h5.65V24.75H31.3V39H37V19.5L24.1 9.75 11 19.5Zm13-14.65Z"
+  /></svg
+>

@@ -1,17 +1,17 @@
 <script lang="ts">
-  import IconButton from "src/components/iconButton/iconButton.svelte";
-  import Search from "src/components/search/search.svelte";
-  import Download from "src/components/icons/download.svelte";
-  import Delete from "src/components/icons/delete.svelte";
+  import IconButton from 'src/components/iconButton/iconButton.svelte';
+  import Search from 'src/components/search/search.svelte';
+  import Download from 'src/components/icons/download.svelte';
+  import Delete from 'src/components/icons/delete.svelte';
 
-  import { fade } from "svelte/transition";
+  import {fade} from 'svelte/transition';
 
   export let checkedFiles;
   export let handleDelete;
   export let handleDownload;
   export let value;
-
 </script>
+
 <div
   class="fixed w-11/12 justify-between flex items-center h-20 top-0 bg-gray-100 z-30"
 >
@@ -25,8 +25,8 @@
     <div
       id="tool"
       class="flex transition-opacity text-gray-600 ease-in duration-700"
-      in:fade={{ duration: 700 }}
-      out:fade={{ duration: 700 }}
+      in:fade={{duration: 700}}
+      out:fade={{duration: 700}}
     >
       <IconButton onClick={() => handleDownload(checkedFiles)}>
         Download
