@@ -53,6 +53,7 @@
   });
 </script>
 
+<!-- svelte-ignore non-top-level-reactive-declaration -->
 <div use:registerFocus class="outline-none">
   {#if !filteredList}
     <div class="flex justify-center items-center w-full h-screen">

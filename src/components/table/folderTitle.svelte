@@ -5,10 +5,11 @@
   import Unfold from "../icons/unfold.svelte";
   import AddFile from "../icons/addFile.svelte";
 
-  export let handleFilesSelect;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export let handleFilesSelect: any;
+  export let handleFold: () => void;
   export let folderName = "";
-  export let handleFold;
-  export let fold;
+  export let fold: boolean;
 </script>
 
 <div

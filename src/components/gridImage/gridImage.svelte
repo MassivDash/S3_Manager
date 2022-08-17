@@ -2,14 +2,17 @@
   import { Link } from "svelte-navigator";
   import { useLazyImage as lazyImage } from "svelte-lazy-image";
   import { formatBytes } from "../../lib/date";
+
   import More from "../../components/icons/more.svelte";
   import Heart from "../../components/icons/heart.svelte";
-  export let key;
-  export let url;
-  export let size;
-  export let last_modified;
-  export let bucket;
-  export let name;
+  import type { ImageBucket } from "src/types";
+
+  export let key: string;
+  export let url: string;
+  export let size: number;
+  export let last_modified: number;
+  export let bucket: ImageBucket;
+  export let name: string;
   const width = 32;
   const height = 32;
 </script>

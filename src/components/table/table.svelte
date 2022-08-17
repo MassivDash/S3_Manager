@@ -1,10 +1,13 @@
 <script lang="ts">
   import { formatBytes } from "../../lib/date";
   import Checkbox from "./checkbox.svelte";
-  export let files;
-  export let bucketName;
-  export let handleCheckbox;
-  export let checkedFiles;
+
+  import type { File, CheckedFile } from "src/types";
+
+  export let files: File[];
+  export let bucketName: string;
+  export let handleCheckbox: (key: string, bucketName: string) => void;
+  export let checkedFiles: CheckedFile[];
   const tableHead = ["Name", "Size", "Date Modified"];
 </script>
 
