@@ -12,6 +12,9 @@
   export let handleDelete: (checkedFiles: CheckedFile[]) => void;
   export let handleDownload: (checkedFiles: CheckedFile[]) => void;
   export let value: string;
+
+  $: search = value;
+  console.log(value);
 </script>
 
 <div

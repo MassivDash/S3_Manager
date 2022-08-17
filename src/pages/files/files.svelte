@@ -30,7 +30,14 @@
           })),
   }));
 
-  let files: string[] = [];
+  onMount(async () => {
+    console.log("onMount");
+    const res: Bucket[] = await invoke("get_files");
+    console.log(res);
+    response = res;
+  });
+
+  let selectedFiles: string[] = [];
 
   async function handleFilesSelect(
     bucketName: string,
@@ -42,11 +49,11 @@
     });
 
     if (selected) {
-      files = [...selected];
+      selectedFiles = [...selected];
       const upload = await invoke("put_files", {
         bucketName,
         folderName,
-        files,
+        selectedFiles,
       });
       if (upload) {
         const res: Bucket[] = await invoke("get_files");
@@ -58,13 +65,6 @@
       }
     }
   }
-
-  onMount(async () => {
-    console.log("onMount");
-    const res: Bucket[] = await invoke("get_files");
-    console.log(res);
-    response = res;
-  });
 
   let checkedFiles: CheckedFile[] = [];
 
@@ -114,6 +114,11 @@
       }
     }
   }
+
+  function drop(event) {
+    event.preventDefault();
+    console.log(event);
+  }
 </script>
 
 <div use:registerFocus class="outline-none relative">
@@ -126,7 +131,7 @@
     <div
       class="fixed w-11/12 justify-between flex items-center h-20 top-0 bg-gray-100 z-30"
     >
-      <Tools {handleDownload} {handleDelete} {checkedFiles} {value} />
+      <Tools {handleDownload} {handleDelete} {checkedFiles} bind:value />
     </div>
     <div class="h-10" />
     {#each filteredList as bucket}
@@ -140,13 +145,16 @@
         <div class="h-1 w-2/4 rounded-md bg-gray-500" />
       </div>
       {#each bucket.folders as folder}
-        <FileTable
-          handleFilesSelect={() => handleFilesSelect(bucket.name, folder.name)}
-          {folder}
-          {bucket}
-          {handleCheckbox}
-          {checkedFiles}
-        />
+        <div on:drop={drop}>
+          <FileTable
+            handleFilesSelect={() =>
+              handleFilesSelect(bucket.name, folder.name)}
+            {folder}
+            {bucket}
+            {handleCheckbox}
+            {checkedFiles}
+          />
+        </div>
       {/each}
     {/each}
   {/if}
