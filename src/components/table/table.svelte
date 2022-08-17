@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {formatBytes} from '../../lib/date';
+  import { formatBytes } from '../../lib/date';
   import Checkbox from './checkbox.svelte';
   export let files;
   export let bucketName;

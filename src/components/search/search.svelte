@@ -40,7 +40,7 @@
    */
   export let removeFormAriaAttributes = false;
 
-  import {createEventDispatcher, onMount, afterUpdate} from 'svelte';
+  import { createEventDispatcher, onMount, afterUpdate } from 'svelte';
 
   const dispatch = createEventDispatcher();
 

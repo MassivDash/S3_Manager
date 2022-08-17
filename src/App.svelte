@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {Router} from 'svelte-navigator';
+  import { Router } from 'svelte-navigator';
   import Layout from './components/template/template.svelte';
   import Images from './pages/images/images.svelte';
   import Image from './pages/image/image.svelte';
