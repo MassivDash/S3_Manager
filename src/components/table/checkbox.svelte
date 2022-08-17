@@ -1,7 +1,10 @@
 <script lang="ts">
-  export let key;
-  export let checkedFiles = [];
-  export let handleCheckbox;
+  import type { CheckedFile } from "src/types";
+
+  export let key: string;
+  export let checkedFiles: CheckedFile[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export let handleCheckbox: any;
 
   $: checked = key ? checkedFiles.some((item) => item.key === key) : false;
 </script>

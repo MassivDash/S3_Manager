@@ -1,6 +1,10 @@
 
 pre-commit:
-  parallel: true
+  parallel: false
   commands:
     eslint:
+      tags: "eslint"
       run: npm run lint
+    prettier:
+      tags: "prettier"
+      run: npm run format
