@@ -3,8 +3,8 @@ pre-commit:
   parallel: false
   commands:
     eslint:
-      tags: "eslint"
-      run: npm run lint
+      glob:  "*.{.svelte, ts, js}"
+      run: ./node_modules/.bin/eslint --fix 
     prettier:
-      tags: "prettier"
-      run: npm run format
+      glob:  "*.{.svelte, ts, js}"
+      run: ./node_modules/.bin/prettier --write {staged_files}

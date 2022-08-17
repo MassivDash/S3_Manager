@@ -13,8 +13,8 @@
 
   const registerFocus = useFocus();
   let response: Bucket[];
-  let filteredList: Bucket[]  ;
-  let value = "";
+  let filteredList: Bucket[];
+  let value = ""  ;
 
   $: response;
   $: filteredList = response?.map((bucket: Bucket) => ({
@@ -60,7 +60,7 @@
   }
 
   onMount(async () => {
-    console.log('onMount');
+    console.log("onMount");
     const res: Bucket[] = await invoke("get_files");
     console.log(res);
     response = res;
