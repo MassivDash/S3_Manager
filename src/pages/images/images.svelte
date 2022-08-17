@@ -9,7 +9,7 @@
   import type { ImageBucket } from "src/types";
 
   const registerFocus = useFocus();
-  let response: ImageBucket[] = [];
+  let response: ImageBucket[];
 
   type GridCol = 1 | 2 | 3 | 4 | 5;
 
@@ -29,7 +29,7 @@
   }));
 
   const handleColumnChange = (col: GridCol): void => {
-    $: gridCol = col;
+    gridCol = col;
   };
 
   const getTailwindClass = (col: GridCol): string => {

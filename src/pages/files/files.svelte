@@ -12,8 +12,8 @@
   import type { Bucket, Folder, CheckedFile } from "src/types";
 
   const registerFocus = useFocus();
-  let response: Bucket[] = [];
-  let filteredList: Bucket[] = [];
+  let response: Bucket[];
+  let filteredList: Bucket[]  ;
   let value = "";
 
   $: response;
@@ -60,7 +60,9 @@
   }
 
   onMount(async () => {
+    console.log('onMount');
     const res: Bucket[] = await invoke("get_files");
+    console.log(res);
     response = res;
   });
 
