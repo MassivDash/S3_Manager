@@ -3,18 +3,11 @@
   import { invoke } from "@tauri-apps/api";
   import { useFocus } from "svelte-navigator";
   import Loader from "../../components/loader/loader.svelte";
-  import Search from "src/components/search/search.svelte";
-  import FolderTitle from "src/components/table/folderTitle.svelte";
-  import Table from "src/components/table/table.svelte";
-  import IconButton from "src/components/iconButton/iconButton.svelte";
-  import { open } from "@tauri-apps/api/dialog";
+  import { open, confirm } from "@tauri-apps/api/dialog";
   import { appDir } from "@tauri-apps/api/path";
   // Open a selection dialog for directories
-  import Download from "../../components/icons/download.svelte";
-  import Delete from "../../components/icons/delete.svelte";
-  import { fade } from "svelte/transition";
   import Tools from "../../components/tools/tools.svelte";
-
+  import FileTable from "src/components/fileTable/fileTable.svelte";
   interface File {
     key: string;
     name: string;
@@ -81,24 +74,60 @@
     response = res;
   });
 
-  interface CheckedFile{
+  interface CheckedFile {
     key: string;
     bucket_name: string;
   }
 
   let checkedFiles: CheckedFile[] = [];
 
+  function resetCheckedFiles() {
+    checkedFiles = [];
+  }
+
   const handleCheckbox = (key: string, bucketName: string) => {
     const checked = {
       key,
       bucket_name: bucketName,
     };
-    if (checkedFiles.includes(checked)) {
+    if (checkedFiles.some(item => item.key === checked.key)) {
       checkedFiles = [...checkedFiles.filter((item) => item.key !== key)];
+      console.log(checkedFiles);
     } else {
       checkedFiles = [...checkedFiles, checked];
     }
   };
+
+  async function handleDownload(checkedFiles) {
+    const dirPath = await open({
+      directory: true,
+      title: "Select a directory",
+    });
+    if (dirPath) {
+      const success = await invoke("save_files", {
+        keys: checkedFiles,
+        dir: dirPath,
+      });
+      if (success) {
+        resetCheckedFiles()
+      }
+    }
+  }
+
+  async function handleDelete(checkedFiles) {
+    const confirmed = await confirm(
+      "This action cannot be reverted. Are you sure you want to delete?",
+      { title: "Delete files ?", type: "warning" }
+    );
+    if (confirmed) {
+      const success = await invoke("delete_files", { keys: checkedFiles });
+      if (success) {
+        resetCheckedFiles()
+        const res: Bucket[] = await invoke("get_files");
+        response = res;
+      }
+    }
+  }
 </script>
 
 <div use:registerFocus class="outline-none relative">
@@ -111,15 +140,7 @@
     <div
       class="fixed w-11/12 justify-between flex items-center h-20 top-0 bg-gray-100 z-30"
     >
-      <Search
-        bind:value
-        hidelabel="true"
-        class="placeholder-gray-700 bg-orange-50 appearance-none outline-none border-2 border-transparent border-spacing-1  focus:border-orange-600 rounded text-gray-900 p-2"
-      />
-
-      {#if checkedFiles && checkedFiles.length > 0}
-      <Tools checkedFiles={checkedFiles} value={value} />
-      {/if}
+      <Tools {handleDownload} {handleDelete} {checkedFiles} {value} />
     </div>
     <div class="h-10" />
     {#each filteredList as bucket}
@@ -133,16 +154,13 @@
         <div class="h-1 w-2/4 rounded-md bg-gray-500" />
       </div>
       {#each bucket.folders as folder}
-        <div class="bg-white">
-          <FolderTitle
-            folderName={folder.name}
-            handleFilesSelect={() =>
-              handleFilesSelect(bucket.name, folder.name)}
-          />
-          <div>
-            <Table bucketName={bucket.name} files={folder.files} {handleCheckbox} {checkedFiles} />
-          </div>
-        </div>
+        <FileTable
+          handleFilesSelect={() => handleFilesSelect(bucket.name, folder.name)}
+          {folder}
+          {bucket}
+          {handleCheckbox}
+          {checkedFiles}
+        />
       {/each}
     {/each}
   {/if}
