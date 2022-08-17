@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Folder from '../icons/folder.svelte';
-  import IconButton from '../iconButton/iconButton.svelte';
-  import Fold from '../icons/fold.svelte';
-  import Unfold from '../icons/unfold.svelte';
-  import AddFile from '../icons/addFile.svelte';
+  import Folder from "../icons/folder.svelte";
+  import IconButton from "../iconButton/iconButton.svelte";
+  import Fold from "../icons/fold.svelte";
+  import Unfold from "../icons/unfold.svelte";
+  import AddFile from "../icons/addFile.svelte";
 
   export let handleFilesSelect;
-  export let folderName = '';
+  export let folderName = "";
   export let handleFold;
   export let fold;
 </script>

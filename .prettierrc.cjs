@@ -1,4 +1,4 @@
-{
+module.children = {
     "arrowParens": "avoid",
     "bracketSpacing": true,
     "singleQuote": true,

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import IconButton from 'src/components/iconButton/iconButton.svelte';
-  import Search from 'src/components/search/search.svelte';
-  import Download from 'src/components/icons/download.svelte';
-  import Delete from 'src/components/icons/delete.svelte';
+  import IconButton from "src/components/iconButton/iconButton.svelte";
+  import Search from "src/components/search/search.svelte";
+  import Download from "src/components/icons/download.svelte";
+  import Delete from "src/components/icons/delete.svelte";
 
-  import { fade } from 'svelte/transition';
+  import { fade } from "svelte/transition";
 
   export let checkedFiles;
   export let handleDelete;

@@ -3,7 +3,7 @@
   export let checkedFiles = [];
   export let handleCheckbox;
 
-  $: checked = key ? checkedFiles.some(item => item.key === key) : false;
+  $: checked = key ? checkedFiles.some((item) => item.key === key) : false;
 </script>
 
 <button class="flex items-center justify-center text-red-500">

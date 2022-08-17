@@ -1,11 +1,11 @@
 <script lang="ts">
-  import MenuItem from './Item.svelte';
-  import Bucket from '../icons/bucket.svelte';
-  import Home from '../icons/home.svelte';
-  import Photo from '../icons/photo.svelte';
-  import Movie from '../icons/movie.svelte';
-  import Files from '../icons/files.svelte';
-  import Settings from '../icons/settings.svelte';
+  import MenuItem from "./Item.svelte";
+  import Bucket from "../icons/bucket.svelte";
+  import Home from "../icons/home.svelte";
+  import Photo from "../icons/photo.svelte";
+  import Movie from "../icons/movie.svelte";
+  import Files from "../icons/files.svelte";
+  import Settings from "../icons/settings.svelte";
   const width = 24;
   const height = 24;
 </script>

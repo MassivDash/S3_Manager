@@ -1,13 +1,12 @@
-
-
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
-  plugins: ['svelte3', '@typescript-eslint', 'prettier'],
+  plugins: ['svelte3', '@typescript-eslint'],
   overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
   settings: {
-    'svelte3/typescript': true,
+    'svelte3/typescript': require('typescript'),
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     'svelte3/ignore-styles': (attributes) => {
       // https://github.com/sveltejs/eslint-plugin-svelte3/issues/10
       return attributes && attributes.lang && attributes.lang !== 'css'
@@ -15,11 +14,12 @@ module.exports = {
   },
   parserOptions: {
     sourceType: 'module',
-    ecmaVersion: 2019,
+    ecmaVersion: 2020,
+    extraFileExtensions: ['.svelte']
   },
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/explicit-member-accessibility': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/camelcase': 'off',
