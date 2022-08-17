@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { Link } from 'svelte-navigator';
-  import { useLazyImage as lazyImage } from 'svelte-lazy-image';
-  import { formatBytes } from '../../lib/date';
-  import More from '../../components/icons/more.svelte';
-  import Heart from '../../components/icons/heart.svelte';
+  import { Link } from "svelte-navigator";
+  import { useLazyImage as lazyImage } from "svelte-lazy-image";
+  import { formatBytes } from "../../lib/date";
+  import More from "../../components/icons/more.svelte";
+  import Heart from "../../components/icons/heart.svelte";
   export let key;
   export let url;
   export let size;
@@ -41,7 +41,7 @@
       <div class="text-right">
         <p class="text-gray-800 font-bold">last modified:</p>
         <p class="text-gray-700">
-          {new Date(last_modified * 1000).toLocaleString().split(',')[0]}
+          {new Date(last_modified * 1000).toLocaleString().split(",")[0]}
         </p>
       </div>
     </div>

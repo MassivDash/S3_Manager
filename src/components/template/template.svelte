@@ -1,6 +1,6 @@
 <script lang="ts">
-  import '../sideMenu/menu.svelte';
-  import SideMenu from '../sideMenu/menu.svelte';
+  import "../sideMenu/menu.svelte";
+  import SideMenu from "../sideMenu/menu.svelte";
 </script>
 
 <div class="flex w-full flex-row h-screen overflow-hidden">

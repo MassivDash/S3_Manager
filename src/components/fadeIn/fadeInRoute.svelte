@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition';
-  import { Route } from 'svelte-navigator';
+  import { fade } from "svelte/transition";
+  import { Route } from "svelte-navigator";
   export let path;
 </script>
 

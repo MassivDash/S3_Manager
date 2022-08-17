@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { formatBytes } from '../../lib/date';
-  import Checkbox from './checkbox.svelte';
+  import { formatBytes } from "../../lib/date";
+  import Checkbox from "./checkbox.svelte";
   export let files;
   export let bucketName;
   export let handleCheckbox;
   export let checkedFiles;
-  const tableHead = ['Name', 'Size', 'Date Modified'];
+  const tableHead = ["Name", "Size", "Date Modified"];
 </script>
 
 <table class="table-auto w-full border-spacing-3 p-2 relative">
@@ -32,7 +32,7 @@
         <td class="px-2 py-2"
           >{new Date(file.last_modified * 1000)
             .toLocaleString()
-            .split(',')[0]}</td
+            .split(",")[0]}</td
         >
       </tr>
     {/each}
