@@ -13,23 +13,14 @@
      * of JS in `.svelte` files.
      */
     "allowJs": true,
-    "importsNotUsedAsValues": "error",
+    "checkJs": true,
     "isolatedModules": true,
     // To have svelte warnings/errors correct position
     "sourceMap": true,
-
-    // Prevent type errors
-    "types": ["svelte"],
-
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "paths": {
-    "@components/*": ["src/components/*"],
-    "@types": "src/types/index.ts"
+    "@components/*": ["src/components/*"]
   }
 }
