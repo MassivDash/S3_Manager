@@ -4,6 +4,3 @@ pre-commit:
   commands:
     eslint:
       run: npm run lint
-    prettier:
-      tags: "prettier"
-      run: npm run format
