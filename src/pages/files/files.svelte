@@ -14,7 +14,7 @@
   const registerFocus = useFocus();
   let response: Bucket[];
   let filteredList: Bucket[];
-  let value = ""     ;
+  let value = ""  ;
 
   $: response;
   $: filteredList = response?.map((bucket: Bucket) => ({
