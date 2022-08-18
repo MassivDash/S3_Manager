@@ -10,9 +10,24 @@
   <div class="relative w-24">
     <SideMenu />
   </div>
-  <main class="w-full overflow-y-auto p-4 relative">
+  <main id="main" class="w-full overflow-y-auto p-4 relative">
     <DropFiles>
       <slot />
     </DropFiles>
   </main>
 </div>
+
+<style>
+  @media (prefers-color-scheme: dark) {
+    #main::-webkit-scrollbar {
+      background-color: #10172a;
+      width: 10px;
+    }
+    #main::-webkit-scrollbar-thumb {
+      background: #fff;
+      border-radius: 10px;
+      height: 15px;
+      width: 5px;
+    }
+  }
+</style>

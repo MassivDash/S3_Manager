@@ -70,7 +70,6 @@ pub async fn get_files() -> Vec<Bucket> {
 
 
 async fn get_objects(client: &Client, bucket: &str) -> Result<Vec<BucketObject>, Box<dyn Error>> {
-    println!("{}", bucket);
     let mut resp  = client.list_objects_v2().bucket(bucket).into_paginator().send();
     let mut files: Vec<BucketObject> = Vec::new();
     let mut objects: Vec<Object> = Vec::new();
