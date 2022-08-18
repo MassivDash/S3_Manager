@@ -18,7 +18,7 @@
 </script>
 
 <div
-  class="fixed w-11/12 justify-between flex items-center h-20 top-0 bg-gray-100 z-30"
+  class="fixed w-11/12 justify-between flex items-center h-20 top-0 bg-stone-100 text-gray-700 dark:text-white dark:bg-slate-900 z-30"
 >
   <Search
     bind:value
