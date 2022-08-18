@@ -5,11 +5,16 @@
   import Unfold from "../icons/unfold.svelte";
   import AddFile from "../icons/addFile.svelte";
 
+  import type { Folder as FolderType } from "src/types";
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let handleFilesSelect: any;
   export let handleFold: () => void;
   export let folderName = "";
   export let fold: boolean;
+  export let folder: FolderType;
+
+  $: amount = folder.files.length;
 </script>
 
 <div
@@ -20,7 +25,7 @@
       <Folder />
     </div>
     <div class="text-gray-800">
-      {folderName}
+      {folderName} ({amount})
     </div>
   </div>
   <div class="text-orange-600 items-center flex bg-transparent">

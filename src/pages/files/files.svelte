@@ -31,10 +31,12 @@
           })),
   }));
 
+  $: bucketFiles = filteredList?.map((bucket) => ({
+    [bucket.name]: bucket.folders.map((item) => item.files).flat().length,
+  }))[0];
+
   onMount(async () => {
-    console.log("onMount");
     const res: Bucket[] = await invoke("get_files");
-    console.log(res);
     response = res;
   });
 
@@ -54,10 +56,11 @@
       const upload = await invoke("put_files", {
         bucketName,
         folderName,
-        selectedFiles,
+        files: selectedFiles,
       });
       if (upload) {
         const res: Bucket[] = await invoke("get_files");
+        console.log(res);
         response = res;
       }
     }
@@ -72,6 +75,7 @@
   async function handleSync(): Promise<void> {
     const res: Bucket[] = await invoke("get_files");
     response = res;
+    console.log(res);
   }
 
   const handleCheckbox = (key: string, bucketName: string): void => {
@@ -112,6 +116,7 @@
       if (success) {
         resetCheckedFiles();
         const res: Bucket[] = await invoke("get_files");
+        console.log(res);
         response = res;
       }
     }
@@ -138,7 +143,9 @@
     </div>
     <div class="h-10" />
     {#each filteredList as bucket}
-      <NameDivider label={`bucket: ${bucket.name}`} />
+      <NameDivider
+        label={bucket.name + " " + "(" + bucketFiles[bucket.name] + ")"}
+      />
       {#each bucket.folders as folder}
         <FileTable
           handleFilesSelect={() => handleFilesSelect(bucket.name, folder.name)}
