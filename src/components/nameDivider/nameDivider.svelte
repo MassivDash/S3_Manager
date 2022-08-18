@@ -3,7 +3,7 @@
 </script>
 
 <div
-  class="flex pb-4 h-9 justify-start items-center my-4 bg-gray-100 sticky top-14 z-30"
+  class="flex pb-4 h-9 justify-start items-center my-4 bg-gray-100 dark:text-white dark:bg-slate-900 sticky top-14 z-30"
 >
   <div class="w-1/4 h-1 rounded-md bg-gray-500" />
   <div class="w-1/4 text-center text-gray-500">

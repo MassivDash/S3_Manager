@@ -20,7 +20,7 @@
   }
 </script>
 
-<div class="bg-white">
+<div class="bg-white dark:bg-slate-900">
   <FolderTitle
     folderName={folder.name}
     {handleFilesSelect}

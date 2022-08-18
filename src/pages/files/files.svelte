@@ -131,7 +131,7 @@
   {/if}
   {#if filteredList && filteredList[0].name}
     <div
-      class="fixed w-11/12 justify-between flex items-center h-20 top-0 bg-gray-100 z-30"
+      class="fixed w-11/12 justify-between flex items-center h-20 top-0 z-30 right-0"
     >
       <Tools
         {handleSync}

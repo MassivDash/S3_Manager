@@ -53,7 +53,7 @@
 </script>
 
 <FileDrop handleFiles={(paths) => handleDrop(paths)} let:files>
-  ><slot /></FileDrop
+  <slot /></FileDrop
 >
 {#if visible}
   <div
