@@ -23,6 +23,12 @@ pub struct ImgBucket {
 }
 
 #[tauri::command]
+#[once(time=900)] // 15 minutes
+pub async fn get_cached_images() -> Vec<ImgBucket>{
+    return get_all_images().await;
+}
+
+#[tauri::command]
 pub async fn get_all_images() -> Vec<ImgBucket> {
     let client = create_client().await.unwrap();
     let resp = client.list_buckets().send().await.unwrap();

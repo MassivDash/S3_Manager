@@ -1,7 +1,6 @@
 <script lang="ts">
   import { formatBytes } from "../../lib/date";
-  import Checkbox from "./checkbox.svelte";
-
+  import Checkbox from "../checkbox/checkbox.svelte";
   import type { File, CheckedFile } from "src/types";
 
   export let files: File[];

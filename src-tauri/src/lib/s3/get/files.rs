@@ -66,7 +66,6 @@ pub async fn get_files() -> Vec<Bucket> {
 
 
 
-// Cache the results, so we don't have to make a request every time.
 async fn get_objects(client: &Client, bucket: &str) -> Vec<BucketObject> {
     println!("{}", bucket);
     let resp = client.list_objects_v2().bucket(bucket).send().await;

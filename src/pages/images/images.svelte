@@ -2,24 +2,27 @@
   import { onMount } from "svelte";
   import { invoke } from "@tauri-apps/api";
   import { useFocus } from "svelte-navigator";
+  import { open, confirm } from "@tauri-apps/api/dialog";
   import Loader from "../../components/loader/loader.svelte";
-  import Search from "src/components/search/search.svelte";
+  import NameDivider from "src/components/nameDivider/nameDivider.svelte";
   import GridImage from "src/components/gridImage/gridImage.svelte";
+  import Tools from "../../components/tools/tools.svelte";
 
-  import type { ImageBucket } from "src/types";
+  import type { ImageBucket, CheckedFile } from "src/types";
 
   const registerFocus = useFocus();
   let response: ImageBucket[];
 
-  type GridCol = 1 | 2 | 3 | 4 | 5;
+  type GridCol = 2 | 3 | 4;
 
-  let gridCol: GridCol = 1;
+  let loading = false;
 
-  $: gridCol = 3;
+  let gridCol: GridCol = 3;
+
   let value = "";
 
   let filteredList: ImageBucket[] = [];
-  $: response;
+
   $: filteredList = response?.map((bucket) => ({
     ...bucket,
     files:
@@ -28,24 +31,89 @@
         : bucket.files.filter((item) => item.name.indexOf(value) !== -1),
   }));
 
-  const handleColumnChange = (col: GridCol): void => {
-    gridCol = col;
-  };
-
-  const getTailwindClass = (col: GridCol): string => {
-    switch (col) {
-      case 1:
-        return "columns-1";
+  const handleGrid = (): void => {
+    switch (gridCol) {
       case 2:
-        return "columns-2";
+        gridCol = 3;
+        break;
       case 3:
-        return "columns-3";
+        gridCol = 4;
+        break;
       case 4:
-        return "columns-4";
-      case 5:
-        return "columns-5";
+        gridCol = 2;
+        break;
     }
   };
+
+  const getTailwindClass = (col): string => {
+    switch (col) {
+      case 2:
+        return "grid-cols-2";
+      case 3:
+        return "grid-cols-3";
+      case 4:
+        return "grid-cols-4";
+    }
+  };
+
+  let checkedFiles: CheckedFile[] = [];
+
+  function resetCheckedFiles(): void {
+    checkedFiles = [];
+  }
+
+  async function handleSync(): Promise<void> {
+    loading = true;
+    const res: ImageBucket[] = await invoke("get_all_images");
+    response = res;
+    loading = false;
+  }
+
+  const handleCheckbox = (key: string, bucketName: string): void => {
+    const checked = {
+      key,
+      bucket_name: bucketName,
+    };
+    console.log(checkedFiles);
+    if (checkedFiles.some((item) => item.key === checked.key)) {
+      checkedFiles = [...checkedFiles.filter((item) => item.key !== key)];
+    } else {
+      checkedFiles = [...checkedFiles, checked];
+    }
+  };
+
+  async function handleDownload(checkedFiles: CheckedFile[]): Promise<void> {
+    const dirPath = await open({
+      directory: true,
+      title: "Select a directory",
+    });
+    if (dirPath) {
+      const success = await invoke("save_files", {
+        keys: checkedFiles,
+        dir: dirPath,
+      });
+      if (success) {
+        resetCheckedFiles();
+      }
+    }
+  }
+
+  async function handleDelete(checkedFiles: CheckedFile[]): Promise<void> {
+    const confirmed = await confirm(
+      "This action cannot be reverted. Are you sure you want to delete?",
+      { title: "Delete files ?", type: "warning" }
+    );
+    if (confirmed) {
+      const success = await invoke("delete_files", { keys: checkedFiles });
+      if (success) {
+        resetCheckedFiles();
+        loading = true;
+        const res: ImageBucket[] = await invoke("get_all_images");
+        response = res;
+        loading = false;
+      }
+    }
+  }
 
   onMount(async () => {
     const res: ImageBucket[] = await invoke("get_all_images");
@@ -61,46 +129,42 @@
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div class="flex">
-      <Search bind:value />
-      <button on:click={() => handleColumnChange(1)}>1</button>
-      <button
-        on:click={() => {
-          gridCol = 2;
-        }}>2</button
-      >
-      <button
-        on:click={() => {
-          gridCol = 3;
-        }}>3</button
-      >
-      <button
-        on:click={() => {
-          gridCol = 4;
-        }}>4</button
-      >
-      <button on:click={() => (gridCol = 5)}>5</button>
+    <div
+      class="fixed w-11/12 justify-between flex items-center h-20 top-0 bg-gray-100 z-30"
+    >
+      <Tools
+        {handleGrid}
+        {handleSync}
+        {handleDownload}
+        {handleDelete}
+        {checkedFiles}
+        bind:value
+      />
     </div>
-    {#each filteredList as bucket}
-      <div class="flex h-9 justify-start items-center my-4">
-        <div class="w-1/4 h-1 rounded-md bg-gray-500" />
-        <div class="w-1/4 text-center text-gray-500">
-          bucket: {bucket.name}
-          {bucket.files.length > 0 ? `(${bucket.files.length})` : ""}
+    {#if loading}
+      <div class="flex justify-center items-center w-full h-screen">
+        <Loader />
+      </div>
+    {:else}
+      {#each filteredList as bucket}
+        <NameDivider
+          label={`bucket: ${bucket.name}
+      ${bucket.files.length > 0 ? `(${bucket.files.length})` : ""}`}
+        />
+        <div class={`grid grid-gap-2 ${getTailwindClass(gridCol)}`}>
+          {#each bucket.files as item}
+            <GridImage
+              {handleCheckbox}
+              {checkedFiles}
+              name={item.name}
+              key={item.key}
+              url={item.url}
+              size={item.size}
+              {bucket}
+            />
+          {/each}
         </div>
-        <div class="h-1 w-2/4 rounded-md bg-gray-500" />
-      </div>
-      <div class={getTailwindClass(gridCol)}>
-        {#each bucket.files as item}
-          <GridImage
-            name={item.name}
-            key={item.key}
-            url={item.url}
-            size={item.size}
-            last_modified={item.last_modified}
-            {bucket}
-          />{/each}
-      </div>
-    {/each}
+      {/each}
+    {/if}
   {/if}
 </div>
