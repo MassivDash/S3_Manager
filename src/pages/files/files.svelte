@@ -128,11 +128,17 @@
     <div
       class="fixed w-11/12 justify-between flex items-center h-20 top-0 bg-gray-100 z-30"
     >
-      <Tools {handleSync} {handleDownload} {handleDelete} {checkedFiles} bind:value />
+      <Tools
+        {handleSync}
+        {handleDownload}
+        {handleDelete}
+        {checkedFiles}
+        bind:value
+      />
     </div>
     <div class="h-10" />
     {#each filteredList as bucket}
-      <NameDivider label={`bucket: ${bucket.name}`} />   
+      <NameDivider label={`bucket: ${bucket.name}`} />
       {#each bucket.folders as folder}
         <FileTable
           handleFilesSelect={() => handleFilesSelect(bucket.name, folder.name)}

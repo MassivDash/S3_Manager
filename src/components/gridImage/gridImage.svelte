@@ -1,52 +1,53 @@
 <script lang="ts">
   import { Link } from "svelte-navigator";
   import { useLazyImage as lazyImage } from "svelte-lazy-image";
+  import Checkbox from "../checkbox/checkbox.svelte";
   import { formatBytes } from "../../lib/date";
 
-  import More from "../../components/icons/more.svelte";
-  import Heart from "../../components/icons/heart.svelte";
-  import type { ImageBucket } from "src/types";
+  import type { ImageBucket, CheckedFile } from "src/types";
 
   export let key: string;
   export let url: string;
   export let size: number;
-  export let last_modified: number;
   export let bucket: ImageBucket;
   export let name: string;
-  const width = 32;
-  const height = 32;
+  export let checkedFiles: CheckedFile[];
+  export let handleCheckbox: (key: string, bucketName: string) => void;
+
+  function shortenName(string: string): string {
+    if (string.length > 20) {
+      return (
+        string.substring(0, 9) +
+        "..." +
+        string.split(".")[string.split(".").length - 1]
+      );
+    }
+    return string;
+  }
 </script>
 
-<div class="px-6 py-2 bg-orange-50 rounded-md flex flex-col drop-shadow-xl m-2">
-  <div class="flex w-full justify-between my-2">
-    <button class="mb-4 text-orange-600">
-      <Heart {width} {height} />
-    </button>
-    <button class="-mr-2 mb-4 text-gray-700">
-      <More {width} {height} />
-    </button>
+<div
+  class="h-[calc(400px+3.5rem)] overflow-hidden bg-orange-50 dark:bg-slate-700 rounded-md flex flex-col m-2"
+>
+  <div class="flex items-center justify-between">
+    <div class="bg-orange-50 dark:bg-slate-700 p-2 h-14 flex items-center">
+      <Checkbox
+        handleCheckbox={() => handleCheckbox(key, bucket.name)}
+        {key}
+        {checkedFiles}
+      />
+      <p class="ml-0">{shortenName(name)}</p>
+    </div>
+    <p class="justify-self-end text-xs mt-1 mr-2">{formatBytes(size)}</p>
   </div>
-
   <Link to="{bucket.name}/{key}" class="flex flex-col justify-center">
-    <img
-      data-src={url}
-      alt={key}
-      use:lazyImage
-      class="rounded-sm object-cover"
-    />
-
-    <div class="text-center font-bold text-gray-600">{name}</div>
-    <div class="flex justify-between items-center mt-2">
-      <div>
-        <p class="text-gray-800 font-bold">file size:</p>
-        <p class="text-gray-700">{formatBytes(size)}</p>
-      </div>
-      <div class="text-right">
-        <p class="text-gray-800 font-bold">last modified:</p>
-        <p class="text-gray-700">
-          {new Date(last_modified * 1000).toLocaleString().split(",")[0]}
-        </p>
-      </div>
+    <div>
+      <img
+        data-src={url}
+        alt={key}
+        class="rounded-sm w-full object-cover min-h-[400px]"
+        use:lazyImage
+      />
     </div>
   </Link>
 </div>

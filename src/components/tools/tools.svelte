@@ -4,6 +4,7 @@
   import Download from "src/components/icons/download.svelte";
   import Delete from "src/components/icons/delete.svelte";
   import Sync from "../icons/sync.svelte";
+  import Grid from "../icons/grid.svelte";
 
   import { fade } from "svelte/transition";
 
@@ -14,6 +15,7 @@
   export let handleDownload: (checkedFiles: CheckedFile[]) => void;
 
   export let handleSync: () => void | undefined = undefined;
+  export let handleGrid: () => void | undefined = undefined;
   export let value: string;
 
   $: search = value;
@@ -23,18 +25,23 @@
 <div
   class="fixed gap-4 flex w-[calc(100%-120px)] items-center h-20 top-0 right-4 bg-stone-100 text-gray-700 dark:text-white dark:bg-slate-900 z-30"
 >
-{#if handleSync}
-<IconButton onClick={handleSync}>
-  <Sync />
-</IconButton>
-{/if}
-<div class="justify-self-center flex-grow">
-  <Search
-    bind:value
-    hidelabel="true"
-    class="placeholder-gray-700 h-14 w-full border-orange-100  bg-orange-50 appearance-none outline-none border-2 border-transparent border-spacing-1  focus:border-orange-600 rounded text-gray-900 p-2"
-  />
-</div>
+  {#if handleSync}
+    <IconButton onClick={handleSync}>
+      <Sync />
+    </IconButton>
+  {/if}
+  {#if handleGrid}
+    <IconButton onClick={handleGrid}>
+      <Grid />
+    </IconButton>
+  {/if}
+  <div class="justify-self-center flex-grow">
+    <Search
+      bind:value
+      hidelabel="true"
+      class="placeholder-gray-700 h-14 w-full border-orange-100  bg-orange-50 appearance-none outline-none border-2 border-transparent border-spacing-1  focus:border-orange-600 rounded text-gray-900 p-2"
+    />
+  </div>
   {#if checkedFiles && checkedFiles.length > 0}
     <div
       id="tool"
