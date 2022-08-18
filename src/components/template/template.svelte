@@ -4,11 +4,13 @@
   import DropFiles from "../dropFiles/dropFiles.svelte";
 </script>
 
-<div class="flex w-full flex-row h-screen overflow-hidden">
+<div
+  class="bg-stone-100 text-gray-700 dark:text-white dark:bg-slate-900 flex w-full flex-row h-screen overflow-hidden"
+>
   <div class="relative w-24">
     <SideMenu />
   </div>
-  <main class="w-full bg-stone-100 overflow-y-auto p-4 relative">
+  <main class="w-full overflow-y-auto p-4 relative">
     <DropFiles>
       <slot />
     </DropFiles>

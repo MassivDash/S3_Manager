@@ -9,7 +9,7 @@
   to={path}
   class={`font-roboto text-xs flex flex-col justify-between items-center p-2 h-16 ${
     path === $location.pathname
-      ? "text-amber-700 border-r-2 border-amber-600"
+      ? "text-amber-700 border-r-2 border-amber-600 dark:text-amber-400 dark:bg-amber-400"
       : ""
   }`}
 >

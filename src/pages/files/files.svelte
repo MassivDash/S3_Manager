@@ -59,10 +59,6 @@
         const res: Bucket[] = await invoke("get_files");
         response = res;
       }
-      if (upload) {
-        const res: Bucket[] = await invoke("get_files");
-        response = res;
-      }
     }
   }
 
@@ -114,11 +110,6 @@
       }
     }
   }
-
-  function drop(event) {
-    event.preventDefault();
-    console.log(event);
-  }
 </script>
 
 <div use:registerFocus class="outline-none relative">
@@ -145,16 +136,13 @@
         <div class="h-1 w-2/4 rounded-md bg-gray-500" />
       </div>
       {#each bucket.folders as folder}
-        <div on:drop={drop}>
-          <FileTable
-            handleFilesSelect={() =>
-              handleFilesSelect(bucket.name, folder.name)}
-            {folder}
-            {bucket}
-            {handleCheckbox}
-            {checkedFiles}
-          />
-        </div>
+        <FileTable
+          handleFilesSelect={() => handleFilesSelect(bucket.name, folder.name)}
+          {folder}
+          {bucket}
+          {handleCheckbox}
+          {checkedFiles}
+        />
       {/each}
     {/each}
   {/if}
