@@ -26,6 +26,7 @@
     {handleFilesSelect}
     {handleFold}
     {fold}
+    {folder}
   />
   {#if !fold}
     <div

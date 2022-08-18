@@ -2,6 +2,9 @@ use aws_sdk_s3::Client;
 use cached::proc_macro::once;
 use serde::{Deserialize, Serialize};
 use itertools::Itertools;
+use aws_sdk_s3::model::Object;
+use tokio_stream::StreamExt;
+use std::error::Error;
 
 use crate::lib::s3::client::client::create_client;
 
@@ -43,7 +46,7 @@ pub async fn get_files() -> Vec<Bucket> {
     let buckets = resp.buckets().unwrap();
     let mut my_buckets = Vec::new();
     for bucket in buckets {
-        let files = get_objects(&client, bucket.name().unwrap_or_default()).await;
+        let files = get_objects(&client, bucket.name().unwrap_or_default()).await.unwrap();
         let mut folders: Vec<BucketFolder> = Vec::new();
         let get_folders: Vec<String> = files.clone().into_iter().map(|x| x.folder.clone()).unique().collect();
         for folder in get_folders {
@@ -66,15 +69,19 @@ pub async fn get_files() -> Vec<Bucket> {
 
 
 
-async fn get_objects(client: &Client, bucket: &str) -> Vec<BucketObject> {
+async fn get_objects(client: &Client, bucket: &str) -> Result<Vec<BucketObject>, Box<dyn Error>> {
     println!("{}", bucket);
-    let resp = client.list_objects_v2().bucket(bucket).send().await;
+    let mut resp  = client.list_objects_v2().bucket(bucket).into_paginator().send();
     let mut files: Vec<BucketObject> = Vec::new();
-    
-    if let Ok(resp) = resp {
-        let contents = resp.contents().unwrap();
+    let mut objects: Vec<Object> = Vec::new();
 
-        for object in contents {
+
+    while let Some(page) = resp.next().await {
+        let items = page?.contents().unwrap().iter().map(|x| x.clone()).collect::<Vec<Object>>();
+        objects.extend(items);
+    }
+
+        for object in objects {
             files.push(BucketObject {
                 key: object.key().unwrap_or_default().to_string(),
                 folder: object.key().unwrap_or_default().split("/").nth(0).unwrap_or_default().to_string(),
@@ -91,8 +98,6 @@ async fn get_objects(client: &Client, bucket: &str) -> Vec<BucketObject> {
                 last_modified: object.last_modified().unwrap().clone().secs(),
             });
         }
-        return files;
-    } else {
-        files
-    }
+        return Ok(files);
+
 }
