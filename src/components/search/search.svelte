@@ -45,7 +45,8 @@
   const dispatch = createEventDispatcher();
 
   let prevValue = value;
-  let timeout: number | undefined = undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let timeout: any = undefined;
   let calling = false;
 
   function debounceFn(fn: () => void): void {
