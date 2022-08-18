@@ -7,6 +7,7 @@
   import { appDir } from "@tauri-apps/api/path";
   // Open a selection dialog for directories
   import Tools from "../../components/tools/tools.svelte";
+  import NameDivider from "src/components/nameDivider/nameDivider.svelte";
   import FileTable from "src/components/fileTable/fileTable.svelte";
 
   import type { Bucket, Folder, CheckedFile } from "src/types";
@@ -68,6 +69,11 @@
     checkedFiles = [];
   }
 
+  async function handleSync(): Promise<void> {
+    const res: Bucket[] = await invoke("get_files");
+    response = res;
+  }
+
   const handleCheckbox = (key: string, bucketName: string): void => {
     const checked = {
       key,
@@ -122,19 +128,11 @@
     <div
       class="fixed w-11/12 justify-between flex items-center h-20 top-0 bg-gray-100 z-30"
     >
-      <Tools {handleDownload} {handleDelete} {checkedFiles} bind:value />
+      <Tools {handleSync} {handleDownload} {handleDelete} {checkedFiles} bind:value />
     </div>
     <div class="h-10" />
     {#each filteredList as bucket}
-      <div
-        class="flex pb-4 h-9 justify-start items-center my-4 bg-gray-100 sticky top-12 z-30"
-      >
-        <div class="w-1/4 h-1 rounded-md bg-gray-500" />
-        <div class="w-1/4 text-center text-gray-500">
-          bucket: {bucket.name}
-        </div>
-        <div class="h-1 w-2/4 rounded-md bg-gray-500" />
-      </div>
+      <NameDivider label={`bucket: ${bucket.name}`} />   
       {#each bucket.folders as folder}
         <FileTable
           handleFilesSelect={() => handleFilesSelect(bucket.name, folder.name)}
