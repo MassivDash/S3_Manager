@@ -9,6 +9,7 @@
   import Tools from "../../components/tools/tools.svelte";
 
   import type { ImageBucket, CheckedFile } from "src/types";
+  import VirtualList from "src/components/virtualList/virtualList.svelte";
 
   const registerFocus = useFocus();
   let response: ImageBucket[];
@@ -30,6 +31,40 @@
         ? bucket.files
         : bucket.files.filter((item) => item.name.indexOf(value) !== -1),
   }));
+
+  const height = "calc(100vh - 100px)";
+
+  function chunkify<T>(a: T[], n: number, balanced: boolean): T[][] {
+    console.log(a);
+    if (n < 2) return [a];
+
+    var len = a.length,
+      out = [],
+      i = 0,
+      size;
+
+    if (len % n === 0) {
+      size = Math.floor(len / n);
+      while (i < len) {
+        out.push(a.slice(i, (i += size)));
+      }
+    } else if (balanced) {
+      while (i < len) {
+        size = Math.ceil((len - i) / n--);
+        out.push(a.slice(i, (i += size)));
+      }
+    } else {
+      n--;
+      size = Math.floor(len / n);
+      if (len % size === 0) size--;
+      while (i < size * n) {
+        out.push(a.slice(i, (i += size)));
+      }
+      out.push(a.slice(size * n));
+    }
+
+    return out;
+  }
 
   const handleGrid = (): void => {
     switch (gridCol) {
@@ -117,7 +152,15 @@
 
   onMount(async () => {
     const res: ImageBucket[] = await invoke("get_all_images");
+    console.log(res);
     response = res;
+    console.log(
+      chunkify(
+        res[0].files,
+        Number((res[0].files.length / gridCol).toFixed()),
+        false
+      )
+    );
   });
 </script>
 
@@ -152,19 +195,29 @@
           label={`bucket: ${bucket.name}
       ${bucket.files.length > 0 ? `(${bucket.files.length})` : ""}`}
         />
-        <div class={`grid grid-gap-2 ${getTailwindClass(gridCol)}`}>
-          {#each bucket.files as item}
-            <GridImage
-              {handleCheckbox}
-              {checkedFiles}
-              name={item.name}
-              key={item.key}
-              url={item.url}
-              size={item.size}
-              {bucket}
-            />
-          {/each}
-        </div>
+        <VirtualList
+          items={chunkify(
+            bucket.files,
+            Number((bucket.files.length / gridCol).toFixed()),
+            false
+          )}
+          {height}
+          let:item
+        >
+          <div class={`grid ${getTailwindClass(gridCol)} mr-4`}>
+            {#each item as i}
+              <GridImage
+                {handleCheckbox}
+                {checkedFiles}
+                name={i.name}
+                key={i.key}
+                url={i.url}
+                size={i.size}
+                {bucket}
+              />
+            {/each}
+          </div>
+        </VirtualList>
       {/each}
     {/if}
   {/if}
