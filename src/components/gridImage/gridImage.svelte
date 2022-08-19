@@ -27,7 +27,7 @@
 </script>
 
 <div
-  class="h-[calc(400px+3.5rem)] overflow-hidden bg-orange-50 dark:bg-slate-700 rounded-md flex flex-col m-2"
+  class="h-[calc(500px+3.5rem)] overflow-hidden bg-orange-50 dark:bg-slate-700 rounded-md flex flex-col m-2  first:ml-0 last:mr-0"
 >
   <div class="flex items-center justify-between">
     <div class="bg-orange-50 dark:bg-slate-700 p-2 h-14 flex items-center">
@@ -45,7 +45,7 @@
       <img
         data-src={url}
         alt={key}
-        class="rounded-sm w-full object-cover min-h-[400px]"
+        class="rounded-sm w-full object-cover min-h-[500px]"
         use:lazyImage
       />
     </div>
