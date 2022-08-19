@@ -4,6 +4,7 @@
   import Images from "./pages/images/images.svelte";
   import Image from "./pages/image/image.svelte";
   import Files from "./pages/files/files.svelte";
+  import Movies from "./pages/movies/movies.svelte";
   import "./tailwind.css";
   import FadeInRoute from "./components/fadeIn/fadeInRoute.svelte";
 </script>
@@ -22,7 +23,9 @@
         <Image />
       </FadeInRoute>
     </FadeInRoute>
-    <FadeInRoute path="movies">Movies</FadeInRoute>
+    <FadeInRoute path="movies">
+      <Movies />
+    </FadeInRoute>
     <FadeInRoute path="buckets">buckets</FadeInRoute>
     <FadeInRoute path="settings">settings</FadeInRoute>
   </Layout>
