@@ -37,8 +37,8 @@
       out:fade={{ duration: 700 }}
     >
       <Table
-        height={folder.files.length * 60 + 30 > 500
-          ? "500px"
+        height={folder.files.length * 60 + 30 > 600
+          ? "600px"
           : folder.files.length * 60 + 30 + "px"}
         bucketName={bucket.name}
         files={folder.files}
