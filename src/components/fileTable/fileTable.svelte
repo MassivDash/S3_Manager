@@ -13,6 +13,7 @@
   export let bucket: Bucket;
   export let handleCheckbox: (key: string, bucketName: string) => void;
   export let checkedFiles: CheckedFile[];
+  export let handleFolderDelete: () => void = undefined;
 
   let fold = false;
   function handleFold(): void {
@@ -24,6 +25,7 @@
   <FolderTitle
     folderName={folder.name}
     {handleFilesSelect}
+    {handleFolderDelete}
     {handleFold}
     {fold}
     {folder}

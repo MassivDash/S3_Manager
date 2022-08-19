@@ -11,6 +11,7 @@ use crate::lib::s3::get::movies::{get_all_movies, get_cached_movies};
 
 use crate::lib::s3::delete::files::delete_files;
 use crate::lib::s3::put::files::put_files;
+use crate::lib::s3::put::folder::put_folder;
 
 mod lib;
 
@@ -43,6 +44,7 @@ fn main() {
             get_cached_movies,
             get_image,
             put_files,
+            put_folder,
             save_files,
             delete_files
         ])
