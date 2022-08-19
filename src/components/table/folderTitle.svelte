@@ -4,6 +4,7 @@
   import Fold from "../icons/fold.svelte";
   import Unfold from "../icons/unfold.svelte";
   import AddFile from "../icons/addFile.svelte";
+  import Delete from "../icons/delete.svelte";
 
   import type { Folder as FolderType } from "src/types";
 
@@ -13,6 +14,7 @@
   export let folderName = "";
   export let fold: boolean;
   export let folder: FolderType;
+  export let handleFolderDelete: () => void = undefined;
 
   $: amount = folder.files.length;
 </script>
@@ -31,6 +33,9 @@
   <div class="text-orange-600 items-center flex bg-transparent">
     <IconButton onClick={handleFilesSelect}>
       <AddFile />
+    </IconButton>
+    <IconButton onClick={handleFolderDelete}>
+      <Delete />
     </IconButton>
     {#if !fold}
       <IconButton onClick={handleFold}>

@@ -2,13 +2,14 @@
   import { onMount } from "svelte";
   import { invoke } from "@tauri-apps/api";
   import { useFocus } from "svelte-navigator";
-  import Loader from "../../components/loader/loader.svelte";
+  import Loader from "src/components/loader/loader.svelte";
   import { open, confirm } from "@tauri-apps/api/dialog";
   import { appDir } from "@tauri-apps/api/path";
   // Open a selection dialog for directories
-  import Tools from "../../components/tools/tools.svelte";
+  import Tools from "src/components/tools/tools.svelte";
   import NameDivider from "src/components/nameDivider/nameDivider.svelte";
   import FileTable from "src/components/fileTable/fileTable.svelte";
+  import AddFolder from "src/components/addFolder/addFolder.svelte";
 
   import type { Bucket, Folder, CheckedFile } from "src/types";
 
@@ -41,6 +42,7 @@
   });
 
   let selectedFiles: string[] = [];
+  let resyncing = false;
 
   async function handleFilesSelect(
     bucketName: string,
@@ -59,9 +61,7 @@
         files: selectedFiles,
       });
       if (upload) {
-        const res: Bucket[] = await invoke("get_files");
-        console.log(res);
-        response = res;
+        await handleSync();
       }
     }
   }
@@ -73,9 +73,10 @@
   }
 
   async function handleSync(): Promise<void> {
+    resyncing = true;
     const res: Bucket[] = await invoke("get_files");
     response = res;
-    console.log(res);
+    resyncing = false;
   }
 
   const handleCheckbox = (key: string, bucketName: string): void => {
@@ -96,12 +97,14 @@
       title: "Select a directory",
     });
     if (dirPath) {
+      resyncing = true;
       const success = await invoke("save_files", {
         keys: checkedFiles,
         dir: dirPath,
       });
       if (success) {
         resetCheckedFiles();
+        resyncing = false;
       }
     }
   }
@@ -112,12 +115,35 @@
       { title: "Delete files ?", type: "warning" }
     );
     if (confirmed) {
+      resyncing = true;
       const success = await invoke("delete_files", { keys: checkedFiles });
       if (success) {
+        console.log(success);
         resetCheckedFiles();
-        const res: Bucket[] = await invoke("get_files");
-        console.log(res);
-        response = res;
+        await handleSync();
+      }
+    }
+  }
+
+  async function handleFolderDelete(
+    bucketName: string,
+    value: string
+  ): Promise<void> {
+    const prepareFolder = {
+      key: value + "/",
+      bucket_name: bucketName,
+    };
+    const confirmed = await confirm(
+      "This action cannot be reverted. Are you sure you want to delete?",
+      { title: "Delete folder ?", type: "warning" }
+    );
+    if (confirmed) {
+      resyncing = true;
+      const res = await invoke("delete_files", {
+        keys: [prepareFolder],
+      });
+      if (res) {
+        await handleSync();
       }
     }
   }
@@ -146,8 +172,11 @@
       <NameDivider
         label={bucket.name + " " + "(" + bucketFiles[bucket.name] + ")"}
       />
+      <AddFolder bucketName={bucket.name} {handleSync} />
       {#each bucket.folders as folder}
         <FileTable
+          handleFolderDelete={() =>
+            handleFolderDelete(bucket.name, folder.name)}
           handleFilesSelect={() => handleFilesSelect(bucket.name, folder.name)}
           {folder}
           {bucket}
@@ -156,5 +185,10 @@
         />
       {/each}
     {/each}
+  {/if}
+  {#if resyncing}
+    <div class="fixed bottom-7 left-7">
+      <Loader />
+    </div>
   {/if}
 </div>

@@ -20,7 +20,7 @@
 </script>
 
 <div
-  class="fixed gap-4 flex w-[calc(100%-130px)] items-center h-20 top-0 right-6 bg-stone-100 text-gray-700 dark:text-white dark:bg-slate-900 z-30"
+  class="fixed gap-4 flex w-[calc(100%-120px)] items-center h-20 top-0 right-4 bg-stone-100 text-gray-700 dark:text-white dark:bg-slate-900 z-30"
 >
   {#if handleSync}
     <IconButton onClick={handleSync}>
@@ -36,7 +36,7 @@
     <Search
       bind:value
       hidelabel="true"
-      class="placeholder-gray-700 h-14 w-full border-orange-100 text-gray-900 dark:text-white bg-orange-50 dark:bg-slate-800  dark:placeholder-white appearance-none outline-none border-2 border-transparent border-spacing-1  focus:border-orange-600 rounded  p-2"
+      class="placeholder-gray-500 h-14 w-full border-orange-100 text-gray-900 dark:text-white bg-orange-50 dark:bg-slate-800  dark:placeholder-white appearance-none outline-none border-2 border-transparent border-spacing-1  focus:border-orange-600 rounded  p-2"
     />
   </div>
   {#if checkedFiles && checkedFiles.length > 0}
