@@ -37,6 +37,9 @@
       out:fade={{ duration: 700 }}
     >
       <Table
+        height={folder.files.length * 60 + 30 > 500
+          ? "500px"
+          : folder.files.length * 60 + 30 + "px"}
         bucketName={bucket.name}
         files={folder.files}
         {handleCheckbox}
