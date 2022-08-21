@@ -2856,6 +2856,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "tokio-stream",
+ "walkdir",
 ]
 
 [[package]]

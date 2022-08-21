@@ -32,7 +32,7 @@
         : bucket.files.filter((item) => item.name.indexOf(value) !== -1),
   }));
 
-  const height = "calc(100vh - 100px)";
+  const height = "calc(100vh - 160px)";
 
   function chunkify<T>(a: T[], n: number, balanced: boolean): T[][] {
     console.log(a);
@@ -109,7 +109,6 @@
       key,
       bucket_name: bucketName,
     };
-    console.log(checkedFiles);
     if (checkedFiles.some((item) => item.key === checked.key)) {
       checkedFiles = [...checkedFiles.filter((item) => item.key !== key)];
     } else {
@@ -184,7 +183,7 @@
         bind:value
       />
     </div>
-    <div class="h-10" />
+    <div class="h-14" />
     {#if loading}
       <div class="flex justify-center items-center w-full h-screen">
         <Loader />
