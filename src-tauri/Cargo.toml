@@ -26,6 +26,7 @@ tokio = { version = "~1.20", features = ["full", "macros"] }
 cached = "0.38.0"
 thiserror = "*"
 itertools = "*"
+walkdir = "*"
 
 [features]
 # by default Tauri runs in production mode

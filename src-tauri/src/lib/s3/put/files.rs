@@ -1,6 +1,7 @@
-use aws_sdk_s3::{Client, types::ByteStream};
 use crate::lib::s3::client::client::create_client;
-use std::{path::Path, error::Error};
+use aws_sdk_s3::{types::ByteStream, Client};
+use std::{error::Error, fs, path::Path};
+use walkdir::WalkDir;
 
 pub async fn put_file(
     client: &Client,
@@ -17,21 +18,49 @@ pub async fn put_file(
         .send()
         .await?;
 
-    println!("Uploaded file: {}", file_name);
     Ok(())
 }
 
 #[tauri::command]
-pub async fn put_files(
-    bucket_name: String,
-    folder_name: String,
-    files: Vec<String>,
-) -> bool {
+pub async fn put_files(bucket_name: String, folder_name: String, files: Vec<String>) -> bool {
     let client = create_client().await.unwrap();
-    println!("Uploading files to bucket: {}", bucket_name);
     for file in files {
-        let key = folder_name.to_string() + "/" + &file.split("/").last().unwrap_or_default().to_string();
-        put_file(&client, bucket_name.to_string(), file, key).await.unwrap();
+        let path = fs::metadata(&file).unwrap();
+        if path.is_dir() {
+            for fil in WalkDir::new(&file).into_iter().filter_map(|fil| fil.ok()) {
+                if fil.metadata().unwrap().is_file() {
+                    let filename = &fil
+                    .path()
+                    .display()
+                    .to_string()
+                    .split("/")
+                    .last()
+                    .unwrap_or_default()
+                    .to_string();
+
+                    let key = folder_name.clone() + "/" + filename;
+                    println!("{} {}", filename, !filename.starts_with("."));
+
+                    if !filename.starts_with(".") {
+                        put_file(
+                            &client,
+                            bucket_name.to_string(),
+                            fil.path().display().to_string(),
+                            key,
+                        )
+                        .await
+                        .unwrap();
+                    }
+                }
+            }
+        } else {
+            let key = folder_name.to_string()
+                + "/"
+                + &file.split("/").last().unwrap_or_default().to_string();
+            put_file(&client, bucket_name.to_string(), file, key)
+                .await
+                .unwrap();
+        }
     }
     return true;
 }
