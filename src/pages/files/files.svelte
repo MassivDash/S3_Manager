@@ -5,6 +5,7 @@
   import Loader from "src/components/loader/loader.svelte";
   import { open, confirm } from "@tauri-apps/api/dialog";
   import { appDir } from "@tauri-apps/api/path";
+  import { formatBytes } from "src/lib/date";
   // Open a selection dialog for directories
   import Tools from "src/components/tools/tools.svelte";
   import NameDivider from "src/components/nameDivider/nameDivider.svelte";
@@ -170,7 +171,13 @@
     <div class="h-10" />
     {#each filteredList as bucket}
       <NameDivider
-        label={bucket.name + " " + "(" + bucketFiles[bucket.name] + ")"}
+        label={bucket.name +
+          " " +
+          "(" +
+          bucketFiles[bucket.name] +
+          ")" +
+          " " +
+          formatBytes(bucket.total_size)}
       />
       <AddFolder bucketName={bucket.name} {handleSync} />
       {#each bucket.folders as folder}

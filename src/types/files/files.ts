@@ -17,6 +17,7 @@ export interface Bucket {
     name: string;
     folders: Folder[];
     total_files: number;
+    total_size: number;
   }
 
 
