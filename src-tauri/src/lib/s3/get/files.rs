@@ -31,6 +31,8 @@ pub struct Bucket {
     pub name: String,
     pub folders: Vec<BucketFolder>,
     pub total_files: usize,
+    pub total_size: i64,
+
 }
 
 #[tauri::command]
@@ -42,7 +44,7 @@ pub async fn get_cached_files() -> Vec<Bucket>{
 #[tauri::command]
 pub async fn get_files() -> Vec<Bucket> {
     let client = create_client().await.unwrap();
-    let resp = client.list_buckets().send().await.unwrap();
+    let resp = &client.list_buckets().send().await.unwrap();
     let buckets = resp.buckets().unwrap();
     let mut my_buckets = Vec::new();
     for bucket in buckets {
@@ -60,8 +62,9 @@ pub async fn get_files() -> Vec<Bucket> {
         }
         my_buckets.push(Bucket {
             name: bucket.name().unwrap_or_default().to_string(),
-            folders: folders,
+            folders: folders.clone(),
             total_files: files.len().clone(),
+            total_size: folders.iter().fold(0, |acc, x| acc + x.total_size),
         });
     }
     return my_buckets;
