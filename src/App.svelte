@@ -11,8 +11,7 @@
 
 <Router>
   <Layout>
-    <FadeInRoute path="/">Home for 4 sure</FadeInRoute>
-    <FadeInRoute path="files">
+    <FadeInRoute path="/">
       <Files />
     </FadeInRoute>
     <FadeInRoute path="images/*">
