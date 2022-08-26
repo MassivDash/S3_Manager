@@ -1,10 +1,9 @@
 <script lang="ts">
-  import MenuItem from "./Item.svelte";
+  import MenuItem from "./item.svelte";
   import Bucket from "../icons/bucket.svelte";
   import Photo from "../icons/photo.svelte";
   import Movie from "../icons/movie.svelte";
   import Files from "../icons/files.svelte";
-  import Settings from "../icons/settings.svelte";
   const width = 24;
   const height = 24;
 </script>
@@ -27,9 +26,6 @@
     </MenuItem>
     <MenuItem name="buckets" path="/buckets">
       <Bucket {width} {height} />
-    </MenuItem>
-    <MenuItem name="settings" path="/settings">
-      <Settings {width} {height} />
     </MenuItem>
   </nav>
 </header>
