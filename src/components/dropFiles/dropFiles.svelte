@@ -1,6 +1,8 @@
 <script lang="ts">
   import FileDrop from "svelte-tauri-filedrop";
+  import { onDestroy } from "svelte";
   import { invoke } from "@tauri-apps/api";
+  import { listen } from "@tauri-apps/api/event";
   import { readDir, FileEntry } from "@tauri-apps/api/fs";
   import { fade, fly } from "svelte/transition";
   import Select from "../select/select.svelte";
@@ -93,6 +95,17 @@
     const index = buckets?.findIndex((bucket) => bucket.name === bucketName);
     return index;
   }
+
+  let uploadedFilesList = [];
+  const filesUploaded = listen("event-upload-file", (event) => {
+    console.log(event, "here");
+    uploadedFilesList = [...uploadedFilesList, event.payload];
+  });
+
+  onDestroy(async () => {
+    const unlisten = await filesUploaded;
+    unlisten();
+  });
 </script>
 
 <FileDrop handleFiles={(paths) => handleDrop(paths)} let:files>
@@ -105,8 +118,13 @@
     class="fixed overflow-y-auto bottom-0 pl-4 pt-2 pb-4 right-0 w-72 h-5/6 z-50 bg-orange-50 dark:bg-slate-800 flex flex-col rounded-t shadow-sm justify-start items-stretch"
   >
     {#if loading}
-      <div class="w-full h-full flex justify-center items-center">
+      <div class="w-full h-full flex flex-col justify-center items-center">
         <Loader />
+        <p class="text-xs m-8">
+          {#if uploadedFilesList.length > 0}
+            Uploading: {uploadedFilesList[uploadedFilesList.length - 1]}
+          {/if}
+        </p>
       </div>
     {:else}
       <div
