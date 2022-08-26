@@ -2,6 +2,7 @@ use crate::lib::s3::client::client::create_client;
 use aws_sdk_s3::{types::ByteStream, Client};
 use std::{error::Error, fs, path::Path};
 use walkdir::WalkDir;
+use tauri::Window;
 
 pub async fn put_file(
     client: &Client,
@@ -21,8 +22,10 @@ pub async fn put_file(
     Ok(())
 }
 
+
+
 #[tauri::command]
-pub async fn put_files(bucket_name: String, folder_name: String, files: Vec<String>) -> bool {
+pub async fn put_files(window: Window, bucket_name: String, folder_name: String, files: Vec<String>) -> bool {
     let client = create_client().await.unwrap();
     for file in files {
         let path = fs::metadata(&file).unwrap();
@@ -50,6 +53,8 @@ pub async fn put_files(bucket_name: String, folder_name: String, files: Vec<Stri
                         )
                         .await
                         .unwrap();
+
+                        window.emit("event-upload-file", &filename).unwrap()
                     }
                 }
             }
@@ -57,9 +62,11 @@ pub async fn put_files(bucket_name: String, folder_name: String, files: Vec<Stri
             let key = folder_name.to_string()
                 + "/"
                 + &file.split("/").last().unwrap_or_default().to_string();
-            put_file(&client, bucket_name.to_string(), file, key)
+            put_file(&client, bucket_name.to_string(), file.to_string(), key)
                 .await
                 .unwrap();
+            
+                window.emit("event-upload-file", &file).unwrap()
         }
     }
     return true;
