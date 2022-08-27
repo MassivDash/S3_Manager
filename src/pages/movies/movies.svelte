@@ -51,7 +51,6 @@
       key,
       bucket_name: bucketName,
     };
-    console.log(checkedFiles);
     if (checkedFiles.some((item) => item.key === checked.key)) {
       checkedFiles = [...checkedFiles.filter((item) => item.key !== key)];
     } else {

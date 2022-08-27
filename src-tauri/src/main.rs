@@ -10,6 +10,7 @@ use crate::lib::s3::get::images::{get_all_images, get_cached_images};
 use crate::lib::s3::get::movies::{get_all_movies, get_cached_movies};
 
 use crate::lib::s3::delete::files::delete_files;
+use crate::lib::s3::delete::folder::delete_folders;
 use crate::lib::s3::put::files::put_files;
 use crate::lib::s3::put::folder::put_folder;
 
@@ -46,7 +47,8 @@ fn main() {
             put_files,
             put_folder,
             save_files,
-            delete_files
+            delete_files,
+            delete_folders,
         ])
         .run(context)
         .expect("error while running tauri application");
