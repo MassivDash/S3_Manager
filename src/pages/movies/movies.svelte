@@ -10,10 +10,21 @@
 
   import type { ImageBucket, CheckedFile } from "src/types";
 
+  import {
+    getTailwindClass,
+    handleGrid,
+    GridCol,
+    chunkify,
+  } from "src/lib/grid";
+  import VirtualList from "src/components/virtualList/virtualList.svelte";
+
   const registerFocus = useFocus();
   let response: ImageBucket[];
 
   let loading = false;
+
+  let gridCol: GridCol = 3;
+  const height = "calc(100vh - 160px)";
 
   let value = "";
 
@@ -104,6 +115,7 @@
       class="fixed w-11/12 justify-between flex items-center h-20 top-0 z-30"
     >
       <Tools
+        handleGrid={() => (gridCol = handleGrid(gridCol))}
         {handleSync}
         {handleDownload}
         {handleDelete}
@@ -120,21 +132,31 @@
       {#each filteredList as bucket}
         <NameDivider
           label={`bucket: ${bucket.name}
-      ${bucket.files.length > 0 ? `(${bucket.files.length})` : ""}`}
+  ${bucket.files.length > 0 ? `(${bucket.files.length})` : ""}`}
         />
-        <div class={`columns-2`}>
-          {#each bucket.files as item}
-            <GridVideo
-              {handleCheckbox}
-              {checkedFiles}
-              name={item.name}
-              key={item.key}
-              url={item.url}
-              size={item.size}
-              {bucket}
-            />
-          {/each}
-        </div>
+        <VirtualList
+          items={chunkify(
+            bucket.files,
+            Number((bucket.files.length / gridCol).toFixed()),
+            false
+          )}
+          {height}
+          let:item
+        >
+          <div class={`grid ${getTailwindClass(gridCol)} mr-4`}>
+            {#each item as i}
+              <GridVideo
+                {handleCheckbox}
+                {checkedFiles}
+                name={i.name}
+                key={i.key}
+                url={i.url}
+                size={i.size}
+                {bucket}
+              />
+            {/each}
+          </div>
+        </VirtualList>
       {/each}
     {/if}
   {/if}
