@@ -1,8 +1,7 @@
 use std::error::Error;
 
-use aws_sdk_s3::Client;
 use aws_config::meta::region::RegionProviderChain;
-
+use aws_sdk_s3::Client;
 
 pub async fn create_client() -> Result<Client, Box<dyn Error>> {
     let region_provider = RegionProviderChain::default_provider().or_else("us-east-1");

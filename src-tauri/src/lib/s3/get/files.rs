@@ -1,13 +1,12 @@
+use aws_sdk_s3::model::Object;
 use aws_sdk_s3::Client;
 use cached::proc_macro::once;
-use serde::{Deserialize, Serialize};
 use itertools::Itertools;
-use aws_sdk_s3::model::Object;
-use tokio_stream::StreamExt;
+use serde::{Deserialize, Serialize};
 use std::error::Error;
+use tokio_stream::StreamExt;
 
 use crate::lib::s3::client::client::create_client;
-
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct BucketObject {
@@ -32,12 +31,11 @@ pub struct Bucket {
     pub folders: Vec<BucketFolder>,
     pub total_files: usize,
     pub total_size: i64,
-
 }
 
 #[tauri::command]
-#[once(time=900)] // 15 minutes
-pub async fn get_cached_files() -> Vec<Bucket>{
+#[once(time = 900)] // 15 minutes
+pub async fn get_cached_files() -> Vec<Bucket> {
     return get_files().await;
 }
 
@@ -48,11 +46,23 @@ pub async fn get_files() -> Vec<Bucket> {
     let buckets = resp.buckets().unwrap();
     let mut my_buckets = Vec::new();
     for bucket in buckets {
-        let files = get_objects(&client, bucket.name().unwrap_or_default()).await.unwrap();
+        let files = get_objects(&client, bucket.name().unwrap_or_default())
+            .await
+            .unwrap();
         let mut folders: Vec<BucketFolder> = Vec::new();
-        let get_folders: Vec<String> = files.clone().into_iter().map(|x| x.folder.clone()).unique().collect();
+        let get_folders: Vec<String> = files
+            .clone()
+            .into_iter()
+            .map(|x| x.folder.clone())
+            .unique()
+            .collect();
         for folder in get_folders {
-            let folder_files: Vec<BucketObject> = files.clone().into_iter().filter(|x| x.folder == folder).filter(|x| !x.key.ends_with("/")).collect();
+            let folder_files: Vec<BucketObject> = files
+                .clone()
+                .into_iter()
+                .filter(|x| x.folder == folder)
+                .filter(|x| !x.key.ends_with("/"))
+                .collect();
             folders.push(BucketFolder {
                 name: folder.clone(),
                 files: folder_files.clone(),
@@ -70,36 +80,53 @@ pub async fn get_files() -> Vec<Bucket> {
     return my_buckets;
 }
 
-
-
 async fn get_objects(client: &Client, bucket: &str) -> Result<Vec<BucketObject>, Box<dyn Error>> {
-    let mut resp  = client.list_objects_v2().bucket(bucket).into_paginator().send();
+    let mut resp = client
+        .list_objects_v2()
+        .bucket(bucket)
+        .into_paginator()
+        .send();
     let mut files: Vec<BucketObject> = Vec::new();
     let mut objects: Vec<Object> = Vec::new();
 
-
     while let Some(page) = resp.next().await {
-        let items = page?.contents().unwrap().iter().map(|x| x.clone()).collect::<Vec<Object>>();
+        let items = page?
+            .contents()
+            .unwrap()
+            .iter()
+            .map(|x| x.clone())
+            .collect::<Vec<Object>>();
         objects.extend(items);
     }
 
-        for object in objects {
-            files.push(BucketObject {
-                key: object.key().unwrap_or_default().to_string(),
-                folder: object.key().unwrap_or_default().split("/").nth(0).unwrap_or_default().to_string(),
-                name: object.key().unwrap().split("/").last().unwrap_or_default().to_string(),
-                extension: object
-                    .key()
-                    .unwrap_or_default()
-                    .split(".")
-                    .last()
-                    .unwrap_or_default()
-                    .to_string()
-                    .to_lowercase(),
-                size: object.size(),
-                last_modified: object.last_modified().unwrap().clone().secs(),
-            });
-        }
-        return Ok(files);
-
+    for object in objects {
+        files.push(BucketObject {
+            key: object.key().unwrap_or_default().to_string(),
+            folder: object
+                .key()
+                .unwrap_or_default()
+                .split("/")
+                .nth(0)
+                .unwrap_or_default()
+                .to_string(),
+            name: object
+                .key()
+                .unwrap()
+                .split("/")
+                .last()
+                .unwrap_or_default()
+                .to_string(),
+            extension: object
+                .key()
+                .unwrap_or_default()
+                .split(".")
+                .last()
+                .unwrap_or_default()
+                .to_string()
+                .to_lowercase(),
+            size: object.size(),
+            last_modified: object.last_modified().unwrap().clone().secs(),
+        });
+    }
+    return Ok(files);
 }

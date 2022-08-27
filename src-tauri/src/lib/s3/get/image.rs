@@ -1,4 +1,3 @@
-
 use crate::lib::s3::client::client::create_client;
 use crate::lib::s3::utils::presigned_url::get_presigned_url;
 
@@ -15,14 +14,9 @@ pub async fn get_image(bucket: String, key: String) -> SingleImgObject {
     let client = create_client().await.unwrap();
     let img = SingleImgObject {
         key: key.to_string(),
-        url: get_presigned_url(
-            &client,
-            &bucket,
-            &key,
-            900,
-        )
-        .await
-        .unwrap(),
+        url: get_presigned_url(&client, &bucket, &key, 900)
+            .await
+            .unwrap(),
     };
     return img;
 }

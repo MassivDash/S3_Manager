@@ -1,6 +1,5 @@
-
 use aws_sdk_s3::{presigning::config::PresigningConfig, Client};
-use std::{time::Duration, error::Error};
+use std::{error::Error, time::Duration};
 
 pub async fn get_presigned_url(
     client: &Client,
@@ -17,5 +16,3 @@ pub async fn get_presigned_url(
         .await?;
     return Ok(presigned_request.uri().to_string());
 }
-
-
