@@ -15,7 +15,7 @@
   export let checkedFiles: CheckedFile[];
   export let handleFolderDelete: () => void = undefined;
 
-  let fold = false;
+  let fold = true;
   function handleFold(): void {
     fold = !fold;
   }

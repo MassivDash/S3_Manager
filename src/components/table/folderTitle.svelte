@@ -37,12 +37,12 @@
     <IconButton onClick={handleFolderDelete}>
       <Delete />
     </IconButton>
-    {#if !fold}
+    {#if fold}
       <IconButton onClick={handleFold}>
         <Unfold />
       </IconButton>
     {/if}
-    {#if fold}
+    {#if !fold}
       <IconButton onClick={handleFold}>
         <Fold />
       </IconButton>

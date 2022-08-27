@@ -9,16 +9,21 @@
   import Tools from "../../components/tools/tools.svelte";
 
   import type { ImageBucket, CheckedFile } from "src/types";
+  import {
+    getTailwindClass,
+    handleGrid,
+    GridCol,
+    chunkify,
+  } from "src/lib/grid";
   import VirtualList from "src/components/virtualList/virtualList.svelte";
 
   const registerFocus = useFocus();
   let response: ImageBucket[];
 
-  type GridCol = 2 | 3 | 4;
-
   let loading = false;
 
   let gridCol: GridCol = 3;
+  const height = "calc(100vh - 160px)";
 
   let value = "";
 
@@ -31,65 +36,6 @@
         ? bucket.files
         : bucket.files.filter((item) => item.name.indexOf(value) !== -1),
   }));
-
-  const height = "calc(100vh - 160px)";
-
-  function chunkify<T>(a: T[], n: number, balanced: boolean): T[][] {
-    console.log(a);
-    if (n < 2) return [a];
-
-    var len = a.length,
-      out = [],
-      i = 0,
-      size;
-
-    if (len % n === 0) {
-      size = Math.floor(len / n);
-      while (i < len) {
-        out.push(a.slice(i, (i += size)));
-      }
-    } else if (balanced) {
-      while (i < len) {
-        size = Math.ceil((len - i) / n--);
-        out.push(a.slice(i, (i += size)));
-      }
-    } else {
-      n--;
-      size = Math.floor(len / n);
-      if (len % size === 0) size--;
-      while (i < size * n) {
-        out.push(a.slice(i, (i += size)));
-      }
-      out.push(a.slice(size * n));
-    }
-
-    return out;
-  }
-
-  const handleGrid = (): void => {
-    switch (gridCol) {
-      case 2:
-        gridCol = 3;
-        break;
-      case 3:
-        gridCol = 4;
-        break;
-      case 4:
-        gridCol = 2;
-        break;
-    }
-  };
-
-  const getTailwindClass = (col): string => {
-    switch (col) {
-      case 2:
-        return "grid-cols-2";
-      case 3:
-        return "grid-cols-3";
-      case 4:
-        return "grid-cols-4";
-    }
-  };
 
   let checkedFiles: CheckedFile[] = [];
 
@@ -175,7 +121,7 @@
       class="fixed w-11/12 justify-between flex items-center h-20 top-0 z-30"
     >
       <Tools
-        {handleGrid}
+        handleGrid={() => (gridCol = handleGrid(gridCol))}
         {handleSync}
         {handleDownload}
         {handleDelete}

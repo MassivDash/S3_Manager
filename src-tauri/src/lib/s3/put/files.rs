@@ -59,14 +59,15 @@ pub async fn put_files(window: Window, bucket_name: String, folder_name: String,
                 }
             }
         } else {
+            let filename = &file.split("/").last().unwrap_or_default().to_string();
             let key = folder_name.to_string()
                 + "/"
-                + &file.split("/").last().unwrap_or_default().to_string();
-            put_file(&client, bucket_name.to_string(), file.to_string(), key)
+                + filename;
+            put_file(&client, bucket_name.to_string(), file, key.to_string())
                 .await
                 .unwrap();
             
-                window.emit("event-upload-file", &file).unwrap()
+                window.emit("event-upload-file", &filename).unwrap()
         }
     }
     return true;
