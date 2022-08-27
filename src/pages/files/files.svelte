@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { invoke } from "@tauri-apps/api";
+  import { onMount, onDestroy } from "svelte";
+  import { invoke, event } from "@tauri-apps/api";
   import { useFocus } from "svelte-navigator";
   import Loader from "src/components/loader/loader.svelte";
   import { open, confirm } from "@tauri-apps/api/dialog";
@@ -40,6 +40,15 @@
   onMount(async () => {
     const res: Bucket[] = await invoke("get_files");
     response = res;
+  });
+
+  const listenToFileUpload = event.listen("event-resync", () => {
+    handleSync();
+  });
+
+  onDestroy(async () => {
+    const unlisten = await listenToFileUpload;
+    unlisten();
   });
 
   let selectedFiles: string[] = [];
@@ -119,7 +128,6 @@
       resyncing = true;
       const success = await invoke("delete_files", { keys: checkedFiles });
       if (success) {
-        console.log(success);
         resetCheckedFiles();
         await handleSync();
       }
@@ -136,11 +144,11 @@
     };
     const confirmed = await confirm(
       "This action cannot be reverted. Are you sure you want to delete?",
-      { title: "Delete folder ?", type: "warning" }
+      { title: "Delete folder with all files inside ?", type: "warning" }
     );
     if (confirmed) {
       resyncing = true;
-      const res = await invoke("delete_files", {
+      const res = await invoke("delete_folders", {
         keys: [prepareFolder],
       });
       if (res) {

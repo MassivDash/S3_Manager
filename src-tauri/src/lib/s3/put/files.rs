@@ -70,5 +70,6 @@ pub async fn put_files(window: Window, bucket_name: String, folder_name: String,
                 window.emit("event-upload-file", &filename).unwrap()
         }
     }
+    window.emit("event-resync", "upload successful").unwrap();
     return true;
 }

@@ -9,7 +9,7 @@
   import Tools from "../../components/tools/tools.svelte";
 
   import type { ImageBucket, CheckedFile } from "src/types";
-  import { handleGrid, GridCol, chunkify } from "src/lib/grid";
+  import { handleGrid, GridCol } from "src/lib/grid";
 
   import VirtualGrid from "src/components/virtualGrid/virtualGrid.svelte";
 
@@ -92,15 +92,7 @@
 
   onMount(async () => {
     const res: ImageBucket[] = await invoke("get_all_images");
-    console.log(res);
     response = res;
-    console.log(
-      chunkify(
-        res[0].files,
-        Number((res[0].files.length / gridCol).toFixed()),
-        false
-      )
-    );
   });
 </script>
 

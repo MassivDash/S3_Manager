@@ -50,7 +50,6 @@
     files = [...new Set([...files, ...paths])];
     await [...new Set([...files, ...paths])].forEach(async (file: string) => {
       const getName = file.split("/")[file.split("/").length - 1];
-      console.log(getName);
       if (!getName.includes(".")) {
         const files: FileEntry[] = await readDir(file, { recursive: true });
         const filesArray = getAllFiles(files);
@@ -66,9 +65,6 @@
         ];
       }
     });
-
-    console.log(dirs);
-
     visible = true;
   }
 
@@ -98,7 +94,6 @@
 
   let uploadedFilesList = [];
   const filesUploaded = listen("event-upload-file", (event) => {
-    console.log(event, "here");
     uploadedFilesList = [...uploadedFilesList, event.payload];
   });
 
