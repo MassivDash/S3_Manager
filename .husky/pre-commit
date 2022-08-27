@@ -3,4 +3,5 @@
 
 npm run lint 
 npm run format
+cargo fmt --all --manifest-path="src-tauri/Cargo.toml"
 git add .
