@@ -9,6 +9,7 @@
   export let key: string;
   export let url: string;
   export let size: number;
+  export let last_modified: number;
   export let bucket: ImageBucket;
   export let name: string;
   export let checkedFiles: CheckedFile[];
@@ -38,7 +39,10 @@
       />
       <p class="ml-0">{shortenName(name)}</p>
     </div>
-    <p class="justify-self-end text-xs mt-1 mr-2">{formatBytes(size)}</p>
+    <div class="justify-self-end text-xs mt-1 mr-2">
+      <p>{formatBytes(size)}</p>
+      <p>{new Date(last_modified * 1000).toLocaleString().split(",")[0]}</p>
+    </div>
   </div>
   <Link to="{bucket.name}/{key}" class="flex flex-col justify-center">
     <div>
