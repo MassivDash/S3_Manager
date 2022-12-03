@@ -141,6 +141,7 @@
               key={i.key}
               url={i.url}
               size={i.size}
+              last_modified={i.last_modified}
               {bucket}
             />
           {/each}
