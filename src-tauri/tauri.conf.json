@@ -8,7 +8,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "S3_Manager",
+    "productName": "S3Manager",
     "version": "0.1.0"
   },
   "tauri": {
@@ -30,7 +30,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.s3_manager",
+      "identifier": "com.tauri.s3manager",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
