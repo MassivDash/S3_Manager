@@ -3,6 +3,13 @@
   import Checkbox from "../checkbox/checkbox.svelte";
   import type { File, CheckedFile } from "src/types";
   import VirtualList from "../virtualList/virtualList.svelte";
+  import { Link } from "svelte-navigator";
+  import { invoke } from "@tauri-apps/api";
+
+  interface ImageObject {
+    key: string;
+    url: string;
+  }
 
   export let files: File[];
   export let bucketName: string;
@@ -10,6 +17,15 @@
   export let checkedFiles: CheckedFile[];
   let start;
   let end;
+
+  let mouseOverImage;
+  let handleMouseOver = async (key: string, bucketName: string) => {
+    const res: ImageObject = await invoke("get_image", {
+      bucket: bucketName,
+      key: key,
+    });
+    mouseOverImage = res;
+  };
 
   export let height = "500px";
 </script>
@@ -39,13 +55,27 @@
               {checkedFiles}
             />
           </td>
-          <td class="px-2 py-2 w-8/12">{item.name}</td>
+          <td
+            class="px-2 py-2 w-8/12"
+            on:mouseover={() => handleMouseOver(item.key, bucketName)}
+            on:focus={() => handleMouseOver(item.key, bucketName)}
+            on:blur={() => (mouseOverImage = null)}
+            on:mouseleave={() => (mouseOverImage = null)}
+            ><Link to="images/{bucketName}/{item.key}">{item.name}</Link></td
+          >
           <td class="px-2 py-2 ml-2 w-2/12">{formatBytes(item.size)}</td>
           <td class="px-2 py-2 ml-2 w-2/12"
             >{new Date(item.last_modified * 1000)
               .toLocaleString()
               .split(",")[0]}</td
           >
+          {#if mouseOverImage && mouseOverImage.key === item.key}
+            <div
+              class={"absolute border-2 border-white backdrop:blur-md bg-orange-50 block w-52 -mt-14 ml-[25vw] p-2"}
+            >
+              <img src={mouseOverImage.url} alt={mouseOverImage.key} />
+            </div>
+          {/if}
         </tr>
       </VirtualList>
       <p class="pl-6 text-sm p-2 border-t border-orange-500">
