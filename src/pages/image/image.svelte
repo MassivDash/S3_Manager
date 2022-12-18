@@ -5,7 +5,7 @@
   }
   import { onMount } from "svelte";
   import { invoke } from "@tauri-apps/api";
-  import { useParams } from "svelte-navigator";
+  import { useParams, navigate } from "svelte-navigator";
 
   let bucket: string;
   let key: string;
@@ -26,5 +26,12 @@
 {#if !response?.url}
   <div>Loading...</div>
 {:else}
-  <img src={response.url} alt={response.key} />
+  <main>
+    <header>
+      <nav>
+        <button on:click={() => navigate(-1)}>Back</button>
+      </nav>
+    </header>
+    <img src={response.url} alt={response.key} />
+  </main>
 {/if}
