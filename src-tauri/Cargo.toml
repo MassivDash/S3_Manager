@@ -12,19 +12,19 @@ rust-version = "1.57"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.0.4", features = [] }
+tauri-build = { version = "1.2.1", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.0.5", features = ["api-all"] }
-aws-config = "0.47.0"
-aws-sdk-s3 = "0.17.0"
-tokio-stream = "0.1.9"
-tokio = { version = "~1.20", features = ["full", "macros"] }
+tauri = { version = "1.2.1", features = ["api-all"] }
+aws-config = "0.51.0"
+aws-sdk-s3 = "0.21.0"
+tokio-stream = "0.1.11"
+tokio = { version = "1.22.0", features = ["full", "macros"] }
 
-cached = "0.38.0"
-thiserror = "*"
+cached = "0.40.0"
+thiserror = "1.0.37"
 itertools = "*"
 walkdir = "*"
 
