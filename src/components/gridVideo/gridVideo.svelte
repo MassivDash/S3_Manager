@@ -46,6 +46,6 @@
     muted={true}
     loop={false}
     autoplay={false}
-    preload="metadata"
+    preload="none"
   />
 </div>
