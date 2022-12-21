@@ -19,7 +19,7 @@
 
   let loading = false;
 
-  let gridCol: GridCol = 3;
+  let gridCol: GridCol = 2;
 
   let value = "";
 

@@ -41,10 +41,11 @@
   <video
     width="100%"
     height="100%"
-    src={url}
+    src={`${url}#t=0.1`}
     controls={true}
     muted={true}
     loop={false}
     autoplay={false}
+    preload="metadata"
   />
 </div>
