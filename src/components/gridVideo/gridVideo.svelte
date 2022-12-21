@@ -1,8 +1,9 @@
 <script lang="ts">
   import Checkbox from "../checkbox/checkbox.svelte";
-  import { formatBytes } from "../../lib/date";
+  import { formatBytes } from "src/lib";
 
   import type { ImageBucket, CheckedFile } from "src/types";
+  import { getOS } from "src/lib/";
 
   export let key: string;
   export let url: string;
@@ -11,6 +12,8 @@
   export let name: string;
   export let checkedFiles: CheckedFile[];
   export let handleCheckbox: (key: string, bucketName: string) => void;
+
+  const os = getOS();
 
   function shortenName(string: string): string {
     if (string.length > 20) {
@@ -46,6 +49,6 @@
     muted={true}
     loop={false}
     autoplay={false}
-    preload="none"
+    preload={os.includes("Mac") ? "metadata" : "none"}
   />
 </div>
