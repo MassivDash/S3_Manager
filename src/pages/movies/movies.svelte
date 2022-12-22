@@ -3,14 +3,14 @@
   import { invoke } from "@tauri-apps/api";
   import { useFocus } from "svelte-navigator";
   import { open, confirm } from "@tauri-apps/api/dialog";
-  import Loader from "../../components/loader/loader.svelte";
+  import Loader from "src/components/loader/loader.svelte";
   import NameDivider from "src/components/nameDivider/nameDivider.svelte";
   import GridVideo from "src/components/gridVideo/gridVideo.svelte";
-  import Tools from "../../components/tools/tools.svelte";
+  import Tools from "src/components/tools/tools.svelte";
 
-  import type { ImageBucket, CheckedFile } from "src/types";
+  import type { ImageBucket, CheckedFile, GridCol } from "src/types";
 
-  import { handleGrid, GridCol } from "src/lib/grid";
+  import { handleGrid } from "src/lib/grid";
 
   import VirtualGrid from "src/components/virtualGrid/virtualGrid.svelte";
 
