@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { getTailwindClass, GridCol, chunkify } from "src/lib/grid";
+  import { getTailwindClass, chunkify } from "src/lib/grid";
   import VirtualList from "src/components/virtualList/virtualList.svelte";
-
+  import type { GridCol } from "src/types";
   const height = "calc(100vh - 160px)";
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

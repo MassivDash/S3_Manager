@@ -3,16 +3,15 @@
   import { onDestroy } from "svelte";
   import { invoke } from "@tauri-apps/api";
   import { listen } from "@tauri-apps/api/event";
-  import { readDir, FileEntry } from "@tauri-apps/api/fs";
+  import { readDir } from "@tauri-apps/api/fs";
   import { fade, fly } from "svelte/transition";
   import Select from "../select/select.svelte";
   import type { Bucket } from "src/types";
-
+  import type { FileEntry } from "@tauri-apps/api/fs";
   import Loader from "../loader/loader.svelte";
   import AddFile from "src/components/icons/addFile.svelte";
   import Close from "src/components/icons/close.svelte";
   import Check from "../icons/check.svelte";
-
   let visible = false;
   let loading = false;
   let files: string[] = [];
@@ -38,7 +37,8 @@
         result.push(...getAllFiles(file.children));
       }
     });
-    return result.filter((file) => !file.startsWith("."));
+    const res = result.filter((file: string) => !file.startsWith("."));
+    return res as string[];
   }
 
   let dirs: Folder[] = [];
@@ -92,9 +92,9 @@
     return index;
   }
 
-  let uploadedFilesList = [];
+  let uploadedFilesList: string[] = [];
   const filesUploaded = listen("event-upload-file", (event) => {
-    uploadedFilesList = [...uploadedFilesList, event.payload];
+    uploadedFilesList = [...uploadedFilesList, event.payload as string];
   });
 
   onDestroy(async () => {

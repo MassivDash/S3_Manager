@@ -1,4 +1,4 @@
-export type GridCol = 1 | 2 | 3 | 4;
+import type { GridCol } from "src/types";
 
 export function chunkify<T>(a: T[], n: number, balanced: boolean): T[][] {
     if (n < 2) return [a];
