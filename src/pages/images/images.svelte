@@ -18,7 +18,6 @@
   let loading = false;
 
   let gridCol: GridCol = 3;
-
   let value = "";
 
   let filteredList: ImageBucket[] = [];

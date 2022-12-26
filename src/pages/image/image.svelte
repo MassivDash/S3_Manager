@@ -6,7 +6,7 @@
   import { onMount } from "svelte";
   import { invoke } from "@tauri-apps/api";
   import { useParams, navigate } from "svelte-navigator";
-
+  import Tags from "../../components/tags/tags.svelte";
   let bucket: string;
   let key: string;
   const params = useParams();
@@ -32,6 +32,8 @@
         <button on:click={() => navigate(-1)}>Back</button>
       </nav>
     </header>
+    <h1>Image key: {key}</h1>
     <img src={response.url} alt={response.key} />
+    <Tags {key} {bucket} />
   </main>
 {/if}
