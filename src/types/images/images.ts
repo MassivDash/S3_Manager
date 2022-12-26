@@ -4,6 +4,10 @@ export interface Image {
     url: string;
     size: number;
     last_modified: number;
+    tags: {
+      key: string;
+      value?: string 
+    }[]
   }
 
 export interface ImageBucket {

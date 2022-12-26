@@ -4,6 +4,7 @@
   import Checkbox from "../checkbox/checkbox.svelte";
   import { formatBytes } from "../../lib/date";
 
+  import Tags from "../tags/tags.svelte";
   import type { ImageBucket, CheckedFile } from "src/types";
 
   export let key: string;
@@ -14,6 +15,8 @@
   export let name: string;
   export let checkedFiles: CheckedFile[];
   export let handleCheckbox: (key: string, bucketName: string) => void;
+
+  // const tags = aws_tags.map(tag => tag.value ? `${tag.key}-${tag.value}` :  tag.key)
 
   function shortenName(string: string): string {
     if (string.length > 20) {
@@ -28,7 +31,7 @@
 </script>
 
 <div
-  class="h-[calc(500px+3.5rem)] overflow-hidden bg-orange-50 dark:bg-slate-700 rounded-md flex flex-col m-2  first:ml-0 last:mr-0"
+  class="h-[calc(500px+3.5rem)] overflow-hidden bg-orange-50 dark:bg-slate-700 rounded-md flex flex-col m-2  first:ml-0 last:mr-0 relative"
 >
   <div class="flex items-center justify-between">
     <div class="bg-orange-50 dark:bg-slate-700 p-2 h-14 flex items-center">
@@ -54,4 +57,7 @@
       />
     </div>
   </Link>
+  <div class="absolute bottom-0 opacity-70 w-full">
+    <Tags {key} bucket={bucket.name} />
+  </div>
 </div>

@@ -6,7 +6,7 @@ pub async fn get_presigned_url(
     bucket: &str,
     object: &str,
     expires_in: u64,
-) -> Result<String, Box<dyn Error>> {
+) -> Result<String, Box<dyn Error + Send + Sync>> {
     let expires_in = Duration::from_secs(expires_in);
     let presigned_request = client
         .get_object()

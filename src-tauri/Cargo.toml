@@ -18,12 +18,12 @@ tauri-build = { version = "1.2.1", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.2.1", features = ["api-all"] }
-aws-config = "0.51.0"
-aws-sdk-s3 = "0.21.0"
+aws-config = "0.52.0"
+aws-sdk-s3 = "0.22.0"
 tokio-stream = "0.1.11"
 tokio = { version = "1.22.0", features = ["full", "macros"] }
 
-cached = "0.40.0"
+cached = "0.41.0"
 thiserror = "1.0.37"
 itertools = "*"
 walkdir = "*"

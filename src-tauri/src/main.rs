@@ -11,8 +11,10 @@ use crate::lib::s3::get::movies::{get_all_movies, get_cached_movies};
 
 use crate::lib::s3::delete::files::delete_files;
 use crate::lib::s3::delete::folder::delete_folders;
+use crate::lib::s3::get::tags::get_all_tags;
 use crate::lib::s3::put::files::put_files;
 use crate::lib::s3::put::folder::put_folder;
+use crate::lib::s3::put::tags::set_all_tags;
 
 mod lib;
 
@@ -49,6 +51,8 @@ fn main() {
             save_files,
             delete_files,
             delete_folders,
+            get_all_tags,
+            set_all_tags,
         ])
         .run(context)
         .expect("error while running tauri application");

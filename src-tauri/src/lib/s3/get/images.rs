@@ -1,14 +1,14 @@
+use aws_sdk_s3::model::Object;
 use aws_sdk_s3::Client;
 use cached::proc_macro::once;
 use serde::{Deserialize, Serialize};
 
 use crate::lib::s3::client::client::create_client;
 use crate::lib::s3::utils::presigned_url::get_presigned_url;
-use aws_sdk_s3::model::Object;
 use std::error::Error;
 use tokio_stream::StreamExt;
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ImgBucketObject {
     pub key: String,
     pub name: String,
@@ -73,7 +73,16 @@ async fn show_objects(
 
     for object in objects {
         if check_if_file_is_image(object.key().unwrap_or_default()) {
-            files.push(ImgBucketObject {
+            let url = get_presigned_url(
+                client,
+                bucket,
+                &object.key().unwrap_or_default().to_string(),
+                9000, //15 minutes
+            )
+            .await
+            .unwrap();
+
+            let new_obj = ImgBucketObject {
                 key: object.key().unwrap().to_string(),
                 name: object
                     .key()
@@ -82,17 +91,11 @@ async fn show_objects(
                     .last()
                     .unwrap_or_default()
                     .to_string(),
-                url: get_presigned_url(
-                    client,
-                    bucket,
-                    &object.key().unwrap_or_default().to_string(),
-                    9000, //15 minutes
-                )
-                .await
-                .unwrap(),
+                url: url,
                 size: object.size(),
                 last_modified: object.last_modified().unwrap().clone().secs(),
-            });
+            };
+            files.push(new_obj);
         }
     }
     return Ok(files);

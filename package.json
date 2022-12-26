@@ -43,6 +43,7 @@
     "postcss-load-config": "^4.0.1",
     "svelte-lazy-image": "^0.5.1",
     "svelte-navigator": "^3.2.2",
+    "svelte-tags-input": "^4.0.0",
     "svelte-tauri-filedrop": "^1.0.0"
   }
 }
