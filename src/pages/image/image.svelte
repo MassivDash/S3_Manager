@@ -2,11 +2,18 @@
   interface ImageObject {
     key: string;
     url: string;
+    size: number;
+    last_modified: number;
   }
   import { onMount } from "svelte";
   import { invoke } from "@tauri-apps/api";
   import { useParams, navigate } from "svelte-navigator";
-  import Tags from "../../components/tags/tags.svelte";
+  import Tags from "src/components/tags/tags.svelte";
+  import Loader from "src/components/loader/loader.svelte";
+  import Back from "src/components/icons/back.svelte";
+  import IconButton from "src/components/iconButton/iconButton.svelte";
+  import { formatBytes, formatDate } from "src/lib/date";
+
   let bucket: string;
   let key: string;
   const params = useParams();
@@ -15,25 +22,41 @@
   }
   let response: ImageObject;
   onMount(async () => {
-    const res: ImageObject = await invoke("get_image", {
-      bucket: bucket,
-      key: key,
-    });
-    response = res;
+    try {
+      const res: ImageObject = await invoke("get_image", {
+        bucket: bucket,
+        key: key,
+      });
+      response = res;
+    } catch (err) {
+      console.log(err);
+    }
   });
 </script>
 
 {#if !response?.url}
-  <div>Loading...</div>
+  <Loader />
 {:else}
   <main>
-    <header>
-      <nav>
-        <button on:click={() => navigate(-1)}>Back</button>
-      </nav>
+    <header class="flex h-16 gap-2 my-4 items-center justify-start ">
+      <IconButton onClick={() => navigate(-1)}><Back /> Go back</IconButton>
+      <h1
+        class="bg-orange-50 dark:bg-slate-800 h-14 px-4 flex items-center text-lg"
+      >
+        {key}
+      </h1>
+      <h2
+        class="bg-orange-50 dark:bg-slate-800 h-14 px-4 flex items-center text-lg"
+      >
+        {formatBytes(response.size)}
+      </h2>
+      <h2
+        class="bg-orange-50 dark:bg-slate-800 h-14 px-4 flex items-center text-lg"
+      >
+        {formatDate(response.last_modified)}
+      </h2>
     </header>
-    <h1>Image key: {key}</h1>
-    <img src={response.url} alt={response.key} />
     <Tags {key} {bucket} />
+    <img src={response.url} alt={response.key} />
   </main>
 {/if}

@@ -9,3 +9,5 @@ export function formatBytes(bytes: number, decimals = 2): string {
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+
+export const formatDate = (unixTimeStamp): string => new Date(unixTimeStamp * 1000).toLocaleString().split(",")[0]

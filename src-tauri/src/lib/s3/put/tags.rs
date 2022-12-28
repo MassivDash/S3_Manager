@@ -1,8 +1,5 @@
 use aws_sdk_s3::{
-    error::PutObjectTaggingError,
     model::{Tag, Tagging},
-    output::PutObjectTaggingOutput,
-    types::SdkError,
     Client,
 };
 
