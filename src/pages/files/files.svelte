@@ -14,6 +14,8 @@
 
   import type { Bucket, Folder, CheckedFile } from "src/types";
 
+  import { showModal } from "src/store/modal";
+
   const registerFocus = useFocus();
   let response: Bucket[];
   let filteredList: Bucket[];
@@ -38,8 +40,17 @@
   }))[0];
 
   onMount(async () => {
-    const res: Bucket[] = await invoke("get_files");
-    response = res;
+    try {
+      const res: Bucket[] = await invoke("get_files");
+      response = res;
+    } catch (err) {
+      console.log(err);
+      showModal({
+        title: err.name,
+        message: err.message,
+        type: "error",
+      })();
+    }
   });
 
   const listenToFileUpload = event.listen("event-resync", () => {
@@ -64,14 +75,23 @@
     });
 
     if (selected) {
-      selectedFiles = [...selected];
-      const upload = await invoke("put_files", {
-        bucketName,
-        folderName,
-        files: selectedFiles,
-      });
-      if (upload) {
-        await handleSync();
+      try {
+        selectedFiles = [...selected];
+        const upload = await invoke("put_files", {
+          bucketName,
+          folderName,
+          files: selectedFiles,
+        });
+        if (upload) {
+          await handleSync();
+        }
+      } catch (err) {
+        console.log(err);
+        showModal({
+          title: err.name,
+          message: err.message,
+          type: "error",
+        })();
       }
     }
   }
@@ -83,10 +103,19 @@
   }
 
   async function handleSync(): Promise<void> {
-    resyncing = true;
-    const res: Bucket[] = await invoke("get_files");
-    response = res;
-    resyncing = false;
+    try {
+      resyncing = true;
+      const res: Bucket[] = await invoke("get_files");
+      response = res;
+      resyncing = false;
+    } catch (err) {
+      console.log(err);
+      showModal({
+        title: err.name,
+        message: err.message,
+        type: "error",
+      })();
+    }
   }
 
   const handleCheckbox = (key: string, bucketName: string): void => {

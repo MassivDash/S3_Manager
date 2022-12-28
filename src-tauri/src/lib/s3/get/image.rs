@@ -19,10 +19,10 @@ pub async fn get_image(bucket: String, key: String) -> Result<SingleImgObject, R
 
     let client = match client_call {
         Ok(instance) => instance,
-        Err(_err) => {
+        Err(err) => {
             return Err(create_error(
-                "client".into(),
-                "Aws client connection failed".into(),
+                "AWS Client Config error".into(),
+                err.to_string(),
             ))
         }
     };
@@ -37,7 +37,12 @@ pub async fn get_image(bucket: String, key: String) -> Result<SingleImgObject, R
 
     let img_atr = match get_image_attributes_result {
         Ok(get_image_atr) => get_image_atr,
-        Err(err) => return Err(create_error("call".into(), err.to_string())),
+        Err(err) => {
+            return Err(create_error(
+                "Get object attributes call failed".into(),
+                err.to_string(),
+            ))
+        }
     };
 
     let img = SingleImgObject {

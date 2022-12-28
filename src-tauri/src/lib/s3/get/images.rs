@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::lib::s3::client::client::create_client;
 use crate::lib::s3::utils::presigned_url::get_presigned_url;
+use crate::lib::s3::utils::response_error::{create_error, ResponseError};
 use std::error::Error;
 use tokio_stream::StreamExt;
 
@@ -27,26 +28,54 @@ pub struct ImgBucket {
 #[tauri::command]
 #[once(time = 900)] // 15 minutes
 pub async fn get_cached_images() -> Vec<ImgBucket> {
-    return get_all_images().await;
+    return get_all_images().await.unwrap();
 }
 
 #[tauri::command]
-pub async fn get_all_images() -> Vec<ImgBucket> {
-    let client = create_client().await.unwrap();
-    let resp = client.list_buckets().send().await.unwrap();
+pub async fn get_all_images() -> Result<Vec<ImgBucket>, ResponseError> {
+    let client_call = create_client().await;
+
+    let client = match client_call {
+        Ok(instance) => instance,
+        Err(err) => {
+            return Err(create_error(
+                "AWS Client Config error".into(),
+                err.to_string(),
+            ))
+        }
+    };
+
+    let resp_call = &client.list_buckets().send().await;
+    let resp = match resp_call {
+        Ok(list) => list,
+        Err(err) => {
+            return Err(create_error(
+                "S3 bucket call failed".into(),
+                err.to_string(),
+            ))
+        }
+    };
     let buckets = resp.buckets().unwrap();
     let mut my_buckets = Vec::new();
     for bucket in buckets {
-        let files = show_objects(&client, bucket.name().unwrap_or_default())
-            .await
-            .unwrap();
+        let files_call = show_objects(&client, bucket.name().unwrap_or_default()).await;
+
+        let files = match files_call {
+            Ok(list) => list,
+            Err(err) => {
+                return Err(create_error(
+                    "S3 object call failed".into(),
+                    err.to_string(),
+                ))
+            }
+        };
         my_buckets.push(ImgBucket {
             name: bucket.name().unwrap_or_default().to_string(),
             files: files.clone(),
             total_files: files.len().clone(),
         });
     }
-    return my_buckets;
+    Ok(my_buckets)
 }
 
 async fn show_objects(
