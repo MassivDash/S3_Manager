@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatBytes } from "../../lib/date";
+  import { formatBytes, formatDate } from "../../lib/date";
   import Checkbox from "../checkbox/checkbox.svelte";
   import type { File, CheckedFile } from "src/types";
   import VirtualList from "../virtualList/virtualList.svelte";
@@ -64,10 +64,7 @@
             ><Link to="images/{bucketName}/{item.key}">{item.name}</Link></td
           >
           <td class="px-2 py-2 ml-2 w-2/12">{formatBytes(item.size)}</td>
-          <td class="px-2 py-2 ml-2 w-2/12"
-            >{new Date(item.last_modified * 1000)
-              .toLocaleString()
-              .split(",")[0]}</td
+          <td class="px-2 py-2 ml-2 w-2/12">{formatDate(item.last_modified)}</td
           >
           {#if mouseOverImage && mouseOverImage.key === item.key}
             <div

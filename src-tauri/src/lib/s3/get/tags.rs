@@ -10,24 +10,6 @@ pub struct ObjectTag {
     pub value: String,
 }
 
-pub async fn get_tag_amount(
-    client: &Client,
-    bucket: &str,
-    object: &str,
-) -> Result<i32, Box<dyn Error + Send + Sync>> {
-    let object = client
-        .get_object()
-        .bucket(bucket)
-        .part_number(1)
-        .response_content_type("json")
-        .key(object)
-        .send()
-        .await?;
-
-    println!("da fuck");
-    return Ok(object.tag_count());
-}
-
 async fn get_tagging(
     client: &Client,
     bucket: &str,
@@ -39,8 +21,6 @@ async fn get_tagging(
         .key(key)
         .send()
         .await?;
-
-    println!("{}, {}", &bucket, &key);
     return Ok(resp);
 }
 
