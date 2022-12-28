@@ -5,8 +5,6 @@ use aws_sdk_s3::{
     types::SdkError,
     Client,
 };
-use serde::{Deserialize, Serialize};
-use std::error::Error;
 
 use crate::lib::s3::client::client::create_client;
 
@@ -20,8 +18,8 @@ pub async fn set_all_tags(
 
     let mut new_options: Option<Vec<Tag>> = Option::None;
     let mut new_tags: Vec<Tag> = Vec::new();
-    for tag_key in tag_keys {
-        let new_tag: Tag = Tag::builder().key(tag_key).build();
+    for tag_key in &tag_keys {
+        let new_tag: Tag = Tag::builder().key(tag_key).value("").build();
         new_tags.push(new_tag)
     }
 
