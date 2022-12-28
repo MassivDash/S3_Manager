@@ -1,12 +1,14 @@
 use aws_sdk_s3::model::Object;
 use aws_sdk_s3::Client;
-use cached::proc_macro::once;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use tokio_stream::StreamExt;
 
-use crate::lib::s3::client::client::create_client;
+use crate::lib::s3::{
+    client::client::create_client,
+    utils::response_error::{create_error, ResponseError},
+};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct BucketObject {
@@ -34,21 +36,45 @@ pub struct Bucket {
 }
 
 #[tauri::command]
-#[once(time = 900)] // 15 minutes
-pub async fn get_cached_files() -> Vec<Bucket> {
-    return get_files().await;
-}
+pub async fn get_files() -> Result<Vec<Bucket>, ResponseError> {
+    let client_call = create_client().await;
 
-#[tauri::command]
-pub async fn get_files() -> Vec<Bucket> {
-    let client = create_client().await.unwrap();
-    let resp = &client.list_buckets().send().await.unwrap();
+    let client = match client_call {
+        Ok(instance) => instance,
+        Err(err) => {
+            return Err(create_error(
+                "AWS Client Config error".into(),
+                err.to_string(),
+            ))
+        }
+    };
+
+    let resp_call = &client.list_buckets().send().await;
+    let resp = match resp_call {
+        Ok(list) => list,
+        Err(err) => {
+            return Err(create_error(
+                "S3 bucket call failed".into(),
+                err.to_string(),
+            ))
+        }
+    };
+
     let buckets = resp.buckets().unwrap();
     let mut my_buckets = Vec::new();
+
     for bucket in buckets {
-        let files = get_objects(&client, bucket.name().unwrap_or_default())
-            .await
-            .unwrap();
+        let files_call = get_objects(&client, bucket.name().unwrap_or_default()).await;
+        let files = match files_call {
+            Ok(list) => list,
+            Err(err) => {
+                return Err(create_error(
+                    "S3 object call failed".into(),
+                    err.to_string(),
+                ))
+            }
+        };
+
         let mut folders: Vec<BucketFolder> = Vec::new();
         let get_folders: Vec<String> = files
             .clone()
@@ -77,7 +103,7 @@ pub async fn get_files() -> Vec<Bucket> {
             total_size: folders.iter().fold(0, |acc, x| acc + x.total_size),
         });
     }
-    return my_buckets;
+    return Ok(my_buckets);
 }
 
 async fn get_objects(client: &Client, bucket: &str) -> Result<Vec<BucketObject>, Box<dyn Error>> {

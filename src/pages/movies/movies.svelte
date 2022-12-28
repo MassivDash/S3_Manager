@@ -11,6 +11,7 @@
   import type { ImageBucket, CheckedFile, GridCol } from "src/types";
 
   import { handleGrid } from "src/lib/grid";
+  import { showModal } from "src/store/modal";
 
   import VirtualGrid from "src/components/virtualGrid/virtualGrid.svelte";
 
@@ -40,10 +41,18 @@
   }
 
   async function handleSync(): Promise<void> {
-    loading = true;
-    const res: ImageBucket[] = await invoke("get_all_movies");
-    response = res;
-    loading = false;
+    try {
+      loading = true;
+      const res: ImageBucket[] = await invoke("get_all_movies");
+      response = res;
+      loading = false;
+    } catch (err) {
+      showModal({
+        title: err.name,
+        message: err.message,
+        type: "error",
+      })();
+    }
   }
 
   const handleCheckbox = (key: string, bucketName: string): void => {
@@ -92,8 +101,16 @@
   }
 
   onMount(async () => {
-    const res: ImageBucket[] = await invoke("get_all_movies");
-    response = res;
+    try {
+      const res: ImageBucket[] = await invoke("get_all_movies");
+      response = res;
+    } catch (err) {
+      showModal({
+        title: err.name,
+        message: err.message,
+        type: "error",
+      })();
+    }
   });
 </script>
 

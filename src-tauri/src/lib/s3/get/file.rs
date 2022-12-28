@@ -1,8 +1,8 @@
+use crate::lib::s3::utils::response_error::create_error;
+use crate::lib::s3::{client::client::create_client, utils::response_error::ResponseError};
 use aws_sdk_s3::Client;
-use std::{fs::write, io::Error};
-
-use crate::lib::s3::client::client::create_client;
 use serde::{Deserialize, Serialize};
+use std::{fs::write, io::Error};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct FilesToDownload {
@@ -11,23 +11,44 @@ pub struct FilesToDownload {
 }
 
 #[tauri::command]
-pub async fn save_files(keys: Vec<FilesToDownload>, dir: String) -> bool {
-    let client = create_client().await.unwrap();
+pub async fn save_files(keys: Vec<FilesToDownload>, dir: String) -> Result<bool, ResponseError> {
+    let client_result = create_client().await;
+    let client = match client_result {
+        Ok(client) => client,
+        Err(err) => {
+            return Err(create_error(
+                "Aws client config error".into(),
+                err.to_string(),
+            ))
+        }
+    };
+
+    let mut file_errors: Vec<String> = Vec::new();
+
     for key in keys {
-        save_file(
-            key.key,
+        let result = save_file(
+            &key.key,
             &client,
             dir.to_string(),
             key.bucket_name.to_string(),
         )
-        .await
-        .unwrap();
+        .await;
+        let _ops = match result {
+            Ok(()) => (),
+            Err(err) => file_errors.push(format!("{}:{}", &key.key, err.to_string())),
+        };
     }
-    return true;
+
+    if file_errors.is_empty() {
+        Ok(true)
+    } else {
+        let error_string = file_errors.join(", ");
+        Err(create_error("file".into(), error_string))
+    }
 }
 
 pub async fn save_file(
-    key: String,
+    key: &String,
     client: &Client,
     dir: String,
     bucket_name: String,

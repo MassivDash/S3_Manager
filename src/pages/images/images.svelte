@@ -12,6 +12,8 @@
   import { handleGrid } from "src/lib/grid";
   import VirtualGrid from "src/components/virtualGrid/virtualGrid.svelte";
 
+  import { showModal } from "src/store/modal";
+
   const registerFocus = useFocus();
   let response: ImageBucket[];
 
@@ -37,10 +39,18 @@
   }
 
   async function handleSync(): Promise<void> {
-    loading = true;
-    const res: ImageBucket[] = await invoke("get_all_images");
-    response = res;
-    loading = false;
+    try {
+      loading = true;
+      const res: ImageBucket[] = await invoke("get_all_images");
+      response = res;
+      loading = false;
+    } catch (err) {
+      showModal({
+        title: err.name,
+        message: err.message,
+        type: "error",
+      })();
+    }
   }
 
   const handleCheckbox = (key: string, bucketName: string): void => {
@@ -56,18 +66,26 @@
   };
 
   async function handleDownload(checkedFiles: CheckedFile[]): Promise<void> {
-    const dirPath = await open({
-      directory: true,
-      title: "Select a directory",
-    });
-    if (dirPath) {
-      const success = await invoke("save_files", {
-        keys: checkedFiles,
-        dir: dirPath,
+    try {
+      const dirPath = await open({
+        directory: true,
+        title: "Select a directory",
       });
-      if (success) {
-        resetCheckedFiles();
+      if (dirPath) {
+        const success = await invoke("save_files", {
+          keys: checkedFiles,
+          dir: dirPath,
+        });
+        if (success) {
+          resetCheckedFiles();
+        }
       }
+    } catch (err) {
+      showModal({
+        title: err.name,
+        message: err.message,
+        type: "error",
+      })();
     }
   }
 
@@ -89,8 +107,16 @@
   }
 
   onMount(async () => {
-    const res: ImageBucket[] = await invoke("get_all_images");
-    response = res;
+    try {
+      const res: ImageBucket[] = await invoke("get_all_images");
+      response = res;
+    } catch (err) {
+      showModal({
+        title: err.name,
+        message: err.message,
+        type: "error",
+      })();
+    }
   });
 </script>
 

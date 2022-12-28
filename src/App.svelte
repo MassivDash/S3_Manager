@@ -7,6 +7,7 @@
   import Movies from "./pages/movies/movies.svelte";
   import "./tailwind.css";
   import FadeInRoute from "./components/fadeIn/fadeInRoute.svelte";
+  import Modal from "./components/modal/modal.svelte";
 </script>
 
 <Router>
@@ -28,4 +29,5 @@
     <FadeInRoute path="buckets">buckets</FadeInRoute>
     <FadeInRoute path="settings">settings</FadeInRoute>
   </Layout>
+  <Modal />
 </Router>
