@@ -12,14 +12,58 @@
   import { handleGrid } from "src/lib/grid";
   import VirtualGrid from "src/components/virtualGrid/virtualGrid.svelte";
 
+  // For error display
   import { showModal } from "src/store/modal";
 
   const registerFocus = useFocus();
   let response: ImageBucket[];
 
+  // Define loading for rust files call
   let loading = false;
+  // Define resync operations (resync, delete)
+  let resyncing = false;
 
+  // Grid and js responsiveness
+  let innerWidth;
   let gridCol: GridCol = 3;
+
+  // On user window resize, mimic css rwd pattern
+  function onResize(): void {
+    innerWidth = window.innerWidth;
+    switch (true) {
+      case innerWidth < 600 && innerWidth !== 0:
+        gridCol = 1;
+        break;
+      case innerWidth > 600 && innerWidth < 900 && innerWidth !== 0:
+        gridCol = 2;
+        break;
+      case innerWidth > 900 && innerWidth !== 0:
+        gridCol = 3;
+        break;
+      default:
+        gridCol = gridCol;
+    }
+  }
+
+  // On mount get the files from rust
+  // Add grid responsiveness via resize listener
+  onMount(async () => {
+    try {
+      const res: ImageBucket[] = await invoke("get_all_images");
+      response = res;
+    } catch (err) {
+      showModal({
+        title: err.name,
+        message: err.message,
+        type: "error",
+      })();
+    }
+    window.addEventListener("resize", onResize);
+    //clean up on unmount
+    return () => window.removeEventListener("resize", onResize);
+  });
+
+  // Searchbar value and filters
   let value = "";
 
   let filteredList: ImageBucket[] = [];
@@ -32,18 +76,20 @@
         : bucket.files.filter((item) => item.name.indexOf(value) !== -1),
   }));
 
+  // Checkboxes for download and delete
   let checkedFiles: CheckedFile[] = [];
 
   function resetCheckedFiles(): void {
     checkedFiles = [];
   }
 
+  //User manual sync op
   async function handleSync(): Promise<void> {
     try {
-      loading = true;
+      resyncing = true;
       const res: ImageBucket[] = await invoke("get_all_images");
       response = res;
-      loading = false;
+      resyncing = false;
     } catch (err) {
       showModal({
         title: err.name,
@@ -65,6 +111,7 @@
     }
   };
 
+  // Download files directly to local machine
   async function handleDownload(checkedFiles: CheckedFile[]): Promise<void> {
     try {
       const dirPath = await open({
@@ -89,6 +136,7 @@
     }
   }
 
+  // Alert and remove files
   async function handleDelete(checkedFiles: CheckedFile[]): Promise<void> {
     const confirmed = await confirm(
       "This action cannot be reverted. Are you sure you want to delete?",
@@ -98,29 +146,22 @@
       const success = await invoke("delete_files", { keys: checkedFiles });
       if (success) {
         resetCheckedFiles();
-        loading = true;
-        const res: ImageBucket[] = await invoke("get_all_images");
-        response = res;
-        loading = false;
+        try {
+          handleSync();
+        } catch (err) {
+          showModal({
+            title: err.name,
+            message: err.message,
+            type: "error",
+          })();
+        }
       }
     }
   }
-
-  onMount(async () => {
-    try {
-      const res: ImageBucket[] = await invoke("get_all_images");
-      response = res;
-    } catch (err) {
-      showModal({
-        title: err.name,
-        message: err.message,
-        type: "error",
-      })();
-    }
-  });
 </script>
 
-<!-- svelte-ignore non-top-level-reactive-declaration -->
+<svelte:window bind:innerWidth />
+
 <div use:registerFocus class="outline-none">
   {#if !filteredList}
     <div class="flex justify-center items-center w-full h-screen">
@@ -172,5 +213,10 @@
         </VirtualGrid>
       {/each}
     {/if}
+  {/if}
+  {#if resyncing}
+    <div class="fixed bottom-7 left-7">
+      <Loader />
+    </div>
   {/if}
 </div>
