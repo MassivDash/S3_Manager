@@ -6,6 +6,7 @@
   import Sync from "../icons/sync.svelte";
   import Grid from "../icons/grid.svelte";
 
+  import Loader from "../loader/loader.svelte";
   import { fade } from "svelte/transition";
 
   import type { CheckedFile } from "src/types";
@@ -14,17 +15,23 @@
   export let handleDelete: (checkedFiles: CheckedFile[]) => void;
   export let handleDownload: (checkedFiles: CheckedFile[]) => void;
 
-  export let handleSync: () => void | undefined = undefined;
+  export let handleSync: (string: "load" | "sync") => void | undefined =
+    undefined;
   export let handleGrid: () => void | undefined = undefined;
   export let value: string;
+  export let resync: boolean;
 </script>
 
 <div
   class="fixed gap-4 flex w-[calc(100%-120px)] items-center h-20 top-0 right-4 bg-stone-100 text-gray-700 dark:text-white dark:bg-slate-900 z-30"
 >
   {#if handleSync}
-    <IconButton onClick={handleSync}>
-      <Sync />
+    <IconButton onClick={() => handleSync("sync")}>
+      {#if resync}
+        <Loader width={24} height={24} />
+      {:else}
+        <Sync />
+      {/if}
     </IconButton>
   {/if}
   {#if handleGrid}

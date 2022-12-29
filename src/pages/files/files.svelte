@@ -15,13 +15,17 @@
   import type { Bucket, Folder, CheckedFile } from "src/types";
 
   import { showModal } from "src/store/modal";
+  import { files } from "src/store/files";
 
   const registerFocus = useFocus();
   let response: Bucket[];
   let filteredList: Bucket[];
   let value = "";
 
-  $: response;
+  const _unsubscribe = files.subscribe((value) => {
+    response = value;
+  });
+
   $: filteredList = response?.map((bucket: Bucket) => ({
     ...bucket,
     folders:
@@ -40,21 +44,13 @@
   }))[0];
 
   onMount(async () => {
-    try {
-      const res: Bucket[] = await invoke("get_files");
-      response = res;
-    } catch (err) {
-      console.log(err);
-      showModal({
-        title: err.name,
-        message: err.message,
-        type: "error",
-      })();
+    if (!response) {
+      await handleSync("load");
     }
   });
 
   const listenToFileUpload = event.listen("event-resync", () => {
-    handleSync();
+    handleSync("sync");
   });
 
   onDestroy(async () => {
@@ -63,7 +59,8 @@
   });
 
   let selectedFiles: string[] = [];
-  let resyncing = false;
+  let loading = false;
+  let resync = false;
 
   async function handleFilesSelect(
     bucketName: string,
@@ -83,7 +80,7 @@
           files: selectedFiles,
         });
         if (upload) {
-          await handleSync();
+          await handleSync("sync");
         }
       } catch (err) {
         console.log(err);
@@ -102,14 +99,31 @@
     checkedFiles = [];
   }
 
-  async function handleSync(): Promise<void> {
+  //User manual sync op
+  async function handleSync(type: "load" | "sync"): Promise<void> {
+    const load = type === "load";
     try {
-      resyncing = true;
+      if (load) {
+        loading = true;
+      }
+      if (!load) {
+        resync = true;
+      }
       const res: Bucket[] = await invoke("get_files");
-      response = res;
-      resyncing = false;
+      files.set(res);
+      if (load) {
+        loading = false;
+      }
+      if (!load) {
+        resync = false;
+      }
     } catch (err) {
-      console.log(err);
+      if (load) {
+        loading = false;
+      }
+      if (!load) {
+        resync = false;
+      }
       showModal({
         title: err.name,
         message: err.message,
@@ -136,14 +150,14 @@
       title: "Select a directory",
     });
     if (dirPath) {
-      resyncing = true;
+      resync = true;
       const success = await invoke("save_files", {
         keys: checkedFiles,
         dir: dirPath,
       });
       if (success) {
         resetCheckedFiles();
-        resyncing = false;
+        resync = false;
       }
     }
   }
@@ -154,11 +168,20 @@
       { title: "Delete files ?", type: "warning" }
     );
     if (confirmed) {
-      resyncing = true;
-      const success = await invoke("delete_files", { keys: checkedFiles });
-      if (success) {
-        resetCheckedFiles();
-        await handleSync();
+      resync = true;
+      try {
+        const success = await invoke("delete_files", { keys: checkedFiles });
+        if (success) {
+          resetCheckedFiles();
+          await handleSync("sync");
+        }
+      } catch (err) {
+        resync = false;
+        showModal({
+          title: err.name || "Delete files failed",
+          message: err.message,
+          type: "error",
+        })();
       }
     }
   }
@@ -176,19 +199,28 @@
       { title: "Delete folder with all files inside ?", type: "warning" }
     );
     if (confirmed) {
-      resyncing = true;
-      const res = await invoke("delete_folders", {
-        keys: [prepareFolder],
-      });
-      if (res) {
-        await handleSync();
+      resync = true;
+      try {
+        const res = await invoke("delete_folders", {
+          keys: [prepareFolder],
+        });
+        if (res) {
+          await handleSync("sync");
+        }
+      } catch (err) {
+        resync = false;
+        showModal({
+          title: err.name || "Delete files failed",
+          message: err.message,
+          type: "error",
+        })();
       }
     }
   }
 </script>
 
 <div use:registerFocus class="outline-none relative">
-  {#if !filteredList}
+  {#if loading}
     <div class="flex justify-center items-center w-full h-screen">
       <Loader />
     </div>
@@ -198,6 +230,7 @@
       class="fixed w-11/12 justify-between flex items-center h-20 top-0 z-30 right-0"
     >
       <Tools
+        {resync}
         {handleSync}
         {handleDownload}
         {handleDelete}
@@ -206,7 +239,7 @@
       />
     </div>
     <div class="h-10" />
-    {#each filteredList as bucket}
+    {#each filteredList as bucket (bucket.name)}
       <NameDivider
         label={bucket.name +
           " " +
@@ -216,8 +249,11 @@
           " " +
           formatBytes(bucket.total_size)}
       />
-      <AddFolder bucketName={bucket.name} {handleSync} />
-      {#each bucket.folders as folder}
+      <AddFolder
+        bucketName={bucket.name}
+        handleSync={() => handleSync("sync")}
+      />
+      {#each bucket.folders as folder (folder.name)}
         <FileTable
           handleFolderDelete={() =>
             handleFolderDelete(bucket.name, folder.name)}
@@ -229,10 +265,5 @@
         />
       {/each}
     {/each}
-  {/if}
-  {#if resyncing}
-    <div class="fixed bottom-7 left-7">
-      <Loader />
-    </div>
   {/if}
 </div>
