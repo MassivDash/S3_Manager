@@ -4,14 +4,16 @@
   import { invoke } from "@tauri-apps/api";
   import { listen } from "@tauri-apps/api/event";
   import { readDir } from "@tauri-apps/api/fs";
-  import { fade, fly } from "svelte/transition";
+  import { fly } from "svelte/transition";
   import Select from "../select/select.svelte";
   import type { Bucket } from "src/types";
   import type { FileEntry } from "@tauri-apps/api/fs";
-  import Loader from "../loader/loader.svelte";
   import AddFile from "src/components/icons/addFile.svelte";
   import Close from "src/components/icons/close.svelte";
   import Check from "../icons/check.svelte";
+  import CircularProgress from "../circularProgress/circularProgress.svelte";
+  import { showModal } from "src/store/modal";
+
   let visible = false;
   let loading = false;
   let files: string[] = [];
@@ -41,12 +43,30 @@
     return res as string[];
   }
 
+  let uploadedFilesList: string[] = [];
+  const filesUploaded = listen("event-upload-file", (event) => {
+    uploadedFilesList = [...uploadedFilesList, event.payload as string];
+  });
+
   let dirs: Folder[] = [];
   $: dirsLength = dirs.length;
+  $: totalFiles =
+    dirsLength > 0
+      ? dirs
+          .map((folder) => folder.files.length)
+          .reduce(
+            (previousValue, currentValue) => previousValue + currentValue,
+            0
+          ) + (files.length - dirsLength > 0 ? files.length - dirsLength : 0)
+      : files.length;
+  $: progress = (uploadedFilesList.length / totalFiles).toFixed(2);
 
   async function handleDrop(paths: string[]): Promise<void> {
+    // This loads possible folder options
     const res: Bucket[] = await invoke("get_files");
     buckets = res;
+
+    // User can drag as many folders and items before they submit
     files = [...new Set([...files, ...paths])];
     await [...new Set([...files, ...paths])].forEach(async (file: string) => {
       const getName = file.split("/")[file.split("/").length - 1];
@@ -73,17 +93,28 @@
     bucketName: string,
     folderName: string
   ): Promise<void> {
-    loading = true;
-    const upload = await invoke("put_files", {
-      bucketName,
-      folderName,
-      files: paths,
-    });
-    if (upload) {
-      files = [];
-      buckets = [];
-      loading = false;
-      visible = false;
+    try {
+      loading = true;
+      const upload = await invoke("put_files", {
+        bucketName,
+        folderName,
+        files: paths,
+      });
+      if (upload) {
+        dirs = [];
+        files = [];
+        buckets = [];
+        uploadedFilesList = [];
+        loading = false;
+        visible = false;
+      }
+    } catch (err) {
+      console.log(err);
+      showModal({
+        title: err.name,
+        message: err.message,
+        type: "error",
+      })();
     }
   }
 
@@ -91,11 +122,6 @@
     const index = buckets?.findIndex((bucket) => bucket.name === bucketName);
     return index;
   }
-
-  let uploadedFilesList: string[] = [];
-  const filesUploaded = listen("event-upload-file", (event) => {
-    uploadedFilesList = [...uploadedFilesList, event.payload as string];
-  });
 
   onDestroy(async () => {
     const unlisten = await filesUploaded;
@@ -108,16 +134,29 @@
 >
 {#if visible}
   <div
-    in:fly={{ y: 200, duration: 2000 }}
-    out:fade
-    class="fixed overflow-y-auto bottom-0 pl-4 pt-2 pb-4 right-0 w-72 h-5/6 z-50 bg-orange-50 dark:bg-slate-800 flex flex-col rounded-t shadow-sm justify-start items-stretch"
+    in:fly={{ x: 200, duration: 1000 }}
+    out:fly={{ x: 200, duration: 1000 }}
+    class="fixed overflow-y-auto bottom-0 pl-4 pt-2 pb-4 right-0 w-72 h-full z-50 bg-orange-50 dark:bg-slate-800 flex flex-col rounded-t shadow-sm justify-start items-stretch"
   >
     {#if loading}
+      <div
+        class="text-gray-800 dark:text-white flex justify-between items-center mb-4"
+      >
+        <h2>Uploading files</h2>
+        <div
+          class="text-gray-800 m-2 p-2 cursor-pointer dark:text-white bg-orange-50 dark:bg-slate-700 hover:bg-amber-100 hover:text-gray-50 hover:dark:bg-slate-900 hover:dark:text-orange-50"
+        >
+          <Close />
+        </div>
+      </div>
       <div class="w-full h-full flex flex-col justify-center items-center">
-        <Loader />
+        <CircularProgress progress={Number(progress)} />
         <p class="text-xs m-8">
+          {#if uploadedFilesList.length === 0}
+            starting up ...
+          {/if}
           {#if uploadedFilesList.length > 0}
-            Uploading: {uploadedFilesList[uploadedFilesList.length - 1]}
+            uploaded: {uploadedFilesList[uploadedFilesList.length - 1]}
           {/if}
         </p>
       </div>
@@ -132,6 +171,7 @@
             visible = false;
             files = [];
             dirs = [];
+            uploadedFilesList = [];
           }}
         >
           <Close />
@@ -162,13 +202,11 @@
             <p class="my-2">Total:</p>
             <p>
               {`${
-                dirsLength > 1 ? `${dirsLength} directories` : "1 directotry"
-              }  with ${dirs
-                .map((folder) => folder.files.length)
-                .reduce(
-                  (previousValue, currentValue) => previousValue + currentValue,
-                  0
-                )}`} files
+                dirsLength > 1 ? `${dirsLength} directories` : "1 directory"
+              }  with ${
+                totalFiles -
+                (files.length - dirsLength > 0 ? files.length - dirsLength : 0)
+              }`} files
             </p>
           {/if}
           {#if files.length - dirsLength > 0}

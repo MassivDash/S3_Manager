@@ -14,14 +14,19 @@
 
   // For error display
   import { showModal } from "src/store/modal";
+  import { images } from "src/store/images";
 
   const registerFocus = useFocus();
   let response: ImageBucket[];
 
+  const _unsubscribe = images.subscribe((value) => {
+    response = value;
+  });
+
   // Define loading for rust files call
   let loading = false;
   // Define resync operations (resync, delete)
-  let resyncing = false;
+  let resync = false;
 
   // Grid and js responsiveness
   let innerWidth;
@@ -48,15 +53,8 @@
   // On mount get the files from rust
   // Add grid responsiveness via resize listener
   onMount(async () => {
-    try {
-      const res: ImageBucket[] = await invoke("get_all_images");
-      response = res;
-    } catch (err) {
-      showModal({
-        title: err.name,
-        message: err.message,
-        type: "error",
-      })();
+    if (!response) {
+      await handleSync("load");
     }
     window.addEventListener("resize", onResize);
     //clean up on unmount
@@ -84,13 +82,30 @@
   }
 
   //User manual sync op
-  async function handleSync(): Promise<void> {
+  async function handleSync(type: "load" | "sync"): Promise<void> {
+    const load = type === "load";
     try {
-      resyncing = true;
+      if (load) {
+        loading = true;
+      }
+      if (!load) {
+        resync = true;
+      }
       const res: ImageBucket[] = await invoke("get_all_images");
-      response = res;
-      resyncing = false;
+      images.set(res);
+      if (load) {
+        loading = false;
+      }
+      if (!load) {
+        resync = false;
+      }
     } catch (err) {
+      if (load) {
+        loading = false;
+      }
+      if (!load) {
+        resync = false;
+      }
       showModal({
         title: err.name,
         message: err.message,
@@ -147,7 +162,7 @@
       if (success) {
         resetCheckedFiles();
         try {
-          handleSync();
+          handleSync("sync");
         } catch (err) {
           showModal({
             title: err.name,
@@ -174,6 +189,7 @@
     >
       <Tools
         handleGrid={() => (gridCol = handleGrid(gridCol))}
+        {resync}
         {handleSync}
         {handleDownload}
         {handleDelete}
@@ -187,7 +203,7 @@
         <Loader />
       </div>
     {:else}
-      {#each filteredList as bucket}
+      {#each filteredList as bucket (bucket.name)}
         <NameDivider
           label={`bucket: ${bucket.name}
       ${bucket.files.length > 0 ? `(${bucket.files.length})` : ""}`}
@@ -198,7 +214,7 @@
           {gridCol}
           let:gridCell
         >
-          {#each gridCell as i}
+          {#each gridCell as i (i.key)}
             <GridImage
               {handleCheckbox}
               {checkedFiles}
@@ -213,10 +229,5 @@
         </VirtualGrid>
       {/each}
     {/if}
-  {/if}
-  {#if resyncing}
-    <div class="fixed bottom-7 left-7">
-      <Loader />
-    </div>
   {/if}
 </div>

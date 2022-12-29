@@ -23,7 +23,11 @@
   }
 </script>
 
-<div class="flex gap-2">
+<form
+  class="flex gap-2"
+  on:submit|preventDefault={async () =>
+    await handleAddFolder(bucketName, value)}
+>
   {#if !visible}
     <IconButton onClick={() => (visible = true)}>
       <AddFolder />
@@ -38,14 +42,17 @@
       placeholder="Enter folder name"
       class="placeholder-gray-500 h-14 border-orange-100 text-gray-900 dark:text-white bg-orange-50 dark:bg-slate-800  dark:placeholder-white appearance-none outline-none border-2 border-transparent border-spacing-1  focus:border-orange-600 rounded  p-2"
     />
-    <IconButton onClick={async () => await handleAddFolder(bucketName, value)}>
+    <IconButton
+      type={"submit"}
+      onClick={async () => await handleAddFolder(bucketName, value)}
+    >
       {#if uploading}
-        <div class="flex pl-2 flex-shrink h-6 justify-center items-center">
-          <Loader />
+        <div class="flex flex-shrink h-6 justify-center items-center">
+          <Loader width={24} height={24} />
         </div>
       {:else}
         <Check /> Submit
       {/if}
     </IconButton>
   {/if}
-</div>
+</form>

@@ -12,18 +12,44 @@
 
   import { handleGrid } from "src/lib/grid";
   import { showModal } from "src/store/modal";
+  import { movies } from "src/store/movies";
 
   import VirtualGrid from "src/components/virtualGrid/virtualGrid.svelte";
 
   const registerFocus = useFocus();
   let response: ImageBucket[];
 
-  let loading = false;
+  const _unsubscribe = movies.subscribe((value) => {
+    response = value;
+  });
 
+  // Define loading for rust files call
+  let loading = false;
+  // Define resync operations (resync, delete)
+  let resync = false;
+
+  // Grid and js responsiveness
+  let innerWidth;
   let gridCol: GridCol = 2;
 
-  let value = "";
+  function onResize(): void {
+    innerWidth = window.innerWidth;
+    switch (true) {
+      case innerWidth < 600 && innerWidth !== 0:
+        gridCol = 1;
+        break;
+      case innerWidth > 600 && innerWidth < 900 && innerWidth !== 0:
+        gridCol = 2;
+        break;
+      case innerWidth > 900 && innerWidth !== 0:
+        gridCol = 3;
+        break;
+      default:
+        gridCol = gridCol;
+    }
+  }
 
+  let value = "";
   let filteredList: ImageBucket[] = [];
 
   $: filteredList = response?.map((bucket) => ({
@@ -40,13 +66,31 @@
     checkedFiles = [];
   }
 
-  async function handleSync(): Promise<void> {
+  async function handleSync(type: "load" | "sync"): Promise<void> {
+    const load = type === "load";
+
     try {
-      loading = true;
+      if (load) {
+        loading = true;
+      }
+      if (!load) {
+        resync = true;
+      }
       const res: ImageBucket[] = await invoke("get_all_movies");
-      response = res;
-      loading = false;
+      movies.set(res);
+      if (load) {
+        loading = false;
+      }
+      if (!load) {
+        resync = false;
+      }
     } catch (err) {
+      if (load) {
+        loading = false;
+      }
+      if (!load) {
+        resync = false;
+      }
       showModal({
         title: err.name,
         message: err.message,
@@ -92,25 +136,16 @@
       const success = await invoke("delete_files", { keys: checkedFiles });
       if (success) {
         resetCheckedFiles();
-        loading = true;
-        const res: ImageBucket[] = await invoke("get_all_movies");
-        response = res;
-        loading = false;
+        await handleSync("sync");
       }
     }
   }
 
   onMount(async () => {
-    try {
-      const res: ImageBucket[] = await invoke("get_all_movies");
-      response = res;
-    } catch (err) {
-      showModal({
-        title: err.name,
-        message: err.message,
-        type: "error",
-      })();
-    }
+    !response && (await handleSync("load"));
+    window.addEventListener("resize", onResize);
+    //clean up on unmount
+    return () => window.removeEventListener("resize", onResize);
   });
 </script>
 
@@ -127,6 +162,7 @@
     >
       <Tools
         handleGrid={() => (gridCol = handleGrid(gridCol))}
+        {resync}
         {handleSync}
         {handleDownload}
         {handleDelete}
@@ -140,7 +176,7 @@
         <Loader />
       </div>
     {:else}
-      {#each filteredList as bucket}
+      {#each filteredList as bucket (bucket.name)}
         <NameDivider
           label={`bucket: ${bucket.name}
   ${bucket.files.length > 0 ? `(${bucket.files.length})` : ""}`}
@@ -151,7 +187,7 @@
           {gridCol}
           let:gridCell
         >
-          {#each gridCell as i}
+          {#each gridCell as i (i.key)}
             <GridVideo
               {handleCheckbox}
               {checkedFiles}
