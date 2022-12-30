@@ -7,6 +7,7 @@
   import Grid from "../icons/grid.svelte";
 
   import Loader from "../loader/loader.svelte";
+  import IntermediateProgress from "../intermediateProgress/intermediateProgress.svelte";
   import { fade } from "svelte/transition";
 
   import type { CheckedFile } from "src/types";
@@ -23,44 +24,51 @@
 </script>
 
 <div
-  class="fixed gap-4 flex w-[calc(100%-120px)] items-center h-20 top-0 right-4 bg-stone-100 text-gray-700 dark:text-white dark:bg-slate-900 z-30"
+  class="fixed gap-4 w-[calc(100%-120px)] h-20 top-0 right-4 bg-stone-100 text-gray-700 dark:text-white dark:bg-slate-900 z-30"
 >
-  {#if handleSync}
-    <IconButton onClick={() => handleSync("sync")}>
-      {#if resync}
-        <Loader width={24} height={24} />
-      {:else}
-        <Sync />
-      {/if}
-    </IconButton>
-  {/if}
-  {#if handleGrid}
-    <IconButton onClick={handleGrid}>
-      <Grid />
-    </IconButton>
-  {/if}
-  <div class="justify-self-center flex-grow">
-    <Search
-      bind:value
-      hidelabel="true"
-      class="placeholder-gray-500 h-14 w-full border-orange-100 text-gray-900 dark:text-white bg-orange-50 dark:bg-slate-800  dark:placeholder-white appearance-none outline-none border-2 border-transparent border-spacing-1  focus:border-orange-600 rounded  p-2"
-    />
-  </div>
-  {#if checkedFiles && checkedFiles.length > 0}
-    <div
-      id="tool"
-      class="transition-opacity mr-0 gap-4 flex text-gray-600 ease-in duration-700"
-      in:fade={{ duration: 700 }}
-      out:fade={{ duration: 700 }}
-    >
-      <IconButton onClick={() => handleDownload(checkedFiles)}>
-        Download
-        <Download />
+  <div class="gap-4 flex items-center h-20">
+    {#if handleSync}
+      <IconButton onClick={() => handleSync("sync")}>
+        {#if resync}
+          <Loader width={24} height={24} />
+        {:else}
+          <Sync />
+        {/if}
       </IconButton>
-      <IconButton onClick={() => handleDelete(checkedFiles)}>
-        Remove
-        <Delete />
+    {/if}
+    {#if handleGrid}
+      <IconButton onClick={handleGrid}>
+        <Grid />
       </IconButton>
+    {/if}
+    <div class="justify-self-center flex-grow">
+      <Search
+        bind:value
+        hidelabel="true"
+        class="placeholder-gray-500 h-14 w-full border-orange-100 text-gray-900 dark:text-white bg-orange-50 dark:bg-slate-800  dark:placeholder-white appearance-none outline-none border-2 border-transparent border-spacing-1  focus:border-orange-600 rounded  p-2"
+      />
     </div>
-  {/if}
+    {#if checkedFiles && checkedFiles.length > 0}
+      <div
+        id="tool"
+        class="transition-opacity mr-0 gap-4 flex text-gray-600 ease-in duration-700"
+        in:fade={{ duration: 700 }}
+        out:fade={{ duration: 700 }}
+      >
+        <IconButton onClick={() => handleDownload(checkedFiles)}>
+          Download
+          <Download />
+        </IconButton>
+        <IconButton onClick={() => handleDelete(checkedFiles)}>
+          Remove
+          <Delete />
+        </IconButton>
+      </div>
+    {/if}
+  </div>
+  <div class="-mt-4 r-2 flex justify-end">
+    {#if resync}
+      <IntermediateProgress />
+    {/if}
+  </div>
 </div>
