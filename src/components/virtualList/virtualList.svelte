@@ -1,14 +1,17 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
-
   // props
   export let items;
   export let height = "100%";
   export let itemHeight = undefined;
-
   // read-only, but visible to consumers via bind:start
   export let start = 0;
   export let end = 0;
+  export let realMount = false;
+  let mounted = false;
+
+  //Connect to store
+
   // local state
   let height_map = [];
   let rows;
@@ -16,26 +19,13 @@
   let contents;
   let viewport_height = 0;
   let visible;
-  let mounted;
-
   let top = 0;
   let bottom = 0;
-  let average_height = 0;
-
-  $: {
-    if (items.length > 0) {
-      const remaining = items.length - end;
-      if (remaining > 0) bottom = remaining * average_height;
-      else bottom = 0;
-    } else {
-      bottom = 0;
-    }
-  }
+  let average_height;
 
   $: visible = items.slice(start, end).map((data, i) => {
     return { index: i + start, data };
   });
-
   // whenever `items` changes, invalidate the current heightmap
   $: if (mounted) refresh(items, viewport_height, itemHeight);
 
@@ -47,81 +37,71 @@
     }
 
     const { scrollTop } = viewport;
-
     await tick(); // wait until the DOM is up to date
-
     let content_height = top - scrollTop;
     let i = start;
-
     while (content_height < viewport_height && i < items.length) {
       let row = rows[i - start];
-
       if (!row) {
         end = i + 1;
         await tick(); // render the newly visible row
         row = rows[i - start];
       }
-
       const row_height = (height_map[i] = itemHeight || row.offsetHeight);
       content_height += row_height;
       i += 1;
     }
-
     end = i;
-
+    const remaining = items.length - end;
     average_height = (top + content_height) / end;
-
+    bottom = remaining * average_height;
     height_map.length = items.length;
+    if (!realMount) {
+      realMount = true;
+    }
   }
-
   async function handle_scroll(): Promise<void> {
     const { scrollTop } = viewport;
-
     for (let v = 0; v < rows.length; v += 1) {
       height_map[start + v] = itemHeight || rows[v].offsetHeight;
     }
-
     let i = 0;
     let y = 0;
-
     while (i < items.length) {
       const row_height = height_map[i] || average_height;
       if (y + row_height > scrollTop) {
         start = i;
         top = y;
-
         break;
       }
-
       y += row_height;
       i += 1;
     }
-
     while (i < items.length) {
       y += height_map[i] || average_height;
       i += 1;
-
       if (y > scrollTop + viewport_height) break;
     }
-
     end = i;
-
+    const remaining = items.length - end;
     average_height = y / end;
-
     while (i < items.length) height_map[i++] = average_height;
+    bottom = remaining * average_height; // Save last item scroll position
 
     // TODO if we overestimated the space these
     // rows would occupy we may need to add some
     // more. maybe we can just call handle_scroll again?
   }
-
   export async function scrollToIndex(index, opts): Promise<void> {
+    console.log("here", index);
     const { scrollTop } = viewport;
     const itemsDelta = index - start;
     const _itemHeight = itemHeight || average_height;
     const distance = itemsDelta * _itemHeight;
     opts = {
+      left: 0,
       top: scrollTop + distance,
+      behavior: "smooth",
       ...opts,
     };
     viewport.scrollTo(opts);
@@ -133,8 +113,6 @@
     mounted = true;
   });
 </script>
-
-<!-- use:bindOffsetHeight -->
 
 <svelte-virtual-list-viewport
   bind:this={viewport}
@@ -161,12 +139,10 @@
     -webkit-overflow-scrolling: touch;
     display: block;
   }
-
   svelte-virtual-list-contents,
   svelte-virtual-list-row {
     display: block;
   }
-
   svelte-virtual-list-row {
     overflow: hidden;
   }

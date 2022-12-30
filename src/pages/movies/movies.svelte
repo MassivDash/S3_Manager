@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import { invoke } from "@tauri-apps/api";
   import { useFocus } from "svelte-navigator";
   import { open, confirm } from "@tauri-apps/api/dialog";
@@ -12,7 +12,11 @@
 
   import { handleGrid } from "src/lib/grid";
   import { showModal } from "src/store/modal";
-  import { movies } from "src/store/movies";
+  import {
+    movies,
+    movies_grid_option,
+    movies_scroll_index,
+  } from "src/store/movies";
 
   import VirtualGrid from "src/components/virtualGrid/virtualGrid.svelte";
 
@@ -28,9 +32,14 @@
   // Define resync operations (resync, delete)
   let resync = false;
 
+  let savedGridOption: GridCol;
+  const _unsubscribeGridOption = movies_grid_option.subscribe((value) => {
+    savedGridOption = value;
+  });
+
   // Grid and js responsiveness
   let innerWidth;
-  let gridCol: GridCol = 2;
+  let gridCol: GridCol = savedGridOption ? savedGridOption : 2;
 
   function onResize(): void {
     innerWidth = window.innerWidth;
@@ -147,6 +156,34 @@
     //clean up on unmount
     return () => window.removeEventListener("resize", onResize);
   });
+
+  let savedScroll: number;
+  const _unsubscribeScroll = movies_scroll_index.subscribe((value) => {
+    savedScroll = value;
+  });
+
+  let scrollToIndex;
+  function scrollToItem(number: number): void {
+    console.log(number);
+    scrollToIndex(number);
+  }
+
+  // End item index needed for scroll restore
+  let start; // first in view
+
+  // virtual list mounted
+  let realMount;
+
+  $: if (realMount) {
+    savedScroll && scrollToItem(savedScroll);
+    movies_scroll_index.set(undefined);
+  }
+
+  onDestroy(() => {
+    // Save scroll position
+    movies_scroll_index.set(start);
+    movies_grid_option.set(gridCol);
+  });
 </script>
 
 <!-- svelte-ignore non-top-level-reactive-declaration -->
@@ -185,6 +222,9 @@
           items={bucket.files}
           length={bucket.files.length}
           {gridCol}
+          bind:start
+          bind:scrollToIndex
+          bind:realMount
           let:gridCell
         >
           {#each gridCell as i (i.key)}

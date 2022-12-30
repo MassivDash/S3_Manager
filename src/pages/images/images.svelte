@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import { invoke } from "@tauri-apps/api";
   import { useFocus } from "svelte-navigator";
   import { open, confirm } from "@tauri-apps/api/dialog";
@@ -14,13 +14,28 @@
 
   // For error display
   import { showModal } from "src/store/modal";
-  import { images } from "src/store/images";
+  import {
+    images,
+    images_scroll_index,
+    image_grid_option,
+  } from "src/store/images";
 
   const registerFocus = useFocus();
+
   let response: ImageBucket[];
 
-  const _unsubscribe = images.subscribe((value) => {
+  const _unsubscribeList = images.subscribe((value) => {
     response = value;
+  });
+
+  let savedScroll: number;
+  const _unsubscribeScroll = images_scroll_index.subscribe((value) => {
+    savedScroll = value;
+  });
+
+  let savedGridOption: GridCol;
+  const _unsubscribeGridOption = image_grid_option.subscribe((value) => {
+    savedGridOption = value;
   });
 
   // Define loading for rust files call
@@ -30,7 +45,7 @@
 
   // Grid and js responsiveness
   let innerWidth;
-  let gridCol: GridCol = 3;
+  let gridCol: GridCol = savedGridOption ? savedGridOption : 3;
 
   // On user window resize, mimic css rwd pattern
   function onResize(): void {
@@ -50,15 +65,42 @@
     }
   }
 
+  // Save scroll position
+
+  let scrollToIndex;
+  function scrollToItem(number: number): void {
+    scrollToIndex(number);
+  }
+
+  // End item index needed for scroll restore
+  let start; // first in view
+  let end; // last in view
+
+  // virtual list mounted
+  let realMount;
+
+  $: if (realMount) {
+    savedScroll && scrollToItem(savedScroll);
+    images_scroll_index.set(undefined);
+  }
+
   // On mount get the files from rust
   // Add grid responsiveness via resize listener
   onMount(async () => {
     if (!response) {
       await handleSync("load");
     }
+
     window.addEventListener("resize", onResize);
     //clean up on unmount
     return () => window.removeEventListener("resize", onResize);
+  });
+
+  onDestroy(() => {
+    // Save scroll position
+    images_scroll_index.set(start);
+    // Save user gird option
+    image_grid_option.set(gridCol);
   });
 
   // Searchbar value and filters
@@ -211,7 +253,11 @@
         <VirtualGrid
           items={bucket.files}
           length={bucket.files.length}
+          bind:end
+          bind:start
+          bind:realMount
           {gridCol}
+          bind:scrollToIndex
           let:gridCell
         >
           {#each gridCell as i (i.key)}
