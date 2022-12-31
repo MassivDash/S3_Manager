@@ -106,7 +106,7 @@ async fn show_objects(
                 client,
                 bucket,
                 &object.key().unwrap_or_default().to_string(),
-                9000, //15 minutes
+                36000, //15 minutes
             )
             .await
             .unwrap();
