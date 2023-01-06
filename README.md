@@ -1,8 +1,68 @@
-# Svelte + TS + Vite
+# S3 Manager 
+
+A graphical user interface to aws s3 service. 
+
+This project is standalone application for connecting to your AWS S3 service.
+Tested on Mac, Linux, Win 10. 
+
+## Prerequisites 
+### AWS Account 
+In order to use the application you need aws account with s3 service activated. S3 app uses standard aws config files used for aws cli connection [info here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html).  
+
+```
+~/.aws/credentials
+```
+
+```
+[default]
+aws_access_key_id=AKIAIOSFODNN7EXAMPLE
+aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+```
+
+```
+~/.aws/config
+```
+
+```
+[default]
+region=us-west-2
+output=json
+```
+
+### Local Install 
+Rust lang (cargo) and node.js (npm or yarn) installations are needed in order to run the project. 
+
+
+## Development  
+### Architecture
+
+This application is based on [tauri.app](https://tauri.app/), RUST lang in the backend (core0 of the app and frontend things are handled by svelte + vite + ts combo. 
+
+Simple division: Rust manages the data and the calls, front end displays the data. 
+
+### Start 
+
+```
+cargo tauri dev
+```
+
+### Build 
+
+```
+cargo tauri dev
+```
+
+
+## Backend development
+Rust has its own docs on each package 
+
+
+### Official Template docs:  Front end development
+### Svelte + TS + Vite
 
 This template should help get you started developing with Svelte and TypeScript in Vite.
 
-## Recommended IDE Setup
+#### Recommended IDE Setup
 
 [VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
 
