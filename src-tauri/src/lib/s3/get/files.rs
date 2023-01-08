@@ -118,7 +118,7 @@ async fn get_objects(client: &Client, bucket: &str) -> Result<Vec<BucketObject>,
     while let Some(page) = resp.next().await {
         let items = page?
             .contents()
-            .unwrap()
+            .unwrap_or_default()
             .iter()
             .map(|x| x.clone())
             .collect::<Vec<Object>>();
