@@ -39,9 +39,13 @@
           })),
   }));
 
-  $: bucketFiles = filteredList?.map((bucket) => ({
-    [bucket.name]: bucket.folders.map((item) => item.files).flat().length,
-  }))[0];
+  $: filesCounter = filteredList?.reduce(
+    (acc, bucket) => ({
+      ...acc,
+      [bucket.name]: bucket.folders.map((item) => item.files).flat().length,
+    }),
+    {}
+  );
 
   onMount(async () => {
     if (!response) {
@@ -239,16 +243,19 @@
       />
     </div>
     <div class="h-10" />
+    {@debug filesCounter}
+
     {#each filteredList as bucket (bucket.name)}
       <NameDivider
         label={bucket.name +
           " " +
           "(" +
-          bucketFiles[bucket.name] +
+          filesCounter[bucket.name] +
           ")" +
           " " +
           formatBytes(bucket.total_size)}
       />
+      {@debug bucket}
       <AddFolder
         bucketName={bucket.name}
         handleSync={() => handleSync("sync")}
