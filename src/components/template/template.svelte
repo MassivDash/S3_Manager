@@ -10,7 +10,7 @@
   <div class="relative w-24">
     <SideMenu />
   </div>
-  <main id="main" class="w-full overflow-y-auto p-4 relative">
+  <main id="main" class="w-full overflow-y-hidden p-4 relative">
     <DropFiles>
       <slot />
     </DropFiles>

@@ -119,6 +119,7 @@
   bind:offsetHeight={viewport_height}
   on:scroll={handle_scroll}
   style="height: {height};"
+  id="scroller-inner"
 >
   <svelte-virtual-list-contents
     bind:this={contents}
@@ -145,5 +146,18 @@
   }
   svelte-virtual-list-row {
     overflow: hidden;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    #scroller-inner::-webkit-scrollbar {
+      background-color: #10172a;
+      width: 10px;
+    }
+    #scroller-inner::-webkit-scrollbar-thumb {
+      background: #fff;
+      border-radius: 10px;
+      height: 15px;
+      width: 5px;
+    }
   }
 </style>

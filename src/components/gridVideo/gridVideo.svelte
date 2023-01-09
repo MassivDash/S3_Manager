@@ -28,10 +28,10 @@
   }
 </script>
 
-<div>
-  <div
-    class="min-h-[calc(200px+3.5rem)] overflow-hidden bg-orange-50 dark:bg-slate-700 rounded-md flex flex-col m-2"
-  >
+<div
+  class="min-h-[calc(200px+3.5rem)] overflow-hidden bg-orange-50 dark:bg-slate-700 rounded-sm flex flex-col mr-2 my-2 last-of-type:mr-0"
+>
+  <div>
     <div class="flex items-center justify-between">
       <div class="bg-orange-50 dark:bg-slate-700 p-2 h-14 flex items-center">
         <Checkbox
