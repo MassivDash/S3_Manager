@@ -4,15 +4,13 @@
   import { useFocus } from "svelte-navigator";
   import { open, confirm } from "@tauri-apps/api/dialog";
   import Loader from "src/components/loader/loader.svelte";
-  import NameDivider from "src/components/nameDivider/nameDivider.svelte";
-  import GridImage from "src/components/gridImage/gridImage.svelte";
+
   import Tools from "src/components/tools/tools.svelte";
   import Scroller from "src/components/scroller/scroller.svelte";
+  import BucketGrid from "./bucket.svelte";
 
   import type { ImageBucket, CheckedFile, GridCol } from "src/types";
   import { handleGrid } from "src/lib/grid";
-  import VirtualGrid from "src/components/virtualGrid/virtualGrid.svelte";
-
   // For error display
   import { showModal } from "src/store/modal";
   import {
@@ -66,25 +64,6 @@
     }
   }
 
-  // Save scroll position
-
-  let scrollToIndex;
-  function scrollToItem(number: number): void {
-    scrollToIndex(number);
-  }
-
-  // End item index needed for scroll restore
-  let start; // first in view
-  let end; // last in view
-
-  // virtual list mounted
-  let realMount;
-
-  $: if (realMount) {
-    savedScroll && scrollToItem(savedScroll);
-    images_scroll_index.set(undefined);
-  }
-
   // On mount get the files from rust
   // Add grid responsiveness via resize listener
   onMount(async () => {
@@ -98,8 +77,6 @@
   });
 
   onDestroy(() => {
-    // Save scroll position
-    images_scroll_index.set(start);
     // Save user gird option
     image_grid_option.set(gridCol);
   });
@@ -245,35 +222,7 @@
     {:else}
       <Scroller>
         {#each filteredList as bucket (bucket.name)}
-          <div class="mr-6">
-            <NameDivider
-              label={`bucket: ${bucket.name}
-      ${bucket.files.length > 0 ? `(${bucket.files.length})` : ""}`}
-            />
-          </div>
-          <VirtualGrid
-            items={bucket.files}
-            length={bucket.files.length}
-            bind:end
-            bind:start
-            bind:realMount
-            {gridCol}
-            bind:scrollToIndex
-            let:gridCell
-          >
-            {#each gridCell as i (i.key)}
-              <GridImage
-                {handleCheckbox}
-                {checkedFiles}
-                name={i.name}
-                key={i.key}
-                url={i.url}
-                size={i.size}
-                last_modified={i.last_modified}
-                {bucket}
-              />
-            {/each}
-          </VirtualGrid>
+          <BucketGrid {bucket} {checkedFiles} {gridCol} {handleCheckbox} />
         {/each}
       </Scroller>
     {/if}
