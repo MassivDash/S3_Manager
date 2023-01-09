@@ -34,7 +34,10 @@
         : bucket.folders.map((folder: Folder) => ({
             ...folder,
             files: folder.files.filter(
-              (item) => item.name.indexOf(value) !== -1
+              (item) =>
+                item.name
+                  .toLocaleLowerCase()
+                  .indexOf(value.toLocaleLowerCase()) !== -1
             ),
           })),
   }));

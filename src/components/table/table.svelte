@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { formatBytes, formatDate } from "../../lib/date";
+  import { formatBytes, formatDate, isImage } from "src/lib";
   import Checkbox from "../checkbox/checkbox.svelte";
   import type { File, CheckedFile } from "src/types";
   import VirtualList from "../virtualList/virtualList.svelte";
   import { Link } from "svelte-navigator";
   import { invoke } from "@tauri-apps/api";
+  import Preview from "../icons/preview.svelte";
 
   interface ImageObject {
     key: string;
@@ -46,7 +47,8 @@
     <tbody class="block relative w-full">
       <VirtualList items={files} {height} let:item bind:start bind:end>
         <tr
-          class="flex items-center text-gray-700 dark:text-white my-2 py-2 border-orange-100 dark:border-slate-500  border-b-2"
+          class="flex items-center text-gray-700 dark:text-white my-2 py-2 border-orange-100 dark:border-slate-500  border-b-2 "
+          on:mouseover={() => (mouseOverImage = null)}
         >
           <td id="checkbox" class="ml-4 flex items-bottom justify-center h-10">
             <Checkbox
@@ -55,14 +57,25 @@
               {checkedFiles}
             />
           </td>
-          <td
-            class="px-2 py-2 w-8/12"
-            on:mouseover={() => handleMouseOver(item.key, bucketName)}
-            on:focus={() => handleMouseOver(item.key, bucketName)}
-            on:blur={() => (mouseOverImage = null)}
-            on:mouseleave={() => (mouseOverImage = null)}
-            ><Link to="images/{bucketName}/{item.key}">{item.name}</Link></td
-          >
+          <td class="px-2 py-2 w-8/12 flex gap-4 align-middle items-center"
+            ><Link
+              on:mouseover={() => (mouseOverImage = null)}
+              to="images/{bucketName}/{item.key}">{item.name}</Link
+            >
+            {#if isImage(item.key)}
+              <div
+                on:mouseover={() => handleMouseOver(item.key, bucketName)}
+                on:focus={() => handleMouseOver(item.key, bucketName)}
+                on:blur={() => (mouseOverImage = null)}
+                on:mouseleave={() => (mouseOverImage = null)}
+                on:mouseout={() => (mouseOverImage = null)}
+                class="hover:opacity-50"
+              >
+                <Preview width={24} height={24} />
+              </div>
+            {/if}
+          </td>
+
           <td class="px-2 py-2 ml-2 w-2/12">{formatBytes(item.size)}</td>
           <td class="px-2 py-2 ml-2 w-2/12">{formatDate(item.last_modified)}</td
           >
