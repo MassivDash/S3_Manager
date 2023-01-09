@@ -4,22 +4,15 @@
   import { useFocus } from "svelte-navigator";
   import { open, confirm } from "@tauri-apps/api/dialog";
   import Loader from "src/components/loader/loader.svelte";
-  import NameDivider from "src/components/nameDivider/nameDivider.svelte";
-  import GridVideo from "src/components/gridVideo/gridVideo.svelte";
   import Tools from "src/components/tools/tools.svelte";
   import Scroller from "src/components/scroller/scroller.svelte";
+  import BucketGrid from "./bucket.svelte";
 
   import type { ImageBucket, CheckedFile, GridCol } from "src/types";
 
   import { handleGrid } from "src/lib/grid";
   import { showModal } from "src/store/modal";
-  import {
-    movies,
-    movies_grid_option,
-    movies_scroll_index,
-  } from "src/store/movies";
-
-  import VirtualGrid from "src/components/virtualGrid/virtualGrid.svelte";
+  import { movies, movies_grid_option } from "src/store/movies";
 
   const registerFocus = useFocus();
   let response: ImageBucket[];
@@ -157,32 +150,8 @@
     //clean up on unmount
     return () => window.removeEventListener("resize", onResize);
   });
-
-  let savedScroll: number;
-  const _unsubscribeScroll = movies_scroll_index.subscribe((value) => {
-    savedScroll = value;
-  });
-
-  let scrollToIndex;
-  function scrollToItem(number: number): void {
-    console.log(number);
-    scrollToIndex(number);
-  }
-
-  // End item index needed for scroll restore
-  let start; // first in view
-
-  // virtual list mounted
-  let realMount;
-
-  $: if (realMount) {
-    savedScroll && scrollToItem(savedScroll);
-    movies_scroll_index.set(undefined);
-  }
-
   onDestroy(() => {
     // Save scroll position
-    movies_scroll_index.set(start);
     movies_grid_option.set(gridCol);
   });
 </script>
@@ -213,33 +182,7 @@
     {:else}
       <Scroller>
         {#each filteredList as bucket (bucket.name)}
-          <div class="mr-6">
-            <NameDivider
-              label={`bucket: ${bucket.name}
-  ${bucket.files.length > 0 ? `(${bucket.files.length})` : ""}`}
-            />
-          </div>
-          <VirtualGrid
-            items={bucket.files}
-            length={bucket.files.length}
-            {gridCol}
-            bind:start
-            bind:scrollToIndex
-            bind:realMount
-            let:gridCell
-          >
-            {#each gridCell as i (i.key)}
-              <GridVideo
-                {handleCheckbox}
-                {checkedFiles}
-                name={i.name}
-                key={i.key}
-                url={i.url}
-                size={i.size}
-                {bucket}
-              />
-            {/each}
-          </VirtualGrid>
+          <BucketGrid {bucket} {checkedFiles} {gridCol} {handleCheckbox} />
         {/each}
       </Scroller>
     {/if}

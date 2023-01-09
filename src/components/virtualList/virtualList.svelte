@@ -93,7 +93,6 @@
     // more. maybe we can just call handle_scroll again?
   }
   export async function scrollToIndex(index, opts): Promise<void> {
-    console.log("here", index);
     const { scrollTop } = viewport;
     const itemsDelta = index - start;
     const _itemHeight = itemHeight || average_height;

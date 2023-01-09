@@ -13,6 +13,7 @@
   import Back from "src/components/icons/back.svelte";
   import IconButton from "src/components/iconButton/iconButton.svelte";
   import { formatBytes, formatDate } from "src/lib/date";
+  import { showModal } from "src/store/modal";
 
   let bucket: string;
   let key: string;
@@ -30,6 +31,11 @@
       response = res;
     } catch (err) {
       console.log(err);
+      showModal({
+        title: err.name,
+        message: err.message,
+        type: "error",
+      })();
     }
   });
 </script>
