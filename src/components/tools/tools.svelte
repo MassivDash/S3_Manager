@@ -24,7 +24,7 @@
 </script>
 
 <div
-  class="fixed gap-4 w-[calc(100%-120px)] h-20 top-0 right-4 bg-stone-100 text-gray-700 dark:text-white dark:bg-slate-900 z-30"
+  class="gap-4 h-20 top-0 left-0 bg-stone-100 text-gray-700 dark:text-white dark:bg-slate-900 z-30"
 >
   <div class="gap-4 flex items-center h-20">
     {#if handleSync}

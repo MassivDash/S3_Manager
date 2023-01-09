@@ -11,6 +11,7 @@
   import NameDivider from "src/components/nameDivider/nameDivider.svelte";
   import FileTable from "src/components/fileTable/fileTable.svelte";
   import AddFolder from "src/components/addFolder/addFolder.svelte";
+  import Scroller from "src/components/scroller/scroller.svelte";
 
   import type { Bucket, Folder, CheckedFile } from "src/types";
 
@@ -226,16 +227,14 @@
   }
 </script>
 
-<div use:registerFocus class="outline-none relative">
+<div use:registerFocus class="outline-none">
   {#if loading}
     <div class="flex justify-center items-center w-full h-screen">
       <Loader />
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div
-      class="fixed w-11/12 justify-between flex items-center h-20 top-0 z-30 right-0"
-    >
+    <div class="mr-7">
       <Tools
         {resync}
         {handleSync}
@@ -245,35 +244,35 @@
         bind:value
       />
     </div>
-    <div class="h-10" />
-    {@debug filesCounter}
-
-    {#each filteredList as bucket (bucket.name)}
-      <NameDivider
-        label={bucket.name +
-          " " +
-          "(" +
-          filesCounter[bucket.name] +
-          ")" +
-          " " +
-          formatBytes(bucket.total_size)}
-      />
-      {@debug bucket}
-      <AddFolder
-        bucketName={bucket.name}
-        handleSync={() => handleSync("sync")}
-      />
-      {#each bucket.folders as folder (folder.name)}
-        <FileTable
-          handleFolderDelete={() =>
-            handleFolderDelete(bucket.name, folder.name)}
-          handleFilesSelect={() => handleFilesSelect(bucket.name, folder.name)}
-          {folder}
-          {bucket}
-          {handleCheckbox}
-          {checkedFiles}
+    <Scroller>
+      {#each filteredList as bucket (bucket.name)}
+        <NameDivider
+          label={bucket.name +
+            " " +
+            "(" +
+            filesCounter[bucket.name] +
+            ")" +
+            " " +
+            formatBytes(bucket.total_size)}
         />
+
+        <AddFolder
+          bucketName={bucket.name}
+          handleSync={() => handleSync("sync")}
+        />
+        {#each bucket.folders as folder (folder.name)}
+          <FileTable
+            handleFolderDelete={() =>
+              handleFolderDelete(bucket.name, folder.name)}
+            handleFilesSelect={() =>
+              handleFilesSelect(bucket.name, folder.name)}
+            {folder}
+            {bucket}
+            {handleCheckbox}
+            {checkedFiles}
+          />
+        {/each}
       {/each}
-    {/each}
+    </Scroller>
   {/if}
 </div>

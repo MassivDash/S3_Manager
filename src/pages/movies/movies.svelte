@@ -7,6 +7,7 @@
   import NameDivider from "src/components/nameDivider/nameDivider.svelte";
   import GridVideo from "src/components/gridVideo/gridVideo.svelte";
   import Tools from "src/components/tools/tools.svelte";
+  import Scroller from "src/components/scroller/scroller.svelte";
 
   import type { ImageBucket, CheckedFile, GridCol } from "src/types";
 
@@ -194,9 +195,7 @@
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div
-      class="fixed w-11/12 justify-between flex items-center h-20 top-0 z-30"
-    >
+    <div class="mr-12">
       <Tools
         handleGrid={() => (gridCol = handleGrid(gridCol))}
         {resync}
@@ -207,39 +206,42 @@
         bind:value
       />
     </div>
-    <div class="h-10" />
     {#if loading}
       <div class="flex justify-center items-center w-full h-screen">
         <Loader />
       </div>
     {:else}
-      {#each filteredList as bucket (bucket.name)}
-        <NameDivider
-          label={`bucket: ${bucket.name}
+      <Scroller>
+        {#each filteredList as bucket (bucket.name)}
+          <div class="mr-6">
+            <NameDivider
+              label={`bucket: ${bucket.name}
   ${bucket.files.length > 0 ? `(${bucket.files.length})` : ""}`}
-        />
-        <VirtualGrid
-          items={bucket.files}
-          length={bucket.files.length}
-          {gridCol}
-          bind:start
-          bind:scrollToIndex
-          bind:realMount
-          let:gridCell
-        >
-          {#each gridCell as i (i.key)}
-            <GridVideo
-              {handleCheckbox}
-              {checkedFiles}
-              name={i.name}
-              key={i.key}
-              url={i.url}
-              size={i.size}
-              {bucket}
             />
-          {/each}
-        </VirtualGrid>
-      {/each}
+          </div>
+          <VirtualGrid
+            items={bucket.files}
+            length={bucket.files.length}
+            {gridCol}
+            bind:start
+            bind:scrollToIndex
+            bind:realMount
+            let:gridCell
+          >
+            {#each gridCell as i (i.key)}
+              <GridVideo
+                {handleCheckbox}
+                {checkedFiles}
+                name={i.name}
+                key={i.key}
+                url={i.url}
+                size={i.size}
+                {bucket}
+              />
+            {/each}
+          </VirtualGrid>
+        {/each}
+      </Scroller>
     {/if}
   {/if}
 </div>
