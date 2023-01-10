@@ -10,14 +10,10 @@
   import BucketGrid from "./bucket.svelte";
 
   import type { ImageBucket, CheckedFile, GridCol } from "src/types";
-  import { handleGrid } from "src/lib/grid";
+  import { handleGrid, search } from "src/lib";
   // For error display
   import { showModal } from "src/store/modal";
-  import {
-    images,
-    images_scroll_index,
-    image_grid_option,
-  } from "src/store/images";
+  import { images, image_grid_option } from "src/store/images";
 
   const registerFocus = useFocus();
 
@@ -25,11 +21,6 @@
 
   const _unsubscribeList = images.subscribe((value) => {
     response = value;
-  });
-
-  let savedScroll: number;
-  const _unsubscribeScroll = images_scroll_index.subscribe((value) => {
-    savedScroll = value;
   });
 
   let savedGridOption: GridCol;
@@ -86,13 +77,7 @@
 
   let filteredList: ImageBucket[] = [];
 
-  $: filteredList = response?.map((bucket) => ({
-    ...bucket,
-    files:
-      value === ""
-        ? bucket.files
-        : bucket.files.filter((item) => item.name.indexOf(value) !== -1),
-  }));
+  $: filteredList = search(response, value);
 
   // Checkboxes for download and delete
   let checkedFiles: CheckedFile[] = [];
@@ -101,7 +86,9 @@
     checkedFiles = [];
   }
 
-  //User manual sync op
+  // User manual sync op button
+  // Either we have initial load scenario "load"
+  // Or manual sync up
   async function handleSync(type: "load" | "sync"): Promise<void> {
     const load = type === "load";
     try {

@@ -37,6 +37,7 @@
     images_scroll_index.update((store) => {
       let newStore = { ...store };
       newStore[bucket.name] = null;
+      return newStore;
     });
   }
 
