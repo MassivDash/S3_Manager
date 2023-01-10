@@ -5,7 +5,7 @@
   import Loader from "src/components/loader/loader.svelte";
   import { open, confirm } from "@tauri-apps/api/dialog";
   import { appDir } from "@tauri-apps/api/path";
-  import { formatBytes } from "src/lib/date";
+  import { formatBytes, searchWithFolders } from "src/lib";
   // Open a selection dialog for directories
   import Tools from "src/components/tools/tools.svelte";
   import NameDivider from "src/components/nameDivider/nameDivider.svelte";
@@ -13,7 +13,7 @@
   import AddFolder from "src/components/addFolder/addFolder.svelte";
   import Scroller from "src/components/scroller/scroller.svelte";
 
-  import type { Bucket, Folder, CheckedFile } from "src/types";
+  import type { Bucket, CheckedFile } from "src/types";
 
   import { showModal } from "src/store/modal";
   import { files } from "src/store/files";
@@ -27,21 +27,7 @@
     response = value;
   });
 
-  $: filteredList = response?.map((bucket: Bucket) => ({
-    ...bucket,
-    folders:
-      value === ""
-        ? [...bucket.folders]
-        : bucket.folders.map((folder: Folder) => ({
-            ...folder,
-            files: folder.files.filter(
-              (item) =>
-                item.name
-                  .toLocaleLowerCase()
-                  .indexOf(value.toLocaleLowerCase()) !== -1
-            ),
-          })),
-  }));
+  $: filteredList = searchWithFolders(response, value);
 
   $: filesCounter = filteredList?.reduce(
     (acc, bucket) => ({

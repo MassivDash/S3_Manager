@@ -1,3 +1,4 @@
+pub mod buckets;
 pub mod file;
 pub mod files;
 pub mod image;
