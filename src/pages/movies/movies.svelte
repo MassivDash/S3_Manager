@@ -10,7 +10,7 @@
 
   import type { ImageBucket, CheckedFile, GridCol } from "src/types";
 
-  import { handleGrid } from "src/lib/grid";
+  import { handleGrid, search } from "src/lib";
   import { showModal } from "src/store/modal";
   import { movies, movies_grid_option } from "src/store/movies";
 
@@ -55,14 +55,7 @@
   let value = "";
   let filteredList: ImageBucket[] = [];
 
-  $: filteredList = response?.map((bucket) => ({
-    ...bucket,
-    files:
-      value === ""
-        ? bucket.files
-        : bucket.files.filter((item) => item.name.indexOf(value) !== -1),
-  }));
-
+  $: filteredList = search(response, value);
   let checkedFiles: CheckedFile[] = [];
 
   function resetCheckedFiles(): void {

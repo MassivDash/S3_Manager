@@ -55,7 +55,7 @@
         <img
           data-src={url}
           alt={key}
-          class="rounded-sm w-full object-cover min-h-[500px]"
+          class={`rounded-sm w-full aspect-video object-cover min-h-[500px] transition-all duration-400`}
           use:lazyImage
           on:error={() => {
             imgError = true;
@@ -63,7 +63,9 @@
         />
       {/if}
       {#if imgError}
-        <div class="p-4 mt-4 flex gap-4 h-full w-full  text-red-700">
+        <div
+          class="p-4 mt-4 flex gap-4 h-full w-full  text-red-700 dark:text-red-500"
+        >
           <div><Error width={36} height={36} /></div>
           <div class="text-sm">
             <h3>Image not loaded</h3>

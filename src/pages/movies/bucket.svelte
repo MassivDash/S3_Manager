@@ -37,6 +37,7 @@
     movies_scroll_index.update((store) => {
       let newStore = { ...store };
       newStore[bucket.name] = null;
+      return newStore;
     });
   }
 
@@ -50,7 +51,7 @@
   });
 </script>
 
-<div class="mr-6">
+<div class="mr-4">
   <NameDivider
     label={`bucket: ${bucket.name}
   ${bucket.files.length > 0 ? `(${bucket.files.length})` : ""}`}
