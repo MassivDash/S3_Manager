@@ -3,6 +3,7 @@
     windows_subsystem = "windows"
 )]
 
+use crate::lib::s3::get::buckets::get_buckets;
 use crate::lib::s3::get::file::save_files;
 use crate::lib::s3::get::files::get_files;
 use crate::lib::s3::get::image::get_image;
@@ -40,6 +41,7 @@ fn main() {
         .menu(tauri::Menu::os_default(&context.package_info().name))
         .invoke_handler(tauri::generate_handler![
             get_files,
+            get_buckets,
             get_cached_images,
             get_all_images,
             get_all_movies,
