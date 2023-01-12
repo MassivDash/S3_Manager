@@ -6,7 +6,7 @@
   import { readDir } from "@tauri-apps/api/fs";
   import { fly } from "svelte/transition";
   import Select from "../select/select.svelte";
-  import type { Bucket } from "src/types";
+  import type { Bucket, TauriError } from "src/types";
   import type { FileEntry } from "@tauri-apps/api/fs";
   import AddFile from "src/components/icons/addFile.svelte";
   import Close from "src/components/icons/close.svelte";
@@ -68,7 +68,8 @@
 
     // User can drag as many folders and items before they submit
     files = [...new Set([...files, ...paths])];
-    await [...new Set([...files, ...paths])].forEach(async (file: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    [...new Set([...files, ...paths])].forEach(async (file: string) => {
       const getName = file.split("/")[file.split("/").length - 1];
       if (!getName.includes(".")) {
         const files: FileEntry[] = await readDir(file, { recursive: true });
@@ -109,10 +110,10 @@
         visible = false;
       }
     } catch (err) {
-      console.log(err);
+      const { name, message } = err as TauriError;
       showModal({
-        title: err.name,
-        message: err.message,
+        title: name,
+        message: message,
         type: "error",
       })();
     }
@@ -129,6 +130,7 @@
   });
 </script>
 
+<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars, eslint-disable-next-line @typescript-eslint/no-unsafe-argument  -->
 <FileDrop handleFiles={(paths) => handleDrop(paths)} let:files>
   <slot /></FileDrop
 >
@@ -165,6 +167,7 @@
         class="text-gray-800 dark:text-white flex justify-between items-center mb-4"
       >
         <h2>Uploading files</h2>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="text-gray-800 m-2 p-2 cursor-pointer dark:text-white bg-orange-50 dark:bg-slate-700 hover:bg-amber-100 hover:text-gray-50 hover:dark:bg-slate-900 hover:dark:text-orange-50"
           on:click={() => {

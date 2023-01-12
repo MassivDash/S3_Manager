@@ -4,7 +4,7 @@ export function chunkify<T>(a: T[], n: number, balanced: boolean): T[][] {
     if (n < 2) return [a];
 
     const len = a.length;
-    const out = [];
+    const out: T[][] = [];
     let i = 0;
     let size = 0;
 

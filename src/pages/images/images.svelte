@@ -9,7 +9,12 @@
   import Scroller from "src/components/scroller/scroller.svelte";
   import BucketGrid from "./bucket.svelte";
 
-  import type { ImageBucket, CheckedFile, GridCol } from "src/types";
+  import type {
+    ImageBucket,
+    CheckedFile,
+    GridCol,
+    TauriError,
+  } from "src/types";
   import { handleGrid, search } from "src/lib";
   // For error display
   import { showModal } from "src/store/modal";
@@ -19,14 +24,16 @@
 
   let response: ImageBucket[];
 
-  const _unsubscribeList = images.subscribe((value) => {
+  const _unsubscribeList = images.subscribe((value: ImageBucket[]) => {
     response = value;
   });
 
   let savedGridOption: GridCol;
-  const _unsubscribeGridOption = image_grid_option.subscribe((value) => {
-    savedGridOption = value;
-  });
+  const _unsubscribeGridOption = image_grid_option.subscribe(
+    (value: GridCol) => {
+      savedGridOption = value;
+    }
+  );
 
   // Define loading for rust files call
   let loading = false;
@@ -51,6 +58,7 @@
         gridCol = 3;
         break;
       default:
+        // eslint-disable-next-line no-self-assign
         gridCol = gridCol;
     }
   }
@@ -113,9 +121,10 @@
       if (!load) {
         resync = false;
       }
+      const { name, message } = err as TauriError;
       showModal({
-        title: err.name,
-        message: err.message,
+        title: name,
+        message: message,
         type: "error",
       })();
     }
@@ -150,9 +159,10 @@
         }
       }
     } catch (err) {
+      const { name, message } = err as TauriError;
       showModal({
-        title: err.name,
-        message: err.message,
+        title: name,
+        message: message,
         type: "error",
       })();
     }
@@ -169,11 +179,12 @@
       if (success) {
         resetCheckedFiles();
         try {
-          handleSync("sync");
+          await handleSync("sync");
         } catch (err) {
+          const { name, message } = err as TauriError;
           showModal({
-            title: err.name,
-            message: err.message,
+            title: name,
+            message: message,
             type: "error",
           })();
         }

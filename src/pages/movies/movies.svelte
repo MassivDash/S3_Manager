@@ -8,7 +8,12 @@
   import Scroller from "src/components/scroller/scroller.svelte";
   import BucketGrid from "./bucket.svelte";
 
-  import type { ImageBucket, CheckedFile, GridCol } from "src/types";
+  import type {
+    ImageBucket,
+    CheckedFile,
+    GridCol,
+    TauriError,
+  } from "src/types";
 
   import { handleGrid, search } from "src/lib";
   import { showModal } from "src/store/modal";
@@ -17,7 +22,7 @@
   const registerFocus = useFocus();
   let response: ImageBucket[];
 
-  const _unsubscribe = movies.subscribe((value) => {
+  const _unsubscribe = movies.subscribe((value: ImageBucket[]) => {
     response = value;
   });
 
@@ -27,9 +32,11 @@
   let resync = false;
 
   let savedGridOption: GridCol;
-  const _unsubscribeGridOption = movies_grid_option.subscribe((value) => {
-    savedGridOption = value;
-  });
+  const _unsubscribeGridOption = movies_grid_option.subscribe(
+    (value: GridCol) => {
+      savedGridOption = value;
+    }
+  );
 
   // Grid and js responsiveness
   let innerWidth;
@@ -48,6 +55,7 @@
         gridCol = 3;
         break;
       default:
+        // eslint-disable-next-line no-self-assign
         gridCol = gridCol;
     }
   }
@@ -87,9 +95,10 @@
       if (!load) {
         resync = false;
       }
+      const { name, message } = err as TauriError;
       showModal({
-        title: err.name,
-        message: err.message,
+        title: name,
+        message: message,
         type: "error",
       })();
     }
@@ -149,7 +158,6 @@
   });
 </script>
 
-<!-- svelte-ignore non-top-level-reactive-declaration -->
 <div use:registerFocus class="outline-none">
   {#if !filteredList}
     <div class="flex justify-center items-center w-full h-screen">

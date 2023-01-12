@@ -39,7 +39,7 @@
       <Table
         height={folder.files.length * 60 + 30 > 600
           ? "600px"
-          : folder.files.length * 60 + 30 + "px"}
+          : `${folder.files.length * 60 + 30}px`}
         bucketName={bucket.name}
         files={folder.files}
         {handleCheckbox}
