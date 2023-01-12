@@ -45,8 +45,7 @@
   const dispatch = createEventDispatcher();
 
   let prevValue = value;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let timeout: any = undefined;
+  let timeout: ReturnType<typeof setTimeout> | undefined = undefined;
   let calling = false;
 
   function debounceFn(fn: () => void): void {
@@ -60,7 +59,7 @@
 
   onMount(() => {
     if (autofocus) window.requestAnimationFrame(() => ref?.focus());
-    return () => clearTimeout(timeout);
+    return (): void => clearTimeout(timeout);
   });
 
   afterUpdate(() => {

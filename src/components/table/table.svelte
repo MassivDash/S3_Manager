@@ -1,7 +1,7 @@
 <script lang="ts">
   import { formatBytes, formatDate, isImage } from "src/lib";
   import Checkbox from "../checkbox/checkbox.svelte";
-  import type { File, CheckedFile } from "src/types";
+  import type { File, CheckedFile, VirtualListArray } from "src/types";
   import VirtualList from "../virtualList/virtualList.svelte";
   import { Link } from "svelte-navigator";
   import { invoke } from "@tauri-apps/api";
@@ -12,15 +12,18 @@
     url: string;
   }
 
-  export let files: File[];
+  export let files: VirtualListArray<File[]>;
   export let bucketName: string;
   export let handleCheckbox: (key: string, bucketName: string) => void;
   export let checkedFiles: CheckedFile[];
   let start;
   let end;
 
-  let mouseOverImage;
-  let handleMouseOver = async (key: string, bucketName: string) => {
+  let mouseOverImage: ImageObject | null = null;
+  let handleMouseOver = async (
+    key: string,
+    bucketName: string
+  ): Promise<void> => {
     const res: ImageObject = await invoke("get_image", {
       bucket: bucketName,
       key: key,
@@ -31,6 +34,7 @@
   export let height = "500px";
 </script>
 
+<!-- eslint-disable @typescript-eslint/no-unsafe-member-access, eslint-disable @typescript-eslint/no-unsafe-argument -->
 {#if files.length > 0}
   <table class="table-auto w-full flex flex-col border-spacing-3 relative">
     <thead
@@ -49,6 +53,7 @@
         <tr
           class="flex items-center text-gray-700 dark:text-white my-2 py-2 border-orange-100 dark:border-slate-500  border-b-2 "
           on:mouseover={() => (mouseOverImage = null)}
+          on:focus={() => (mouseOverImage = null)}
         >
           <td id="checkbox" class="ml-4 flex items-bottom justify-center h-10">
             <Checkbox

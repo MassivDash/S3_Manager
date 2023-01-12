@@ -5,7 +5,7 @@
   import Image from "./pages/image/image.svelte";
   import Files from "./pages/files/files.svelte";
   import Movies from "./pages/movies/movies.svelte";
-  import Buckets from "./pages/buckets/Buckets.svelte";
+  import Buckets from "./pages/buckets/buckets.svelte";
 
   import "./tailwind.css";
   import FadeInRoute from "./components/fadeIn/fadeInRoute.svelte";

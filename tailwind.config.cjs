@@ -8,7 +8,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'roboto': ['"roboto"', 'sans serif']
+        'roboto': ['"Roboto"', 'sans serif'],
+        'audiowide': ['"Audiowide"' , 'cursive'] 
       }
     },
   },

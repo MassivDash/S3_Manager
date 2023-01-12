@@ -12,19 +12,21 @@
   export let gridCol;
 
   let savedScroll: number;
-  const _unsubscribeScroll = movies_scroll_index.subscribe((value) => {
-    if (value && value[bucket.name]) {
-      savedScroll = value[bucket.name];
+  const _unsubscribeScroll = movies_scroll_index.subscribe(
+    (value: { [key: string]: number }) => {
+      if (value && value[bucket.name]) {
+        savedScroll = value[bucket.name];
+      }
     }
-  });
+  );
 
   // End item index needed for scroll restore
-  let start; // first in view
-  let end; // last in view
+  let start: number | undefined; // first in view
+  let end: number | undefined; // last in view
 
   // Save scroll position
 
-  let scrollToIndex;
+  let scrollToIndex: (number: number) => void;
   function scrollToItem(number: number): void {
     scrollToIndex(number);
   }
@@ -34,7 +36,7 @@
 
   $: if (realMount) {
     savedScroll && scrollToItem(savedScroll);
-    movies_scroll_index.update((store) => {
+    movies_scroll_index.update((store: { [key: string]: number }) => {
       let newStore = { ...store };
       newStore[bucket.name] = null;
       return newStore;
@@ -43,7 +45,7 @@
 
   onDestroy(() => {
     // Save scroll position
-    movies_scroll_index.update((store) => {
+    movies_scroll_index.update((store: { [key: string]: number }) => {
       let newStore = { ...store };
       newStore[bucket.name] = start;
       return newStore;

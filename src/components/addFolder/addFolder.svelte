@@ -6,12 +6,15 @@
   import Check from "../icons/check.svelte";
   import Loader from "../loader/loader.svelte";
   export let bucketName = "";
-  export let handleSync: () => void;
+  export let handleSync: () => Promise<void>;
   let value = "";
   let visible = false;
   let uploading = false;
 
-  async function handleAddFolder(bucketName, value): Promise<void> {
+  async function handleAddFolder(
+    bucketName: string,
+    value: string
+  ): Promise<void> {
     uploading = true;
     const res = await invoke("put_folder", {
       bucketName,

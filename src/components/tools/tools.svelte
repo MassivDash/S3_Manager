@@ -12,9 +12,11 @@
 
   import type { CheckedFile } from "src/types";
 
-  export let checkedFiles: CheckedFile[];
-  export let handleDelete: (checkedFiles: CheckedFile[]) => void;
-  export let handleDownload: (checkedFiles: CheckedFile[]) => void;
+  export let checkedFiles: CheckedFile[] | undefined = undefined;
+  export let handleDelete: (checkedFiles: CheckedFile[]) => void | undefined =
+    undefined;
+  export let handleDownload: (checkedFiles: CheckedFile[]) => void | undefined =
+    undefined;
 
   export let handleSync: (string: "load" | "sync") => void | undefined =
     undefined;

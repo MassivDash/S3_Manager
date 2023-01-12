@@ -4,7 +4,7 @@
 
   let currentModal;
 
-  const _unsubscribe = modal.subscribe((value) => {
+  const _unsubscribe = modal.subscribe((value: string) => {
     currentModal = value;
   });
 </script>

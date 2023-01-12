@@ -3,13 +3,15 @@
   import { invoke, event } from "@tauri-apps/api";
   import { useFocus } from "svelte-navigator";
   import Loader from "src/components/loader/loader.svelte";
-  import { formatDate } from "src/lib/date";
+  import { formatDate, formatBytes } from "src/lib";
   // Open a selection dialog for directories
   import Tools from "src/components/tools/tools.svelte";
   import Scroller from "src/components/scroller/scroller.svelte";
+  import type { Bucket, TauriError } from "src/types";
 
   import { showModal } from "src/store/modal";
   import { buckets } from "src/store/buckets";
+  import { files } from "src/store/files";
 
   interface BucketInfo {
     name: string;
@@ -21,7 +23,7 @@
   let filteredList: BucketInfo[];
   let value = "";
 
-  const _unsubscribe = buckets.subscribe((value) => {
+  const _unsubscribe = buckets.subscribe((value: BucketInfo[]) => {
     response = value;
   });
 
@@ -30,6 +32,11 @@
       bucket.name.toLocaleLowerCase().indexOf(value.toLocaleLowerCase()) !== -1
   );
 
+  let filesInfoCall: Bucket[] | null = null;
+  const _unsubscribeFiles = files.subscribe((value: Bucket[]) => {
+    filesInfoCall = value;
+  });
+
   onMount(async () => {
     if (!response) {
       await handleSync("load");
@@ -37,7 +44,17 @@
   });
 
   const listenToFileUpload = event.listen("event-resync", () => {
-    handleSync("sync");
+    handleSync("sync")
+      .then(() => {
+        console.log("resynced");
+      })
+      .catch((err: TauriError) => {
+        showModal({
+          title: err.name,
+          message: err.message,
+          type: "error",
+        })();
+      });
   });
 
   onDestroy(async () => {
@@ -60,7 +77,6 @@
       }
       const res: BucketInfo[] = await invoke("get_buckets");
       buckets.set(res);
-      console.log(res);
       if (load) {
         loading = false;
       }
@@ -74,9 +90,10 @@
       if (!load) {
         resync = false;
       }
+      const { name, message } = err as TauriError;
       showModal({
-        title: err.name,
-        message: err.message,
+        title: name,
+        message: message,
         type: "error",
       })();
     }
@@ -104,12 +121,27 @@
             <div class="w-full flex justify-start">
               <h2
                 class="bg-white text-slate-900 font-extrabold
-         text-[115px] font-roboto border-2 rounded-sm h-28 w-28 flex justify-center items-center"
+         text-[115px] font-audiowide border-2 rounded-sm h-28 w-28 flex justify-center items-center"
               >
-                {bucket.name.slice(0, 1).toLocaleUpperCase()}
+                {bucket?.name.slice(0, 1).toLocaleUpperCase()}
               </h2>
             </div>
-            <div>
+            {#if filesInfoCall}
+              <div class="w-full flex flex-col">
+                <p class="w-full">
+                  <span class="text-sm"> total size: </span>
+                  {formatBytes(
+                    filesInfoCall.find((v) => v.name === bucket.name).total_size
+                  )}
+                </p>
+                <p class="w-full m-0">
+                  <span class="text-sm"> total files: </span>
+                  {filesInfoCall.find((v) => v.name === bucket.name)
+                    .total_files}
+                </p>
+              </div>
+            {/if}
+            <div class="w-full flex flex-col">
               <h3 class="mt-8 text-lg">
                 <span class="text-sm">name:</span>
                 {bucket.name}

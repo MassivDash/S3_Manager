@@ -13,7 +13,7 @@
   import AddFolder from "src/components/addFolder/addFolder.svelte";
   import Scroller from "src/components/scroller/scroller.svelte";
 
-  import type { Bucket, CheckedFile } from "src/types";
+  import type { Bucket, CheckedFile, TauriError } from "src/types";
 
   import { showModal } from "src/store/modal";
   import { files } from "src/store/files";
@@ -23,7 +23,7 @@
   let filteredList: Bucket[];
   let value = "";
 
-  const _unsubscribe = files.subscribe((value) => {
+  const _unsubscribe = files.subscribe((value: Bucket[]) => {
     response = value;
   });
 
@@ -35,7 +35,7 @@
       [bucket.name]: bucket.folders.map((item) => item.files).flat().length,
     }),
     {}
-  );
+  ) as { [key: string]: number };
 
   onMount(async () => {
     if (!response) {
@@ -44,7 +44,17 @@
   });
 
   const listenToFileUpload = event.listen("event-resync", () => {
-    handleSync("sync");
+    handleSync("sync")
+      .then(() => {
+        console.log("resynced");
+      })
+      .catch((err: TauriError) => {
+        showModal({
+          title: err.name,
+          message: err.message,
+          type: "error",
+        })();
+      });
   });
 
   onDestroy(async () => {
@@ -77,10 +87,10 @@
           await handleSync("sync");
         }
       } catch (err) {
-        console.log(err);
+        const { name, message } = err as TauriError;
         showModal({
-          title: err.name,
-          message: err.message,
+          title: name,
+          message: message,
           type: "error",
         })();
       }
@@ -118,9 +128,10 @@
       if (!load) {
         resync = false;
       }
+      const { name, message } = err as TauriError;
       showModal({
-        title: err.name,
-        message: err.message,
+        title: name,
+        message: message,
         type: "error",
       })();
     }
@@ -171,9 +182,10 @@
         }
       } catch (err) {
         resync = false;
+        const { name, message } = err as TauriError;
         showModal({
-          title: err.name || "Delete files failed",
-          message: err.message,
+          title: name || "Delete files failed",
+          message: message,
           type: "error",
         })();
       }
@@ -203,9 +215,10 @@
         }
       } catch (err) {
         resync = false;
+        const { name, message } = err as TauriError;
         showModal({
-          title: err.name || "Delete files failed",
-          message: err.message,
+          title: name || "Delete files failed",
+          message: message,
           type: "error",
         })();
       }
@@ -233,13 +246,9 @@
     <Scroller>
       {#each filteredList as bucket (bucket.name)}
         <NameDivider
-          label={bucket.name +
-            " " +
-            "(" +
-            filesCounter[bucket.name] +
-            ")" +
-            " " +
-            formatBytes(bucket.total_size)}
+          label={`${bucket.name} (${filesCounter[bucket.name]}) ${formatBytes(
+            bucket.total_size
+          )}`}
         />
 
         <AddFolder
