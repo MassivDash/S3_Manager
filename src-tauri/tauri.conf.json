@@ -8,8 +8,8 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "Manager",
-    "version": "0.1.0"
+    "productName": "S3 Manager",
+    "version": "0.9.0"
   },
   "tauri": {
     "allowlist": {
@@ -59,7 +59,7 @@
         "fullscreen": false,
         "height": 800,
         "resizable": true,
-        "title": " Manager",
+        "title": "S3 Manager",
         "width": 1200
       }
     ]
