@@ -5,7 +5,32 @@ A graphical user interface to aws s3 service.
 This project is standalone application for connecting to your AWS S3 service.
 Tested on Mac, Linux, Win 10. 
 
+## Features
+
+![LightFiles](/screenshots/lightFiles.png)
+![DarkFiles](/screenshots/darkFiles.png)
+
+![LightImg](/screenshots/lightImg.png)
+![DarkImg](/screenshots/darkImg.png)
+
+
+
+
+- Dark and light mode dependant on system preferences  
+- Files, Pictures, Movies and buckets gallery (grid style)
+- Optimized for looking through the pictures / movies, lazy loading, images and movies streamed dritecly from the bucket, are loaded with presigned urls. 
+- Adjustable grid gallery 
+- Simple name search 
+- Tagging of assets
+- Folder creation
+- Multi file upload (drop files)
+- Galleries remember scroll positions while navigating the app. 
+  
+
 ## Prerequisites 
+Tauri app perquisites
+https://tauri.app/v1/guides/getting-started/prerequisites 
+
 ### AWS Account 
 In order to use the application you need aws account with s3 service activated. S3 app uses standard aws config files used for aws cli connection [info here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html).  
 

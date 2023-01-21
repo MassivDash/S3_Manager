@@ -43,6 +43,7 @@
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function refresh(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     items: any[],
     viewport_height: number,
     itemHeight: number
