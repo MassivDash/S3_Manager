@@ -7,11 +7,11 @@ Tested on Mac, Linux, Win 10.
 
 ## Features
 
-![LightFiles](/screenshots/lightFiles.png)
-![DarkFiles](/screenshots/darkFiles.png)
+![LightFiles](/screenshots/lightFiles.png?raw=true)
+![DarkFiles](/screenshots/darkFiles.png?raw=true)
 
-![LightImg](/screenshots/lightImg.png)
-![DarkImg](/screenshots/darkImg.png)
+![LightImg](/screenshots/lightImg.png?raw=true)
+![DarkImg](/screenshots/darkImg.png?raw=true)
 
 
 
