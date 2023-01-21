@@ -1,13 +1,13 @@
 [package]
 name = "s3_manager"
-version = "0.1.0"
+version = "0.9.0"
 description = "S3 Manager: A tool to manage S3 buckets"
 authors = ["Lukasz Celitan, @SpaceoutPL"]
 license = "MIT"
 repository = ""
 default-run = "s3_manager"
 edition = "2021"
-rust-version = "1.57"
+rust-version = "1.63"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -18,12 +18,12 @@ tauri-build = { version = "1.2.1", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.2.3", features = ["api-all"] }
-aws-config = "0.52.0"
-aws-sdk-s3 = "0.22.0"
+aws-config = "0.53.0"
+aws-sdk-s3 = "0.23.0"
 tokio-stream = "0.1.11"
 tokio = { version = "1.23.1", features = ["full", "macros"] }
 
-cached = "0.41.0"
+cached = "0.42.0"
 thiserror = "1.0.37"
 itertools = "*"
 walkdir = "*"
