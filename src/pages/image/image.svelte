@@ -14,6 +14,7 @@
   import IconButton from "src/components/iconButton/iconButton.svelte";
   import { formatBytes, formatDate } from "src/lib/date";
   import { showModal } from "src/store/modal";
+  import Scroller from "src/components/scroller/scroller.svelte";
   import type { TauriError } from "src/types";
 
   let bucket: string;
@@ -64,6 +65,8 @@
       </h2>
     </header>
     <Tags {key} {bucket} />
-    <img src={response.url} alt={response.key} />
+    <Scroller>
+      <img src={response.url} alt={response.key} />
+    </Scroller>
   </main>
 {/if}
