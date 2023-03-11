@@ -13,6 +13,7 @@
   import Check from "../icons/check.svelte";
   import CircularProgress from "../circularProgress/circularProgress.svelte";
   import { showModal } from "src/store/modal";
+  import { getFileName } from "src/lib/getFileName";
 
   let visible = false;
   let loading = false;
@@ -70,7 +71,7 @@
     files = [...new Set([...files, ...paths])];
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     [...new Set([...files, ...paths])].forEach(async (file: string) => {
-      const getName = file.split("/")[file.split("/").length - 1];
+      const getName = getFileName(file);
       if (!getName.includes(".")) {
         const files: FileEntry[] = await readDir(file, { recursive: true });
         const filesArray = getAllFiles(files);

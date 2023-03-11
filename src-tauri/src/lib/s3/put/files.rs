@@ -1,4 +1,5 @@
 use crate::lib::s3::client::client::create_client;
+use crate::lib::s3::utils::get_file_name::get_file_name;
 use aws_sdk_s3::{types::ByteStream, Client};
 use std::{error::Error, fs, path::Path};
 use tauri::Window;
@@ -35,15 +36,7 @@ pub async fn put_files(
         if path.is_dir() {
             for fil in WalkDir::new(&file).into_iter().filter_map(|fil| fil.ok()) {
                 if fil.metadata().unwrap().is_file() {
-                    let filename = &fil
-                        .path()
-                        .display()
-                        .to_string()
-                        .split("/")
-                        .last()
-                        .unwrap_or_default()
-                        .to_string();
-
+                    let filename = get_file_name(&fil.path().to_str().unwrap_or_default());
                     let key = folder_name.clone() + "/" + filename;
                     println!("{} {}", filename, !filename.starts_with("."));
 
@@ -62,11 +55,17 @@ pub async fn put_files(
                 }
             }
         } else {
-            let filename = &file.split("/").last().unwrap_or_default().to_string();
+            let filename = get_file_name(&file);
+
             let key = folder_name.to_string() + "/" + filename;
-            put_file(&client, bucket_name.to_string(), file, key.to_string())
-                .await
-                .unwrap();
+            put_file(
+                &client,
+                bucket_name.to_string(),
+                file.clone(),
+                key.to_string(),
+            )
+            .await
+            .unwrap();
 
             window.emit("event-upload-file", &filename).unwrap()
         }
