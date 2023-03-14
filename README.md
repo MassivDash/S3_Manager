@@ -52,9 +52,14 @@ region=us-west-2
 output=json
 ```
 
-### Local Install 
-Rust lang (cargo) and node.js (npm or yarn) and tauri-cli insta
-## Development
+### Alternate s3 endpoint 
+
+Set ```S3_CUSTOM_ENDPOINT``` env vars at your machine to alter the s3 default endpoints
+
+## Local install and development
+Rust lang (cargo) and node.js (npm or yarn) and tauri-cli instalations are needed to run / build the project from source
+
+### Development
 ### Installing the Prerequisites
 Project is build thanks to tauri app which uses RUST lang for the system portion of the app and a custom html frontend, in order to start the project you need to install following. 
 
