@@ -25,11 +25,9 @@ Tested on Mac, Linux, Win 10.
 - Folder creation
 - Multi file upload (drop files)
 - Galleries remember scroll positions while navigating the app. 
-  
 
-## Prerequisites 
-Tauri app perquisites
-https://tauri.app/v1/guides/getting-started/prerequisites 
+
+
 
 ### AWS Account 
 In order to use the application you need aws account with s3 service activated. S3 app uses standard aws config files used for aws cli connection [info here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html).  
@@ -55,10 +53,16 @@ output=json
 ```
 
 ### Local Install 
-Rust lang (cargo) and node.js (npm or yarn) installations are needed in order to run the project. 
+Rust lang (cargo) and node.js (npm or yarn) and tauri-cli insta
+## Development
+### Installing the Prerequisites
+Project is build thanks to tauri app which uses RUST lang for the system portion of the app and a custom html frontend, in order to start the project you need to install following. 
 
 
-## Development  
+- Tauri app perquisites https://tauri.app/v1/guides/getting-started/prerequisites 
+- Tauri app cli ```cargo install tauri-cli```
+
+
 ### Architecture
 
 This application is based on [tauri.app](https://tauri.app/), RUST lang in the backend (core0 of the app and frontend things are handled by svelte + vite + ts combo. 
@@ -67,6 +71,9 @@ Simple division: Rust manages the data and the calls, front end displays the dat
 
 ### Start 
 
+
+Since rust is responsible for making the aws calls you will need the rust "backend" to be started, without it the app will not work.
+You will also need need the aws crednetails present on the system
 ```
 cargo tauri dev
 ```
@@ -74,7 +81,7 @@ cargo tauri dev
 ### Build 
 
 ```
-cargo tauri dev
+cargo tauri build
 ```
 
 
