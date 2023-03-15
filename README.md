@@ -5,6 +5,10 @@ A graphical user interface to aws s3 service.
 This project is standalone application for connecting to your AWS S3 service.
 Tested on Mac, Linux, Win 10. 
 
+## Installation files
+https://github.com/MassivDash/S3_Manager/releases
+
+
 ## Features
 
 ![LightFiles](/screenshots/lightFiles.png?raw=true)
