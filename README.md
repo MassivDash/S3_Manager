@@ -6,7 +6,7 @@ This project is standalone application for connecting to your AWS S3 service.
 Tested on Mac, Linux, Win 10. 
 
 ## Installation files
-https://github.com/MassivDash/S3_Manager/releases
+[releases](https://github.com/MassivDash/S3_Manager/releases)
 
 
 ## Features
@@ -58,7 +58,8 @@ output=json
 
 ### Alternate s3 endpoint 
 
-Set ```S3_CUSTOM_ENDPOINT``` env vars at your machine to alter the s3 default endpoints
+Set env vars ```S3_CUSTOM_ENDPOINT``` to ```true``` or ```1```   at your machine to alter the s3 default endpoints
+Set the alternative endpoint url with ```S3_CUSTOM_ENDPOINT_URL``` env
 
 ## Local install and development
 Rust lang (cargo) and node.js (npm or yarn) and tauri-cli instalations are needed to run / build the project from source
@@ -82,7 +83,7 @@ Simple division: Rust manages the data and the calls, front end displays the dat
 
 
 Since rust is responsible for making the aws calls you will need the rust "backend" to be started, without it the app will not work.
-You will also need need the aws crednetails present on the system
+You will also need need the aws credentials present on the system
 ```
 cargo tauri dev
 ```
