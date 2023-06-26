@@ -1,6 +1,6 @@
 [package]
 name = "s3_manager"
-version = "0.9.3"
+version = "0.9.5"
 description = "S3 Manager: A tool to manage S3 buckets"
 authors = ["Lukasz Celitan, @SpaceoutPL"]
 license = "MIT"
