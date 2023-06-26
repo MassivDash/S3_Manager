@@ -9,7 +9,7 @@
   },
   "package": {
     "productName": "S3 Manager",
-    "version": "0.9.3"
+    "version": "0.9.5"
   },
   "tauri": {
     "allowlist": {
