@@ -1,6 +1,6 @@
 [package]
 name = "s3_manager"
-version = "0.9.3"
+version = "0.9.5"
 description = "S3 Manager: A tool to manage S3 buckets"
 authors = ["Lukasz Celitan, @SpaceoutPL"]
 license = "MIT"
@@ -17,7 +17,7 @@ tauri-build = { version = "1.2.1", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.2.3", features = ["api-all"] }
+tauri = { version = "1.2.5", features = ["api-all"] }
 aws-config = "0.53.0"
 aws-sdk-s3 = "0.23.0"
 tokio-stream = "0.1.11"
