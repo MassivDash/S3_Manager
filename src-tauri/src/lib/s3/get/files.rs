@@ -1,4 +1,4 @@
-use aws_sdk_s3::model::Object;
+use aws_sdk_s3::types::Object;
 use aws_sdk_s3::Client;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};

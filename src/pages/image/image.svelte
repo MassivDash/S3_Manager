@@ -46,7 +46,7 @@
   <Loader />
 {:else}
   <main>
-    <header class="flex h-16 gap-2 my-4 items-center justify-start ">
+    <header class="flex h-16 gap-2 my-4 items-center justify-start">
       <IconButton onClick={() => navigate(-1)}><Back /> Go back</IconButton>
       <h1
         class="bg-orange-50 dark:bg-slate-800 h-14 px-4 flex items-center text-lg"

@@ -177,6 +177,8 @@
             dirs = [];
             uploadedFilesList = [];
           }}
+          role="button"
+          tabindex="0"
         >
           <Close />
         </div>
