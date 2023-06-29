@@ -116,7 +116,7 @@
       >
         {#each filteredList as bucket (bucket.name)}
           <div
-            class="p-8 h-96  border-2 relative rounded-sm flex flex-col justify-between items-center"
+            class="p-8 h-96 border-2 relative rounded-sm flex flex-col justify-between items-center"
           >
             <div class="w-full flex justify-start">
               <h2

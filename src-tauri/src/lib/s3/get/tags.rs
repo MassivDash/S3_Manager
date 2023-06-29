@@ -1,5 +1,5 @@
 use crate::lib::s3::client::client::create_client;
-use aws_sdk_s3::output::GetObjectTaggingOutput;
+use aws_sdk_s3::operation::get_object_tagging::GetObjectTaggingOutput;
 use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
 use std::error::Error;

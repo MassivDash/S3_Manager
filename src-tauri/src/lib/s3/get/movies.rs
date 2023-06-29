@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::lib::s3::client::client::create_client;
 use crate::lib::s3::utils::presigned_url::get_presigned_url;
 use crate::lib::s3::utils::response_error::{create_error, ResponseError};
-use aws_sdk_s3::model::Object;
+use aws_sdk_s3::types::Object;
 use std::error::Error;
 use tokio_stream::StreamExt;
 

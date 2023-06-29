@@ -43,7 +43,7 @@
     <input
       bind:value
       placeholder="Enter folder name"
-      class="placeholder-gray-500 h-14 border-orange-100 text-gray-900 dark:text-white bg-orange-50 dark:bg-slate-800  dark:placeholder-white appearance-none outline-none border-2 border-transparent border-spacing-1  focus:border-orange-600 rounded  p-2"
+      class="placeholder-gray-500 h-14 border-orange-100 text-gray-900 dark:text-white bg-orange-50 dark:bg-slate-800 dark:placeholder-white appearance-none outline-none border-2 border-transparent border-spacing-1 focus:border-orange-600 rounded p-2"
     />
     <IconButton
       type={"submit"}
