@@ -9,5 +9,6 @@ export interface ModalProps {
     message: string;
     type: 'error' | 'info'
 }
+ 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-export const showModal = ({ title, message, type }: ModalProps) => (): void => modal.set(bind<typeof Popup>(Popup, { title, message, type }));
+export const showModal = ({ title, message, type }: ModalProps) => (): void => modal.set(bind(Popup, { title, message, type }));
