@@ -4,6 +4,7 @@ export interface Image {
     url: string;
     size: number;
     last_modified: number;
+    folder: string;
     tags: {
       key: string;
       value?: string 
