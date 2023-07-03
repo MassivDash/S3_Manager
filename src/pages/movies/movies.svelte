@@ -146,12 +146,18 @@
     }
   }
 
-  onMount(async () => {
-    !response && (await handleSync("load"));
+  onMount(() => {
+    if (!response) {
+      handleSync("load").catch((err: TauriError) => {
+        showModal({ title: err.name, message: err.message, type: "error" });
+      });
+    }
+
     window.addEventListener("resize", onResize);
     //clean up on unmount
     return () => window.removeEventListener("resize", onResize);
   });
+
   onDestroy(() => {
     // Save scroll position
     movies_grid_option.set(gridCol);
@@ -165,7 +171,7 @@
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div class="mr-12">
+    <div class="mr-8">
       <Tools
         handleGrid={() => (gridCol = handleGrid(gridCol))}
         {resync}

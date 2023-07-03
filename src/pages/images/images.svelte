@@ -65,9 +65,11 @@
 
   // On mount get the files from rust
   // Add grid responsiveness via resize listener
-  onMount(async () => {
+  onMount(() => {
     if (!response) {
-      await handleSync("load");
+      handleSync("load").catch((err: TauriError) => {
+        showModal({ title: err.name, message: err.message, type: "error" });
+      });
     }
 
     window.addEventListener("resize", onResize);
@@ -107,6 +109,7 @@
         resync = true;
       }
       const res: ImageBucket[] = await invoke("get_all_images");
+      console.log(res);
       images.set(res);
       if (load) {
         loading = false;
@@ -202,7 +205,7 @@
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div class="mr-12">
+    <div class="mr-8">
       <Tools
         handleGrid={() => (gridCol = handleGrid(gridCol))}
         {resync}
