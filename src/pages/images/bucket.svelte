@@ -2,10 +2,11 @@
   import NameDivider from "src/components/nameDivider/nameDivider.svelte";
   import GridImage from "src/components/gridImage/gridImage.svelte";
   import VirtualGrid from "src/components/virtualGrid/virtualGrid.svelte";
-  import Folder from "./folder.svelte";
+  import FolderPicker from "../../components/foldersPicker/folderPicker.svelte";
 
   import { onDestroy } from "svelte";
   import { images_scroll_index } from "src/store/images";
+  import { folder } from "src/store/folder";
 
   import type { ImageBucket, CheckedFile } from "src/types";
   export let bucket: ImageBucket;
@@ -36,6 +37,25 @@
   // virtual list mounted
   let realMount;
 
+  let folderList: string[] = [];
+  folderList = [
+    ...new Set(
+      bucket.files.map((file) => {
+        return file.folder;
+      })
+    ),
+  ];
+
+  let checkedFolders: string[] = [];
+
+  const _unsubscribeFolder = folder.subscribe(
+    (value: { [key: string]: string[] }) => {
+      if (value && value[bucket.name]) {
+        checkedFolders = value[bucket.name];
+      }
+    }
+  );
+
   $: if (realMount) {
     savedScroll && scrollToItem(savedScroll);
     images_scroll_index.update((store: { [key: string]: number }) => {
@@ -43,6 +63,13 @@
       newStore[bucket.name] = null;
       return newStore;
     });
+    if (checkedFolders.length === 0) {
+      folder.update((store: { [key: string]: string[] }) => {
+        let newStore = { ...store };
+        newStore[bucket.name] = [...folderList];
+        return newStore;
+      });
+    }
   }
 
   onDestroy(() => {
@@ -54,20 +81,6 @@
     });
   });
 
-  let folderList: string[] = [];
-  folderList = [
-    ...new Set(
-      bucket.files.map((file) => {
-        return file.folder;
-      })
-    ),
-  ];
-
-  // Add folders list to checked folders list if not already there
-
-  let checkedFolders: string[] = [];
-  checkedFolders = [...folderList];
-
   let filteredFiles: ImageBucket = bucket;
   $: filteredFiles = {
     name: bucket.name,
@@ -77,11 +90,21 @@
     total_files: bucket.total_files,
   };
 
-  let handleCheckFolders: (folder: string) => void = (folder: string) => {
-    if (checkedFolders.includes(folder)) {
-      checkedFolders = checkedFolders.filter((f) => f !== folder);
+  let handleCheckFolders: (folder_name: string) => void = (
+    folder_name: string
+  ) => {
+    if (checkedFolders.includes(folder_name)) {
+      folder.update((store: { [key: string]: string[] }) => {
+        let newStore = { ...store };
+        newStore[bucket.name] = checkedFolders.filter((f) => f !== folder_name);
+        return newStore;
+      });
     } else {
-      checkedFolders = [...checkedFolders, folder];
+      folder.update((store: { [key: string]: string[] }) => {
+        let newStore = { ...store };
+        newStore[bucket.name] = [...checkedFolders, folder_name];
+        return newStore;
+      });
     }
   };
 </script>
@@ -89,19 +112,12 @@
 <div class="mr-4">
   <NameDivider
     label={`bucket: ${bucket.name}
-${bucket.files.length > 0 ? `(${bucket.files.length})` : ""}`}
+${filteredFiles.files.length > 0 ? `(${filteredFiles.files.length})` : ""}`}
   />
 </div>
-<div
-  class="mr-4 mb-2 flex flex-auto gap-4 flex-wrap justify-center items-center border-2 border-orange-500"
->
-  <div class="ml-2">folders:</div>
-  <div class="flex flex-auto gap-4 flex-wrap">
-    {#each folderList as folder (folder)}
-      <Folder {checkedFolders} {handleCheckFolders} {folder} />
-    {/each}
-  </div>
-</div>
+
+<FolderPicker {checkedFolders} {handleCheckFolders} {folderList} />
+
 <VirtualGrid
   items={filteredFiles.files}
   length={filteredFiles.files.length}
