@@ -109,7 +109,6 @@
         resync = true;
       }
       const res: ImageBucket[] = await invoke("get_all_images");
-      console.log(res);
       images.set(res);
       if (load) {
         loading = false;

@@ -46,7 +46,6 @@
   };
 
   const handleRemoveTag = (tag: string) => (): void => {
-    console.log(tag, "tag");
     const rmTag = tags.filter((t) => t.key !== tag);
     tags = [...rmTag];
   };
@@ -59,7 +58,6 @@
     tags = res;
 
     loading = false;
-    console.log(tags);
   });
 </script>
 
