@@ -32,12 +32,12 @@
     await handleAddFolder(bucketName, value)}
 >
   {#if !visible}
-    <IconButton onClick={() => (visible = true)}>
+    <IconButton dataTestId="add-folder-form" onClick={() => (visible = true)}>
       <AddFolder />
     </IconButton>
   {/if}
   {#if visible}
-    <IconButton onClick={() => (visible = false)}>
+    <IconButton dataTestId="add-folder-form" onClick={() => (visible = false)}>
       <Close />
     </IconButton>
     <input
@@ -47,6 +47,7 @@
     />
     <IconButton
       type={"submit"}
+      dataTestId="add-folder-form"
       onClick={async () => await handleAddFolder(bucketName, value)}
     >
       {#if uploading}

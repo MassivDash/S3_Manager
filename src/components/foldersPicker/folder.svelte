@@ -8,6 +8,7 @@
 </script>
 
 <button
+  data-testId="folder"
   class="flex items-center justify-center text-red-500"
   on:click={() => handleCheckFolders(folder)}
 >
