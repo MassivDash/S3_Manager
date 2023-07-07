@@ -38,12 +38,12 @@
       <Delete />
     </IconButton>
     {#if fold}
-      <IconButton onClick={handleFold}>
+      <IconButton dataTestId="unfold" onClick={handleFold}>
         <Unfold />
       </IconButton>
     {/if}
     {#if !fold}
-      <IconButton onClick={handleFold}>
+      <IconButton dataTestId="fold" onClick={handleFold}>
         <Fold />
       </IconButton>
     {/if}

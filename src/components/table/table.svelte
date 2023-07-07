@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatBytes, formatDate, isImage } from "src/lib";
+  import { formatBytes, formatDate, isImage } from "../../lib";
   import Checkbox from "../checkbox/checkbox.svelte";
   import type { File, CheckedFile, VirtualListArray } from "src/types";
   import VirtualList from "../virtualList/virtualList.svelte";

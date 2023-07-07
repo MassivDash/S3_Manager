@@ -5,12 +5,13 @@
   export let checkedFiles: CheckedFile[] = [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export let handleCheckbox: any;
-
+  let checked = false;
   $: checked = key ? checkedFiles.some((item) => item.key === key) : false;
 </script>
 
 <button class="flex items-center justify-center text-red-500">
   <input
+    data-testId="checkbox"
     type="checkbox"
     bind:checked
     on:change={handleCheckbox}
