@@ -5,7 +5,7 @@
   import { onDestroy } from "svelte";
   import { movies_scroll_index } from "src/store/movies";
   import { folder_movies } from "src/store/folder";
-  import FolderPicker from "../../components/foldersPicker/folderPicker.svelte";
+  import FolderPicker from "../../components/foldersPicker/foldersPicker.svelte";
 
   import type { ImageBucket, CheckedFile } from "src/types";
   export let bucket: ImageBucket;
