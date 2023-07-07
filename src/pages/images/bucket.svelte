@@ -2,7 +2,7 @@
   import NameDivider from "src/components/nameDivider/nameDivider.svelte";
   import GridImage from "src/components/gridImage/gridImage.svelte";
   import VirtualGrid from "src/components/virtualGrid/virtualGrid.svelte";
-  import FolderPicker from "../../components/foldersPicker/folderPicker.svelte";
+  import FolderPicker from "../../components/foldersPicker/foldersPicker.svelte";
 
   import { onDestroy } from "svelte";
   import { images_scroll_index } from "src/store/images";
