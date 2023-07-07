@@ -5,9 +5,7 @@ import { defineConfig } from 'vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tsconfigPaths({
-    extensions: ['.ts', '.js', '.json', '.svelte'],
-  }), svelte()],
+  plugins: [tsconfigPaths(), svelte()],
   server: {
     port: 3000,
   },

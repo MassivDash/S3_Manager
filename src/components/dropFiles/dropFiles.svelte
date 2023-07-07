@@ -8,12 +8,12 @@
   import Select from "../select/select.svelte";
   import type { Bucket, TauriError } from "src/types";
   import type { FileEntry } from "@tauri-apps/api/fs";
-  import AddFile from "src/components/icons/addFile.svelte";
-  import Close from "src/components/icons/close.svelte";
+  import AddFile from "../icons/addFile.svelte";
+  import Close from "../icons/close.svelte";
   import Check from "../icons/check.svelte";
   import CircularProgress from "../circularProgress/circularProgress.svelte";
-  import { showModal } from "src/store/modal";
-  import { getFileName } from "src/lib/getFileName";
+  import { showModal } from "../../store/modal";
+  import { getFileName } from "../../lib/getFileName";
 
   let visible = false;
   let loading = false;
@@ -133,7 +133,9 @@
 
 <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars, eslint-disable-next-line @typescript-eslint/no-unsafe-argument  -->
 <FileDrop handleFiles={(paths) => handleDrop(paths)} let:files>
-  <slot /></FileDrop
+  <div data-testId="dropzone">
+    <slot />
+  </div></FileDrop
 >
 {#if visible}
   <div
@@ -225,6 +227,7 @@
         </div>
         <div class="flex justify-center items-center w-full h-24">
           <button
+            data-testId="upload-submit"
             disabled={folderName === ""}
             class="m-auto mt-8 flex justify-between p-5 w-32 text-gray-700 dark:text-white bg-orange-100 dark:bg-slate-600"
             type="submit"
