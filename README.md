@@ -24,7 +24,8 @@ Tested on Mac, Linux, Win 10.
 - Files, Pictures, Movies and buckets gallery (grid style)
 - Optimized for looking through the pictures / movies, lazy loading, images and movies streamed dritecly from the bucket, are loaded with presigned urls. 
 - Adjustable grid gallery 
-- Simple name search 
+- Simple name search
+- folders filtering in movies and images pages 
 - Tagging of assets
 - Folder creation
 - Multi file upload (drop files)
