@@ -12,8 +12,8 @@
     "format": "prettier --write '{public,src}/**/*.{css,html,js,svelte}'",
     "lint": "eslint --fix --quiet src --ext .js,.svelte,.ts",
     "prepare": "husky install",
-    "test:front": "vitest run src",
-    "test:front:watch": "vitest src"
+    "test": "vitest run src",
+    "test:watch": "vitest src"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.4.2",
