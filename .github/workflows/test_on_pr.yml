@@ -29,7 +29,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2 # optional
+          aws-region: eu-central-1 # optional
       - name: Build the releases 
         uses: tauri-apps/tauri-action@v0
         env:
