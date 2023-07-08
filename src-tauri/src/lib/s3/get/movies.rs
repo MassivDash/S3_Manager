@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::lib::s3::client::client::create_client;
 use crate::lib::s3::utils::presigned_url::get_presigned_url;
 use crate::lib::s3::utils::response_error::{create_error, ResponseError};
-use aws_sdk_s3::model::Object;
+use aws_sdk_s3::types::Object;
 use std::error::Error;
 use tokio_stream::StreamExt;
 
@@ -16,6 +16,7 @@ pub struct ImgBucketObject {
     pub url: String,
     pub size: i64,
     pub last_modified: i64,
+    pub folder: String,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -121,6 +122,13 @@ async fn show_objects(
                 .unwrap(),
                 size: object.size(),
                 last_modified: object.last_modified().unwrap().clone().secs(),
+                folder: object
+                    .key()
+                    .unwrap()
+                    .split("/")
+                    .nth(0)
+                    .unwrap_or_default()
+                    .to_string(),
             });
         }
     }

@@ -15,7 +15,7 @@
     value: string;
   }
 
-  let tag = "";
+  let value = "";
   let tags: Tag[];
   $: tags;
   $: tagNames = tags?.map((tag) =>
@@ -41,8 +41,8 @@
   };
 
   const handleAddTag = (): void => {
-    tags = [...tags, { key: tag, value: undefined }];
-    tag = "";
+    tags = [...tags, { key: value, value: undefined }];
+    value = "";
   };
 
   const handleRemoveTag = (tag: string) => (): void => {
@@ -56,33 +56,37 @@
       key: key,
     });
     tags = res;
+
     loading = false;
   });
 </script>
 
-{#if !loading}
-  <div
-    class="relative m-2 flex align-middle items-center justify-start flex-wrap"
-  >
-    <form on:submit|preventDefault={handleAddTag}>
+<div
+  class="relative m-2 flex align-middle items-center justify-start flex-wrap"
+>
+  {#if !loading}
+    <form data-testId="tags-form" on:submit|preventDefault={handleAddTag}>
       <label class="flex flex-wrap">
         {#each tagNames as tagName}
           <li
-            class="rounded first:ml-0 first:mr-1 mx-2 my-1 h-6 text-xs flex items-center  bg-orange-50 p-2 dark:bg-slate-800 dark:text-white border-0 appearance-none outline-orange-500 bg-none transition-all hover:bg-gray-50 hover:dark:bg-slate-700 hover:dark:text-orange-50 hover:text-gray-800 active:bg-gray-200"
+            class="rounded first:ml-0 first:mr-1 mx-2 my-1 h-6 text-xs flex items-center bg-orange-50 p-2 dark:bg-slate-800 dark:text-white border-0 appearance-none outline-orange-500 bg-none transition-all hover:bg-gray-50 hover:dark:bg-slate-700 hover:dark:text-orange-50 hover:text-gray-800 active:bg-gray-200"
           >
             <p class="mr-2">{tagName}</p>
             <span
               id={tagName}
+              data-testId="remove-tag"
               class="relative w-3 flex items-center justify-end cursor-pointer"
+              role="button"
+              tabindex="0"
               on:keypress={handleRemoveTag(tagName)}
               on:click={handleRemoveTag(tagName)}><Close width={16} /></span
             >
           </li>
         {/each}
         <input
-          class="text-xs my-1 placeholder:text-xs h-6 w-20 bg-orange-50 placeholder:bg-orange-50 placeholder:dark:bg-slate-800 dark:bg-slate-800 dark:text-white p-2  gap-2 flex border-0  outline-orange-500 bg-none transition-all hover:bg-gray-50 hover:dark:bg-slate-700 hover:dark:text-orange-50 hover:text-gray-800 active:bg-gray-200 placeholder:italic mr-2 placeholder:text-slate-400 placeholder:dark:text-slate-50 rounded-sm   py-2 pl-2 pr-1 focus:outline-none focus:border-slate-800 focus:ring-slate-700 focus:ring-1 sm:text-sm"
+          class="text-xs my-1 placeholder:text-xs h-6 w-20 bg-orange-50 placeholder:bg-orange-50 placeholder:dark:bg-slate-800 dark:bg-slate-800 dark:text-white p-2 gap-2 flex border-0 outline-orange-500 bg-none transition-all hover:bg-gray-50 hover:dark:bg-slate-700 hover:dark:text-orange-50 hover:text-gray-800 active:bg-gray-200 placeholder:italic mr-2 placeholder:text-slate-400 placeholder:dark:text-slate-50 rounded-sm py-2 pl-2 pr-1 focus:outline-none focus:border-slate-800 focus:ring-slate-700 focus:ring-1 sm:text-sm"
           type="text"
-          bind:value={tag}
+          bind:value
           name={"tag"}
           placeholder="Add tags"
         />
@@ -99,5 +103,5 @@
         </IconButton>
       </label>
     </form>
-  </div>
-{/if}
+  {/if}
+</div>

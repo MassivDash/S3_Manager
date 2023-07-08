@@ -1,4 +1,4 @@
-use aws_sdk_s3::{presigning::config::PresigningConfig, Client};
+use aws_sdk_s3::{presigning::PresigningConfig, Client};
 use std::{error::Error, time::Duration};
 
 pub async fn get_presigned_url(

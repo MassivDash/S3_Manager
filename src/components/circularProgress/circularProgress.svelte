@@ -12,7 +12,7 @@
 
 <div id="progress-circle" style={cssVarStyles}>
   <div
-    class="flex items-center justify-center rounded-full w-20 h-20 text-lg dark:bg-slate-800 dark:text-white  gap-2 border-0  outline-orange-500 bg-none transition-all hover:bg-gray-50 hover:dark:bg-slate-700 hover:dark:text-orange-50 hover:text-gray-800 active:bg-gray-200"
+    class="flex items-center justify-center rounded-full w-20 h-20 text-lg dark:bg-slate-800 dark:text-white gap-2 border-0 outline-orange-500 bg-none transition-all hover:bg-gray-50 hover:dark:bg-slate-700 hover:dark:text-orange-50 hover:text-gray-800 active:bg-gray-200"
   >
     {procentage}
   </div>

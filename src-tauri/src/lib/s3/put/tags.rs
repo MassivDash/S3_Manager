@@ -1,5 +1,5 @@
 use aws_sdk_s3::{
-    model::{Tag, Tagging},
+    types::{Tag, Tagging},
     Client,
 };
 
