@@ -156,3 +156,24 @@ async fn get_objects(client: &Client, bucket: &str) -> Result<Vec<BucketObject>,
     }
     return Ok(files);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_get_objects() {
+        let result = get_files().await;
+        assert!(result.is_ok());
+        let bucket = result.unwrap();
+        assert!(!bucket.is_empty());
+        let mut found_bucket = false;
+        for b in &bucket {
+            if b.name == "lc-photobackup" {
+                found_bucket = true;
+                break;
+            }
+        }
+        assert!(found_bucket);
+    }
+}
