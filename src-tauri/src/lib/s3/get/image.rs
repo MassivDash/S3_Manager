@@ -56,3 +56,29 @@ pub async fn get_image(bucket: String, key: String) -> Result<SingleImgObject, R
 
     Ok(img)
 }
+
+#[cfg(test)]
+
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_get_image() {
+        let result = get_image(
+            "spaceout-backup".to_string(),
+            "website/dockercli.jpeg".to_string(),
+        )
+        .await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_get_image_error() {
+        let result = get_image(
+            "spaceout-error".to_string(),
+            "website/dockercli.jpeg".to_string(),
+        )
+        .await;
+        assert!(result.is_err());
+    }
+}

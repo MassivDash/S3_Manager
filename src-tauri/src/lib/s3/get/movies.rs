@@ -142,3 +142,25 @@ fn check_if_file_is_movie(key: &str) -> bool {
         _ => false,
     }
 }
+
+#[cfg(test)]
+
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_get_all_movies() {
+        let result = get_all_movies().await;
+        assert!(result.is_ok());
+        let bucket = result.unwrap();
+        assert!(!bucket.is_empty());
+        let mut found_bucket = false;
+        for b in &bucket {
+            if b.name == "lc-photobackup" {
+                found_bucket = true;
+                break;
+            }
+        }
+        assert!(found_bucket);
+    }
+}
