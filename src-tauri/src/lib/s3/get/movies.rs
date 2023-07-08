@@ -1,6 +1,5 @@
 use aws_sdk_s3::Client;
 use cached::proc_macro::once;
-use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 
 use crate::lib::s3::client::client::create_client;

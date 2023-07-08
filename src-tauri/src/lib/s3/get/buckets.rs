@@ -47,3 +47,22 @@ pub async fn get_buckets() -> Result<Vec<BucketInfo>, ResponseError> {
     }
     return Ok(my_buckets);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_get_buckets() {
+        let result = get_buckets().await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_get_buckets_error() {
+        let result = create_error("Test Error".into(), "This is a test error".into());
+        let error = result;
+        assert_eq!(error.name, "Test Error");
+        assert_eq!(error.message, "This is a test error");
+    }
+}
