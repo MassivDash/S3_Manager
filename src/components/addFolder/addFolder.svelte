@@ -37,7 +37,7 @@
     </IconButton>
   {/if}
   {#if visible}
-    <IconButton dataTestId="add-folder-form" onClick={() => (visible = false)}>
+    <IconButton dataTestId="add-folder-close" onClick={() => (visible = false)}>
       <Close />
     </IconButton>
     <input
