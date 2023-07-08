@@ -1,5 +1,5 @@
 use aws_sdk_s3::{
-    model::{Delete, Object, ObjectIdentifier},
+    types::{Delete, Object, ObjectIdentifier},
     Client,
 };
 use std::error::Error;

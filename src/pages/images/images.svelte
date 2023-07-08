@@ -65,9 +65,11 @@
 
   // On mount get the files from rust
   // Add grid responsiveness via resize listener
-  onMount(async () => {
+  onMount(() => {
     if (!response) {
-      await handleSync("load");
+      handleSync("load").catch((err: TauriError) => {
+        showModal({ title: err.name, message: err.message, type: "error" });
+      });
     }
 
     window.addEventListener("resize", onResize);
@@ -202,7 +204,7 @@
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div class="mr-12">
+    <div class="mr-8">
       <Tools
         handleGrid={() => (gridCol = handleGrid(gridCol))}
         {resync}

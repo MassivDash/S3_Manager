@@ -1,7 +1,9 @@
-use aws_sdk_s3::model::Object;
+use aws_sdk_s3::types::Object;
 use aws_sdk_s3::Client;
 use cached::proc_macro::once;
+use itertools::Itertools;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use crate::lib::s3::client::client::create_client;
 use crate::lib::s3::utils::presigned_url::get_presigned_url;
@@ -16,6 +18,7 @@ pub struct ImgBucketObject {
     pub url: String,
     pub size: i64,
     pub last_modified: i64,
+    pub folder: String,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -69,6 +72,23 @@ pub async fn get_all_images() -> Result<Vec<ImgBucket>, ResponseError> {
                 ))
             }
         };
+
+        // Group files by the folder they are in
+
+        let files = files
+            .into_iter()
+            .sorted_by(|a, b| a.folder.cmp(&b.folder))
+            .group_by(|a| a.folder.clone())
+            .into_iter()
+            .map(|(_, group)| {
+                group
+                    .into_iter()
+                    .sorted_by(|a, b| a.name.cmp(&b.name))
+                    .collect::<Vec<ImgBucketObject>>()
+            })
+            .collect::<Vec<Vec<ImgBucketObject>>>()
+            .concat();
+
         my_buckets.push(ImgBucket {
             name: bucket.name().unwrap_or_default().to_string(),
             files: files.clone(),
@@ -82,6 +102,9 @@ async fn show_objects(
     client: &Client,
     bucket: &str,
 ) -> Result<Vec<ImgBucketObject>, Box<dyn Error>> {
+    let mut tags = HashMap::new();
+    tags.insert("karolina".to_owned(), "karolina".to_owned());
+
     let mut resp = client
         .list_objects_v2()
         .bucket(bucket)
@@ -123,6 +146,13 @@ async fn show_objects(
                 url: url,
                 size: object.size(),
                 last_modified: object.last_modified().unwrap().clone().secs(),
+                folder: object
+                    .key()
+                    .unwrap()
+                    .split("/")
+                    .nth(0)
+                    .unwrap_or_default()
+                    .to_string(),
             };
             files.push(new_obj);
         }

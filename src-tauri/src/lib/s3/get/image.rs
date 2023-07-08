@@ -2,7 +2,7 @@ use crate::lib::s3::utils::presigned_url::get_presigned_url;
 use crate::lib::s3::utils::response_error::create_error;
 use crate::lib::s3::{client::client::create_client, utils::response_error::ResponseError};
 
-use aws_sdk_s3::model::ObjectAttributes;
+use aws_sdk_s3::types::ObjectAttributes;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone)]

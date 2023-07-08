@@ -1,6 +1,7 @@
 use crate::lib::s3::client::client::create_client;
 use crate::lib::s3::utils::get_file_name::get_file_name;
-use aws_sdk_s3::{types::ByteStream, Client};
+use aws_sdk_s3::primitives::ByteStream;
+use aws_sdk_s3::Client;
 use std::{error::Error, fs, path::Path};
 use tauri::Window;
 use walkdir::WalkDir;

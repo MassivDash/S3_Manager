@@ -1,8 +1,8 @@
 <script lang="ts">
-  import IconButton from "src/components/iconButton/iconButton.svelte";
-  import Search from "src/components/search/search.svelte";
-  import Download from "src/components/icons/download.svelte";
-  import Delete from "src/components/icons/delete.svelte";
+  import IconButton from "../iconButton/iconButton.svelte";
+  import Search from "../search/search.svelte";
+  import Download from "../icons/download.svelte";
+  import Delete from "../icons/delete.svelte";
   import Sync from "../icons/sync.svelte";
   import Grid from "../icons/grid.svelte";
 

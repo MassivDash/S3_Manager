@@ -7,6 +7,7 @@
   {width}
   {height}
   role="status"
+  data-testId="loader"
   class="text-gray-200 animate-spin dark:text-gray-600 fill-amber-600"
   viewBox="0 0 100 100"
   fill="none"
