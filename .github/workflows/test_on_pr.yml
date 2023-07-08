@@ -37,7 +37,7 @@ jobs:
       - name: Test the frontend
         run: yarn test
       - name: Test the backend
-        script: |
+        run: |
           cd src-tauri
           cargo test
 
