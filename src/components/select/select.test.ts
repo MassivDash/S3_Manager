@@ -39,5 +39,8 @@ describe("Select component", () => {
     await fireEvent.change(select, { target: { value: options[1] } });
 
     expect(value).toBe(options[1]);
+    await fireEvent.change(select, { target: { value: options[0] } });
+
+    expect(value).toBe(options[0]);
   });
 });
