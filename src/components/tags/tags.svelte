@@ -51,13 +51,19 @@
   };
 
   onMount(async () => {
-    const res: Tag[] = await invoke("get_all_tags", {
-      bucket: bucket,
-      key: key,
-    });
-    tags = res;
+    try {
+      const res: Tag[] = await invoke("get_all_tags", {
+        bucket: bucket,
+        key: key,
+      });
+      tags = res;
 
-    loading = false;
+      loading = false;
+    } catch (err) {
+      console.log(err);
+      loading = false;
+      //TO DO: show errors to user
+    }
   });
 </script>
 
