@@ -38,7 +38,7 @@
 {#if files.length > 0}
   <table class="table-auto w-full flex flex-col border-spacing-3 relative">
     <thead
-      class="pl-4 bg-orange-50 dark:bg-slate-800 dark:text-white px-2 sticky top-32 z-10"
+      class="pl-4 bg-orange-50 dark:bg-slate-800 dark:text-white px-2 sticky top-[63px] z-10"
     >
       <tr class="text-left text-xs">
         <th />
