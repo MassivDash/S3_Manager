@@ -5,13 +5,13 @@
   import Loader from "src/components/loader/loader.svelte";
   import { open, confirm } from "@tauri-apps/api/dialog";
   import { appDir } from "@tauri-apps/api/path";
-  import { formatBytes, searchWithFolders } from "src/lib";
+  import { searchWithFolders } from "src/lib";
   // Open a selection dialog for directories
   import Tools from "src/components/tools/tools.svelte";
-  import NameDivider from "src/components/nameDivider/nameDivider.svelte";
   import FileTable from "src/components/fileTable/fileTable.svelte";
-  import AddFolder from "src/components/addFolder/addFolder.svelte";
   import Scroller from "src/components/scroller/scroller.svelte";
+
+  import Title from "./bucketTitle.svelte";
 
   import type { Bucket, CheckedFile, TauriError } from "src/types";
 
@@ -233,7 +233,7 @@
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div class="mr-7">
+    <div class="mr-8">
       <Tools
         {resync}
         {handleSync}
@@ -245,30 +245,22 @@
     </div>
     <Scroller>
       {#each filteredList as bucket (bucket.name)}
-      <div class="flex">
-        <NameDivider
-          label={`${bucket.name} (${filesCounter[bucket.name]}) ${formatBytes(
-            bucket.total_size
-          )}`}
-        />
-
-        <AddFolder
-          bucketName={bucket.name}
-          handleSync={() => handleSync("sync")}
-        />
-      </div>
-        {#each bucket.folders as folder (folder.name)}
-          <FileTable
-            handleFolderDelete={() =>
-              handleFolderDelete(bucket.name, folder.name)}
-            handleFilesSelect={() =>
-              handleFilesSelect(bucket.name, folder.name)}
-            {folder}
-            {bucket}
-            {handleCheckbox}
-            {checkedFiles}
-          />
-        {/each}
+        <Title {handleSync} {bucket} {filesCounter} />
+        <div class="mr-4 mt-4">
+          {#each bucket.folders as folder (folder.name)}
+            <FileTable
+              handleFolderDelete={() =>
+                handleFolderDelete(bucket.name, folder.name)}
+              handleFilesSelect={() =>
+                handleFilesSelect(bucket.name, folder.name)}
+              {folder}
+              {bucket}
+              {handleCheckbox}
+              {checkedFiles}
+            />
+          {/each}
+        </div>
+        <div class="h-5" />
       {/each}
     </Scroller>
   {/if}
