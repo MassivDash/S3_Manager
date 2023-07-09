@@ -16,13 +16,19 @@
     value: string
   ): Promise<void> {
     uploading = true;
-    const res = await invoke("put_folder", {
-      bucketName,
-      key: value,
-    });
-    res && (await handleSync());
-    uploading = false;
-    visible = false;
+    try {
+      const res = await invoke("put_folder", {
+        bucketName,
+        key: value,
+      });
+      res && (await handleSync());
+      uploading = false;
+      visible = false;
+    } catch (err) {
+      console.log(err);
+      uploading = false;
+      visible = false;
+    }
   }
 </script>
 
