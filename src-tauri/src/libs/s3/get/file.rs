@@ -1,7 +1,7 @@
-use crate::lib::s3::utils::response_error::create_error;
-use crate::lib::s3::{client::client::create_client, utils::response_error::ResponseError};
+use crate::libs::s3::utils::response_error::create_error;
+use crate::libs::s3::{client::client::create_client, utils::response_error::ResponseError};
 #[cfg(not(test))]
-use crate::lib::tauri::operations::show_folder::show_folder;
+use crate::libs::tauri::operations::show_folder::show_folder;
 use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
 use std::fs::write;
