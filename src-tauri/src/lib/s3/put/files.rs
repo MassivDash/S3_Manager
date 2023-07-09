@@ -1,5 +1,6 @@
-use crate::lib::s3::client::client::create_client;
 use crate::lib::s3::utils::get_file_name::get_file_name;
+use crate::lib::s3::utils::response_error::create_error;
+use crate::lib::s3::{client::client::create_client, utils::response_error::ResponseError};
 use aws_sdk_s3::primitives::ByteStream;
 use aws_sdk_s3::Client;
 use std::{error::Error, fs, path::Path};
@@ -30,8 +31,19 @@ pub async fn put_files(
     bucket_name: String,
     folder_name: String,
     files: Vec<String>,
-) -> bool {
-    let client = create_client().await.unwrap();
+) -> Result<bool, ResponseError> {
+    let client_call = create_client().await;
+
+    let client = match client_call {
+        Ok(instance) => instance,
+        Err(err) => {
+            return Err(create_error(
+                "AWS Client Config error".into(),
+                err.to_string(),
+            ))
+        }
+    };
+
     for file in files {
         let path = fs::metadata(&file).unwrap();
         if path.is_dir() {
@@ -42,16 +54,24 @@ pub async fn put_files(
                     println!("{} {}", filename, !filename.starts_with("."));
 
                     if !filename.starts_with(".") {
-                        put_file(
+                        match put_file(
                             &client,
                             bucket_name.to_string(),
                             fil.path().display().to_string(),
                             key,
                         )
                         .await
-                        .unwrap();
-
-                        window.emit("event-upload-file", &filename).unwrap()
+                        {
+                            Ok(_) => {
+                                window.emit("event-upload-file", &filename).unwrap();
+                            }
+                            Err(err) => {
+                                return Err(create_error(
+                                    "Error uploading file".into(),
+                                    err.to_string(),
+                                ));
+                            }
+                        }
                     }
                 }
             }
@@ -59,18 +79,23 @@ pub async fn put_files(
             let filename = get_file_name(&file);
 
             let key = folder_name.to_string() + "/" + filename;
-            put_file(
+            match put_file(
                 &client,
                 bucket_name.to_string(),
                 file.clone(),
                 key.to_string(),
             )
             .await
-            .unwrap();
-
-            window.emit("event-upload-file", &filename).unwrap()
+            {
+                Ok(_) => {
+                    window.emit("event-upload-file", &filename).unwrap();
+                }
+                Err(err) => {
+                    return Err(create_error("Error uploading file".into(), err.to_string()));
+                }
+            }
         }
     }
     window.emit("event-resync", "upload successful").unwrap();
-    return true;
+    return Ok(true);
 }

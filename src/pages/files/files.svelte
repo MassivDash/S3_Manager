@@ -245,6 +245,7 @@
     </div>
     <Scroller>
       {#each filteredList as bucket (bucket.name)}
+      <div class="flex">
         <NameDivider
           label={`${bucket.name} (${filesCounter[bucket.name]}) ${formatBytes(
             bucket.total_size
@@ -255,6 +256,7 @@
           bucketName={bucket.name}
           handleSync={() => handleSync("sync")}
         />
+      </div>
         {#each bucket.folders as folder (folder.name)}
           <FileTable
             handleFolderDelete={() =>

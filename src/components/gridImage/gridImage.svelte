@@ -4,6 +4,7 @@
   import Checkbox from "../checkbox/checkbox.svelte";
   import { formatBytes } from "../../lib/date";
   import Error from "../icons/error.svelte";
+  import Resync from "../icons/sync.svelte";
 
   import Tags from "../tags/tags.svelte";
   import type { ImageBucket, CheckedFile } from "src/types";
@@ -70,7 +71,7 @@
           <div class="text-sm">
             <h3>Image not loaded</h3>
             <p>Most probably the presigned url has expired.</p>
-            <p>Try to resync</p>
+            <p class="flex gap-4 mt-4">Try to resync <Resync /></p>
           </div>
         </div>
       {/if}
