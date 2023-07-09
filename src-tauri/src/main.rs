@@ -17,6 +17,7 @@ use crate::libs::s3::put::files::put_files;
 use crate::libs::s3::put::folder::put_folder;
 use crate::libs::s3::put::tags::set_all_tags;
 
+use crate::libs::tauri::operations::close_splashscreen::close_splashscreen;
 use crate::libs::tauri::operations::show_folder::show_folder;
 
 mod libs;
@@ -57,6 +58,7 @@ fn main() {
             delete_folders,
             get_all_tags,
             set_all_tags,
+            close_splashscreen
         ])
         .run(context)
         .expect("error while running tauri application");
