@@ -67,14 +67,16 @@ pub async fn show_folder(path: String) -> Result<(), ResponseError> {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+//  This test works, but it opens a folder on the local machine, not in the container.
 
-    #[tokio::test]
-    async fn test_show_folder() {
-        let path = "/path/to/folder".to_string();
-        let result = show_folder(path).await;
-        assert!(result.is_ok());
-    }
-}
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+
+//     #[tokio::test]
+//     async fn test_show_folder() {
+//         let path = "/path/to/folder".to_string();
+//         let result = show_folder(path).await;
+//         assert!(result.is_ok());
+//     }
+// }
