@@ -10,13 +10,13 @@ use crate::libs::s3::utils::response_error::{create_error, ResponseError};
 pub async fn show_folder(path: String) -> Result<(), ResponseError> {
     #[cfg(target_os = "windows")]
     {
-        match Command::new("explorer")
+        return match Command::new("explorer")
             .args(["/select,", &path]) // The comma after select is not a typo
             .spawn()
         {
-            Ok(_) => (),
+            Ok(_) => Ok(()),
             Err(err) => return Err(create_error("folder open error".into(), err.to_string())),
-        }
+        };
     }
 
     #[cfg(target_os = "linux")]
@@ -31,8 +31,8 @@ pub async fn show_folder(path: String) -> Result<(), ResponseError> {
                     path2.into_os_string().into_string().unwrap()
                 }
             };
-            match Command::new("xdg-open").arg(&new_path).spawn() {
-                Ok(_) => (),
+            return match Command::new("xdg-open").arg(&new_path).spawn() {
+                Ok(_) => Ok(()),
                 Err(err) => return Err(create_error("folder open error".into(), err.to_string())),
             };
         } else {
@@ -55,10 +55,10 @@ pub async fn show_folder(path: String) -> Result<(), ResponseError> {
                     }
                 }
             } else {
-                Err(create_error(
+                return Err(create_error(
                     "folder open error".into(),
                     "Fork error".into(),
-                ))
+                ));
             }
         }
     }
