@@ -22,7 +22,7 @@ aws-config = "0.55.3"
 aws-sdk-s3 = "0.28.0"
 tokio-stream = "0.1.11"
 tokio = { version = "1.24.2", features = ["full", "macros"] }
-
+fork = "*"
 cached = "0.44.0"
 thiserror = "1.0.37"
 itertools = "*"

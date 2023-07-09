@@ -17,6 +17,8 @@ use crate::lib::s3::put::files::put_files;
 use crate::lib::s3::put::folder::put_folder;
 use crate::lib::s3::put::tags::set_all_tags;
 
+use crate::lib::tauri::operations::show_folder::show_folder;
+
 mod lib;
 
 #[derive(Debug, thiserror::Error)]
@@ -41,6 +43,7 @@ fn main() {
         .menu(tauri::Menu::os_default(&context.package_info().name))
         .invoke_handler(tauri::generate_handler![
             get_files,
+            show_folder,
             get_buckets,
             get_cached_images,
             get_all_images,
