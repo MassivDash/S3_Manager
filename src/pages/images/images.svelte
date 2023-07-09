@@ -204,7 +204,7 @@
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div class="mr-8">
+    <div class="mr-10">
       <Tools
         handleGrid={() => (gridCol = handleGrid(gridCol))}
         {resync}

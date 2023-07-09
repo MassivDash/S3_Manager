@@ -108,7 +108,7 @@
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div class="mr-8 mt-2">
+    <div class="mr-10 mt-2">
       <Tools {resync} {handleSync} bind:value />
     </div>
     <Scroller>
