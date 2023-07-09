@@ -66,3 +66,15 @@ pub async fn show_folder(path: String) -> Result<(), ResponseError> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_show_folder() {
+        let path = "/path/to/folder".to_string();
+        let result = show_folder(path).await;
+        assert!(result.is_ok());
+    }
+}
