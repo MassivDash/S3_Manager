@@ -33,7 +33,7 @@ pub async fn show_folder(path: String) -> Result<(), ResponseError> {
             };
             match Command::new("xdg-open").arg(&new_path).spawn() {
                 Ok(_) => (),
-                Err(err) => return Err(create_error("folder open errror".into(), err.to_string())),
+                Err(err) => return Err(create_error("folder open error".into(), err.to_string())),
             };
         } else {
             if let Ok(Fork::Child) = daemon(false, false) {
@@ -54,6 +54,11 @@ pub async fn show_folder(path: String) -> Result<(), ResponseError> {
                         return Err(create_error("folder open error".into(), err.to_string()))
                     }
                 }
+            } else {
+                Err(create_error(
+                    "folder open error".into(),
+                    "Fork error".into(),
+                ))
             }
         }
     }
