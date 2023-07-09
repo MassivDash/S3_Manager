@@ -1,5 +1,6 @@
 use crate::lib::s3::utils::response_error::create_error;
 use crate::lib::s3::{client::client::create_client, utils::response_error::ResponseError};
+#[cfg(not(test))]
 use crate::lib::tauri::operations::show_folder::show_folder;
 use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
@@ -42,12 +43,13 @@ pub async fn save_files(keys: Vec<FilesToDownload>, dir: String) -> Result<bool,
 
     if file_errors.is_empty() {
         let cloned_keys = keys.clone();
-        let first_key = cloned_keys.first().unwrap();
+        let _first_key = cloned_keys.first().unwrap();
 
+        #[cfg(not(test))]
         match show_folder(format!(
             "{}/{}",
             dir.to_string(),
-            first_key.key.split("/").last().unwrap().to_string()
+            _first_key.key.split("/").last().unwrap().to_string()
         ))
         .await
         {
