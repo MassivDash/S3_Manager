@@ -3,23 +3,23 @@
     windows_subsystem = "windows"
 )]
 
-use crate::lib::s3::get::buckets::get_buckets;
-use crate::lib::s3::get::file::save_files;
-use crate::lib::s3::get::files::get_files;
-use crate::lib::s3::get::image::get_image;
-use crate::lib::s3::get::images::{get_all_images, get_cached_images};
-use crate::lib::s3::get::movies::{get_all_movies, get_cached_movies};
+use crate::libs::s3::get::buckets::get_buckets;
+use crate::libs::s3::get::file::save_files;
+use crate::libs::s3::get::files::get_files;
+use crate::libs::s3::get::image::get_image;
+use crate::libs::s3::get::images::{get_all_images, get_cached_images};
+use crate::libs::s3::get::movies::{get_all_movies, get_cached_movies};
 
-use crate::lib::s3::delete::files::delete_files;
-use crate::lib::s3::delete::folder::delete_folders;
-use crate::lib::s3::get::tags::get_all_tags;
-use crate::lib::s3::put::files::put_files;
-use crate::lib::s3::put::folder::put_folder;
-use crate::lib::s3::put::tags::set_all_tags;
+use crate::libs::s3::delete::files::delete_files;
+use crate::libs::s3::delete::folder::delete_folders;
+use crate::libs::s3::get::tags::get_all_tags;
+use crate::libs::s3::put::files::put_files;
+use crate::libs::s3::put::folder::put_folder;
+use crate::libs::s3::put::tags::set_all_tags;
 
-use crate::lib::tauri::operations::show_folder::show_folder;
+use crate::libs::tauri::operations::show_folder::show_folder;
 
-mod lib;
+mod libs;
 
 #[derive(Debug, thiserror::Error)]
 enum Error {

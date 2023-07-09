@@ -4,7 +4,7 @@ use std::process::Command;
 #[cfg(target_os = "linux")]
 use std::{fs::metadata, path::PathBuf};
 
-use crate::lib::s3::utils::response_error::{create_error, ResponseError};
+use crate::libs::s3::utils::response_error::{create_error, ResponseError};
 
 #[tauri::command]
 pub async fn show_folder(path: String) -> Result<(), ResponseError> {

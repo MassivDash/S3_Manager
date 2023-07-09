@@ -1,5 +1,5 @@
-use crate::lib::s3::utils::response_error::create_error;
-use crate::lib::s3::{client::client::create_client, utils::response_error::ResponseError};
+use crate::libs::s3::utils::response_error::create_error;
+use crate::libs::s3::{client::client::create_client, utils::response_error::ResponseError};
 use tauri::Window;
 
 #[tauri::command]

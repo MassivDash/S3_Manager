@@ -1,6 +1,6 @@
 use aws_sdk_s3::types::{Tag, Tagging};
 
-use crate::lib::s3::{
+use crate::libs::s3::{
     client::client::create_client,
     utils::response_error::{create_error, ResponseError},
 };
