@@ -59,7 +59,9 @@ fn main() {
                     "Operations",
                     Menu::with_items([
                         CustomMenuItem::new("resync", "Resync").into(),
-                        CustomMenuItem::new("upload", "Upload files").into(),
+                        MenuEntry::NativeItem(MenuItem::Separator),
+                        CustomMenuItem::new("upload-files", "Upload files").into(),
+                        CustomMenuItem::new("upload-folders", "Upload folders").into(),
                     ]),
                 ))
                 .add_submenu(Submenu::new(
@@ -97,10 +99,16 @@ fn main() {
                     .emit("event-resync", "resync menu action")
                     .unwrap();
             }
-            "upload" => {
+            "upload-files" => {
                 event
                     .window()
-                    .emit("event-upload", "upload menu action")
+                    .emit("event-upload-menu-files", "upload menu action")
+                    .unwrap();
+            }
+            "upload-folders" => {
+                event
+                    .window()
+                    .emit("event-upload-menu-folders", "upload menu action")
                     .unwrap();
             }
             "AboutS3" => message(
