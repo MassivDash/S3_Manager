@@ -44,15 +44,11 @@ pub async fn save_files(keys: Vec<FilesToDownload>, dir: String) -> Result<bool,
     if file_errors.is_empty() {
         let cloned_keys = keys.clone();
         let _first_key = cloned_keys.first().unwrap();
-
+        let mut filepath = std::path::PathBuf::from(dir.to_string());
+        filepath.push(_first_key.key.split("/").last().unwrap().to_string());
+        let _path_string = filepath.to_str().unwrap().to_string();
         #[cfg(not(test))]
-        match show_folder(format!(
-            "{}/{}",
-            dir.to_string(),
-            _first_key.key.split("/").last().unwrap().to_string()
-        ))
-        .await
-        {
+        match show_folder(_path_string).await {
             Ok(_) => (),
             Err(err) => {
                 return Err(create_error(
