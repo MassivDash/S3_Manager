@@ -2,6 +2,8 @@
   import FileDrop from "svelte-tauri-filedrop";
   import { onDestroy } from "svelte";
   import { invoke } from "@tauri-apps/api";
+  import { open } from "@tauri-apps/api/dialog";
+  import { appDir } from "@tauri-apps/api/path";
   import { listen } from "@tauri-apps/api/event";
   import { readDir } from "@tauri-apps/api/fs";
   import { fly } from "svelte/transition";
@@ -48,6 +50,80 @@
   const filesUploaded = listen("event-upload-file", (event) => {
     uploadedFilesList = [...uploadedFilesList, event.payload as string];
   });
+
+  const menuListener = listen("event-upload-menu-files", (_event): void => {
+    appDir()
+      .then((path) => {
+        open({
+          multiple: true,
+          defaultPath: path,
+        })
+          .then((selected): void => {
+            if (selected) {
+              handleDrop([selected].flat()).catch((err: TauriError) => {
+                showModal({
+                  title: err.name,
+                  message: err.message,
+                  type: "error",
+                })();
+              });
+            }
+          })
+          .catch((err: TauriError) => {
+            showModal({
+              title: err.name,
+              message: err.message,
+              type: "error",
+            })();
+          });
+      })
+      .catch((err: TauriError) => {
+        showModal({
+          title: err.name,
+          message: err.message,
+          type: "error",
+        })();
+      });
+  });
+
+  const menuFoldersListener = listen(
+    "event-upload-menu-folders",
+    (_event): void => {
+      appDir()
+        .then((path) => {
+          open({
+            directory: true,
+            multiple: true,
+            defaultPath: path,
+          })
+            .then((selected): void => {
+              if (selected) {
+                handleDrop([selected].flat()).catch((err: TauriError) => {
+                  showModal({
+                    title: err.name,
+                    message: err.message,
+                    type: "error",
+                  })();
+                });
+              }
+            })
+            .catch((err: TauriError) => {
+              showModal({
+                title: err.name,
+                message: err.message,
+                type: "error",
+              })();
+            });
+        })
+        .catch((err: TauriError) => {
+          showModal({
+            title: err.name,
+            message: err.message,
+            type: "error",
+          })();
+        });
+    }
+  );
 
   let dirs: Folder[] = [];
   $: dirsLength = dirs.length;
@@ -127,7 +203,11 @@
 
   onDestroy(async () => {
     const unlisten = await filesUploaded;
+    const unlistenMenu = await menuListener;
+    const unlistenMenuFolders = await menuFoldersListener;
     unlisten();
+    unlistenMenu();
+    unlistenMenuFolders();
   });
 </script>
 
