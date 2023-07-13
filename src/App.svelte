@@ -14,7 +14,6 @@
   import { onMount } from "svelte";
   import { invoke } from "@tauri-apps/api";
 
-
   // When app is ready, close splashscreen
   onMount(async () => {
     await invoke("close_splashscreen");

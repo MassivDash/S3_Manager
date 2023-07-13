@@ -18,10 +18,11 @@ pub async fn save_files(keys: Vec<FilesToDownload>, dir: String) -> Result<bool,
     let client = match client_result {
         Ok(client) => client,
         Err(err) => {
+            println!("{}", err.to_string());
             return Err(create_error(
                 "Aws client config error".into(),
                 err.to_string(),
-            ))
+            ));
         }
     };
 
@@ -51,15 +52,17 @@ pub async fn save_files(keys: Vec<FilesToDownload>, dir: String) -> Result<bool,
         match show_folder(_path_string).await {
             Ok(_) => (),
             Err(err) => {
+                println!("{}", err.to_string());
                 return Err(create_error(
                     "Failed to open folder, but files were saved".into(),
                     err.to_string(),
-                ))
+                ));
             }
         }
         Ok(true)
     } else {
         let error_string = file_errors.join(", ");
+        println!("{}", error_string.clone());
         Err(create_error("file".into(), error_string))
     }
 }

@@ -18,10 +18,11 @@ pub async fn get_buckets() -> Result<Vec<BucketInfo>, ResponseError> {
     let client = match client_call {
         Ok(instance) => instance,
         Err(err) => {
+            println!("{}", err.to_string());
             return Err(create_error(
                 "AWS Client Config error".into(),
                 err.to_string(),
-            ))
+            ));
         }
     };
 
@@ -29,10 +30,11 @@ pub async fn get_buckets() -> Result<Vec<BucketInfo>, ResponseError> {
     let resp = match resp_call {
         Ok(list) => list,
         Err(err) => {
+            println!("{}", err.to_string());
             return Err(create_error(
                 "S3 bucket call failed".into(),
                 err.to_string(),
-            ))
+            ));
         }
     };
 

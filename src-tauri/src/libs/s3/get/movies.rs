@@ -39,10 +39,11 @@ pub async fn get_all_movies() -> Result<Vec<ImgBucket>, ResponseError> {
     let client = match client_call {
         Ok(instance) => instance,
         Err(err) => {
+            println!("{}", err.to_string());
             return Err(create_error(
                 "AWS Client Config error".into(),
                 err.to_string(),
-            ))
+            ));
         }
     };
 
@@ -50,10 +51,11 @@ pub async fn get_all_movies() -> Result<Vec<ImgBucket>, ResponseError> {
     let resp = match resp_call {
         Ok(list) => list,
         Err(err) => {
+            println!("{}", err.to_string());
             return Err(create_error(
                 "S3 bucket call failed".into(),
                 err.to_string(),
-            ))
+            ));
         }
     };
     let buckets = resp.buckets().unwrap();
@@ -63,10 +65,11 @@ pub async fn get_all_movies() -> Result<Vec<ImgBucket>, ResponseError> {
         let files = match files_call {
             Ok(list) => list,
             Err(err) => {
+                println!("{}", err.to_string());
                 return Err(create_error(
                     "S3 object call failed".into(),
                     err.to_string(),
-                ))
+                ));
             }
         };
 

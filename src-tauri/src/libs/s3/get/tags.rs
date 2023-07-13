@@ -33,10 +33,11 @@ pub async fn get_all_tags(bucket: String, key: String) -> Result<Vec<ObjectTag>,
     let client = match client_call {
         Ok(instance) => instance,
         Err(err) => {
+            println!("{}", err.to_string());
             return Err(create_error(
                 "AWS Client Config error".into(),
                 err.to_string(),
-            ))
+            ));
         }
     };
     let mut tags: Vec<ObjectTag> = Vec::new();
