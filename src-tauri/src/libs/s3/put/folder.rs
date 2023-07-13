@@ -13,10 +13,11 @@ pub async fn put_folder(
     let client = match client_call {
         Ok(instance) => instance,
         Err(err) => {
+            println!("{}", err.to_string());
             return Err(create_error(
                 "AWS Client Config error".into(),
                 err.to_string(),
-            ))
+            ));
         }
     };
 
