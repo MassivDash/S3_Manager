@@ -5,9 +5,9 @@ use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::lib::s3::client::client::create_client;
-use crate::lib::s3::utils::presigned_url::get_presigned_url;
-use crate::lib::s3::utils::response_error::{create_error, ResponseError};
+use crate::libs::s3::client::client::create_client;
+use crate::libs::s3::utils::presigned_url::get_presigned_url;
+use crate::libs::s3::utils::response_error::{create_error, ResponseError};
 use std::error::Error;
 use tokio_stream::StreamExt;
 
@@ -41,10 +41,11 @@ pub async fn get_all_images() -> Result<Vec<ImgBucket>, ResponseError> {
     let client = match client_call {
         Ok(instance) => instance,
         Err(err) => {
+            println!("{}", err.to_string());
             return Err(create_error(
                 "AWS Client Config error".into(),
                 err.to_string(),
-            ))
+            ));
         }
     };
 
@@ -52,10 +53,11 @@ pub async fn get_all_images() -> Result<Vec<ImgBucket>, ResponseError> {
     let resp = match resp_call {
         Ok(list) => list,
         Err(err) => {
+            println!("{}", err.to_string());
             return Err(create_error(
                 "S3 bucket call failed".into(),
                 err.to_string(),
-            ))
+            ));
         }
     };
     let buckets = resp.buckets().unwrap();
@@ -165,5 +167,27 @@ fn check_if_file_is_image(key: &str) -> bool {
     match extension.as_str() {
         "jpg" | "jpeg" | "png" | "gif" | "bmp" => true,
         _ => false,
+    }
+}
+
+#[cfg(test)]
+
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_get_all_images() {
+        let result = get_all_images().await;
+        assert!(result.is_ok());
+        let bucket = result.unwrap();
+        assert!(!bucket.is_empty());
+        let mut found_bucket = false;
+        for b in &bucket {
+            if b.name == "lc-photobackup" {
+                found_bucket = true;
+                break;
+            }
+        }
+        assert!(found_bucket);
     }
 }

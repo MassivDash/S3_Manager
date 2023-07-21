@@ -38,10 +38,16 @@ describe("AddFolder component", () => {
     });
     const addForm = getByTestId("add-folder-form");
     await fireEvent.click(addForm);
+    const close = getByTestId("add-folder-close");
+    expect(close).toBeInTheDocument();
     const inputField = getByPlaceholderText("Enter folder name");
     const submitButton = getByText("Submit");
     await fireEvent.input(inputField, { target: { value: "test-folder" } });
     await fireEvent.click(submitButton);
     expect(handleSync).toHaveBeenCalled();
+    const loader = getByTestId('loader');
+    expect(loader).toBeInTheDocument();
+
+
   });
 });
