@@ -1,5 +1,7 @@
-use crate::lib::s3::utils::response_error::create_error;
-use crate::lib::s3::{client::client::create_client, utils::response_error::ResponseError};
+use crate::libs::s3::utils::response_error::create_error;
+use crate::libs::s3::{client::client::create_client, utils::response_error::ResponseError};
+#[cfg(not(test))]
+use crate::libs::tauri::operations::show_folder::show_folder;
 use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
 use std::fs::write;
@@ -16,16 +18,17 @@ pub async fn save_files(keys: Vec<FilesToDownload>, dir: String) -> Result<bool,
     let client = match client_result {
         Ok(client) => client,
         Err(err) => {
+            println!("{}", err.to_string());
             return Err(create_error(
                 "Aws client config error".into(),
                 err.to_string(),
-            ))
+            ));
         }
     };
 
     let mut file_errors: Vec<String> = Vec::new();
 
-    for key in keys {
+    for key in &keys {
         let result = save_file(
             &key.key,
             &client,
@@ -40,9 +43,26 @@ pub async fn save_files(keys: Vec<FilesToDownload>, dir: String) -> Result<bool,
     }
 
     if file_errors.is_empty() {
+        let cloned_keys = keys.clone();
+        let _first_key = cloned_keys.first().unwrap();
+        let mut filepath = std::path::PathBuf::from(dir.to_string());
+        filepath.push(_first_key.key.split("/").last().unwrap().to_string());
+        let _path_string = filepath.to_str().unwrap().to_string();
+        #[cfg(not(test))]
+        match show_folder(_path_string).await {
+            Ok(_) => (),
+            Err(err) => {
+                println!("{}", err.to_string());
+                return Err(create_error(
+                    "Failed to open folder, but files were saved".into(),
+                    err.to_string(),
+                ));
+            }
+        }
         Ok(true)
     } else {
         let error_string = file_errors.join(", ");
+        println!("{}", error_string.clone());
         Err(create_error("file".into(), error_string))
     }
 }

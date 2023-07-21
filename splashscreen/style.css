@@ -1,0 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=Audiowide&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700");
+.is-hidden {
+  display: none;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*, *::after, *::before {
+  box-sizing: inherit;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f97315;
+  font-family: "Audiowide", cursive;
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  overflow: hidden;
+}
+
+.text {
+  font-size: 2.1rem;
+  margin-top: -40px;
+  font-family: "Roboto";
+}
+
+.heading > .line {
+  font-size: 6rem;
+  weight: 400;
+  line-height: 1em;
+  font-family: "Audiowide", cursive;
+  animation-name: reveal-text;
+  animation-duration: 540ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+  clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+  transform: translateY(100%);
+  animation-delay: 200ms;
+}
+.heading > .line:nth-child(2n) {
+  animation-delay: 400ms;
+}
+.heading > .line:nth-child(3n) {
+  animation-delay: 500ms;
+}
+.heading > .line:last-child {
+  animation-delay: 550ms;
+}
+.heading > .line:last-child::after {
+  content: "";
+  display: block;
+  background-color: white;
+  height: 2px;
+  width: 120px;
+  margin-top: -16px;
+  margin-left: 6px;
+}
+
+@keyframes reveal-text {
+  to {
+    clip-path: polygon(0 0, 100% 0, 100% 140%, 0 140%);
+    transform: translateY(0);
+  }
+}

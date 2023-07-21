@@ -13,6 +13,7 @@
     "lint": "eslint --fix --quiet src --ext .js,.svelte,.ts",
     "prepare": "husky install",
     "test": "vitest run src",
+    "test:coverage": "vitest run src --coverage",
     "test:watch": "vitest src"
   },
   "devDependencies": {
@@ -23,6 +24,7 @@
     "@tsconfig/svelte": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
+    "@vitest/coverage-v8": "^0.33.0",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
@@ -41,6 +43,7 @@
     "tslib": "^2.6.0",
     "typescript": "^5.1.6",
     "vite": "^4.4.1",
+    "vite-plugin-static-copy": "^0.16.0",
     "vite-tsconfig-paths": "^4.2.0",
     "vitest": "^0.33.0"
   },

@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::error::Error;
 use tokio_stream::StreamExt;
 
-use crate::lib::s3::{
+use crate::libs::s3::{
     client::client::create_client,
     utils::response_error::{create_error, ResponseError},
 };
@@ -68,10 +68,11 @@ pub async fn get_files() -> Result<Vec<Bucket>, ResponseError> {
         let files = match files_call {
             Ok(list) => list,
             Err(err) => {
+                println!("{}", err.to_string());
                 return Err(create_error(
                     "S3 object call failed".into(),
                     err.to_string(),
-                ))
+                ));
             }
         };
 

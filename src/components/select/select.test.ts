@@ -28,16 +28,25 @@ describe("Select component", () => {
   });
 
   it("should update the value when an option is selected", async () => {
-    const { getByTestId } = render(Select, {
+    const { getByTestId, getByText } = render(Select, {
       options,
       value,
       label,
       handleChange,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
     const select = getByTestId("select");
     await fireEvent.change(select, { target: { value: options[1] } });
 
+    const selectedOption = getByText(options[1]);
+    expect(selectedOption).toBeInTheDocument();
+
     expect(value).toBe(options[1]);
+    await fireEvent.change(select, { target: { value: options[0] } });
+    const selectedOption2 = getByText(options[0]);
+    expect(selectedOption2).toBeInTheDocument();
+    expect(value).toBe(options[0]);
   });
 });

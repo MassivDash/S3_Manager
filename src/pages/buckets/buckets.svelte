@@ -2,16 +2,16 @@
   import { onMount, onDestroy } from "svelte";
   import { invoke, event } from "@tauri-apps/api";
   import { useFocus } from "svelte-navigator";
-  import Loader from "src/components/loader/loader.svelte";
-  import { formatDate, formatBytes } from "src/lib";
+  import Loader from "../../components/loader/loader.svelte";
+  import { formatDate, formatBytes } from "../../lib";
   // Open a selection dialog for directories
-  import Tools from "src/components/tools/tools.svelte";
-  import Scroller from "src/components/scroller/scroller.svelte";
-  import type { Bucket, TauriError } from "src/types";
+  import Tools from "../../components/tools/tools.svelte";
+  import Scroller from "../../components/scroller/scroller.svelte";
+  import type { Bucket, TauriError } from "../../types";
 
-  import { showModal } from "src/store/modal";
-  import { buckets } from "src/store/buckets";
-  import { files } from "src/store/files";
+  import { showModal } from "../../store/modal";
+  import { buckets } from "../../store/buckets";
+  import { files } from "../../store/files";
 
   interface BucketInfo {
     name: string;
@@ -22,6 +22,8 @@
   let response: BucketInfo[];
   let filteredList: BucketInfo[];
   let value = "";
+  let loading = false;
+  let resync = false;
 
   const _unsubscribe = buckets.subscribe((value: BucketInfo[]) => {
     response = value;
@@ -62,9 +64,6 @@
     unlisten();
   });
 
-  let loading = false;
-  let resync = false;
-
   //User manual sync op
   async function handleSync(type: "load" | "sync"): Promise<void> {
     const load = type === "load";
@@ -76,6 +75,7 @@
         resync = true;
       }
       const res: BucketInfo[] = await invoke("get_buckets");
+
       buckets.set(res);
       if (load) {
         loading = false;
@@ -91,6 +91,7 @@
         resync = false;
       }
       const { name, message } = err as TauriError;
+
       showModal({
         title: name,
         message: message,
@@ -107,7 +108,7 @@
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div class="mr-7">
+    <div class="mr-10 mt-2">
       <Tools {resync} {handleSync} bind:value />
     </div>
     <Scroller>

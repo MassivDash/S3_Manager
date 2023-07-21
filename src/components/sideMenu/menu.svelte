@@ -13,9 +13,7 @@
     class="flex gap-2 flex-col h-full text-gray-600 dark:text-white dark:bg-slate-900 sticky"
   >
     <div class="flex-1 flex justify-center items-center my-8">
-      <p
-        class="text-lg font-audiowide shadow-inner text-amber-600 dark:text-amber-400 bold"
-      >
+      <p class="text-lg font-audiowide text-amber-600 dark:text-amber-400 bold">
         S3
       </p>
     </div>

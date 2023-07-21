@@ -109,7 +109,7 @@
   };
 </script>
 
-<div class="mr-4">
+<div class="mr-4 mt-2">
   <NameDivider
     label={`bucket: ${bucket.name}
 ${filteredFiles.files.length > 0 ? `(${filteredFiles.files.length})` : ""}`}

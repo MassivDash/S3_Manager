@@ -2,9 +2,9 @@ use aws_sdk_s3::Client;
 use cached::proc_macro::once;
 use serde::{Deserialize, Serialize};
 
-use crate::lib::s3::client::client::create_client;
-use crate::lib::s3::utils::presigned_url::get_presigned_url;
-use crate::lib::s3::utils::response_error::{create_error, ResponseError};
+use crate::libs::s3::client::client::create_client;
+use crate::libs::s3::utils::presigned_url::get_presigned_url;
+use crate::libs::s3::utils::response_error::{create_error, ResponseError};
 use aws_sdk_s3::types::Object;
 use std::error::Error;
 use tokio_stream::StreamExt;
@@ -39,10 +39,11 @@ pub async fn get_all_movies() -> Result<Vec<ImgBucket>, ResponseError> {
     let client = match client_call {
         Ok(instance) => instance,
         Err(err) => {
+            println!("{}", err.to_string());
             return Err(create_error(
                 "AWS Client Config error".into(),
                 err.to_string(),
-            ))
+            ));
         }
     };
 
@@ -50,10 +51,11 @@ pub async fn get_all_movies() -> Result<Vec<ImgBucket>, ResponseError> {
     let resp = match resp_call {
         Ok(list) => list,
         Err(err) => {
+            println!("{}", err.to_string());
             return Err(create_error(
                 "S3 bucket call failed".into(),
                 err.to_string(),
-            ))
+            ));
         }
     };
     let buckets = resp.buckets().unwrap();
@@ -63,10 +65,11 @@ pub async fn get_all_movies() -> Result<Vec<ImgBucket>, ResponseError> {
         let files = match files_call {
             Ok(list) => list,
             Err(err) => {
+                println!("{}", err.to_string());
                 return Err(create_error(
                     "S3 object call failed".into(),
                     err.to_string(),
-                ))
+                ));
             }
         };
 
@@ -140,5 +143,27 @@ fn check_if_file_is_movie(key: &str) -> bool {
     match extension.as_str() {
         "mov" | "mp4" | "webm" | "ogg" => true,
         _ => false,
+    }
+}
+
+#[cfg(test)]
+
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_get_all_movies() {
+        let result = get_all_movies().await;
+        assert!(result.is_ok());
+        let bucket = result.unwrap();
+        assert!(!bucket.is_empty());
+        let mut found_bucket = false;
+        for b in &bucket {
+            if b.name == "lc-photobackup" {
+                found_bucket = true;
+                break;
+            }
+        }
+        assert!(found_bucket);
     }
 }

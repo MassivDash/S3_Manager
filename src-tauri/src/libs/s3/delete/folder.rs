@@ -5,7 +5,7 @@ use aws_sdk_s3::{
 use std::error::Error;
 use tokio_stream::StreamExt;
 
-use crate::lib::s3::client::client::create_client;
+use crate::libs::s3::client::client::create_client;
 use serde::{Deserialize, Serialize};
 use tauri::Window;
 #[derive(Serialize, Deserialize, Clone, Debug)]

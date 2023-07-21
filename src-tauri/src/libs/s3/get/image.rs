@@ -1,6 +1,6 @@
-use crate::lib::s3::utils::presigned_url::get_presigned_url;
-use crate::lib::s3::utils::response_error::create_error;
-use crate::lib::s3::{client::client::create_client, utils::response_error::ResponseError};
+use crate::libs::s3::utils::presigned_url::get_presigned_url;
+use crate::libs::s3::utils::response_error::create_error;
+use crate::libs::s3::{client::client::create_client, utils::response_error::ResponseError};
 
 use aws_sdk_s3::types::ObjectAttributes;
 use serde::{Deserialize, Serialize};
@@ -55,4 +55,30 @@ pub async fn get_image(bucket: String, key: String) -> Result<SingleImgObject, R
     };
 
     Ok(img)
+}
+
+#[cfg(test)]
+
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_get_image() {
+        let result = get_image(
+            "spaceout-backup".to_string(),
+            "website/dockercli.jpeg".to_string(),
+        )
+        .await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_get_image_error() {
+        let result = get_image(
+            "spaceout-error".to_string(),
+            "website/dockercli.jpeg".to_string(),
+        )
+        .await;
+        assert!(result.is_err());
+    }
 }
