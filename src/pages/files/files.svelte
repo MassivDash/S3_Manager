@@ -117,7 +117,6 @@
       files.set(res);
       if (load) {
         loading = false;
-        await invoke("close_splashscreen");
       }
       if (!load) {
         resync = false;
