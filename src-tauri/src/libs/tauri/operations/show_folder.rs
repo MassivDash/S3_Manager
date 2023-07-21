@@ -1,4 +1,4 @@
-#[cfg(target_os = "linux")]
+
 use std::process::Command;
 #[cfg(target_os = "linux")]
 use std::{fs::metadata, path::PathBuf};
