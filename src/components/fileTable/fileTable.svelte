@@ -1,6 +1,6 @@
 <script lang="ts">
-  import FolderTitle from "src/components/table/folderTitle.svelte";
-  import Table from "src/components/table/table.svelte";
+  import FolderTitle from "../table/folderTitle.svelte";
+  import Table from "../table/table.svelte";
 
   import { fade } from "svelte/transition";
   import type { Bucket, Folder, CheckedFile } from "src/types";

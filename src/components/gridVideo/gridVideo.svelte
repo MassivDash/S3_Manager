@@ -1,10 +1,9 @@
 <script lang="ts">
   import Checkbox from "../checkbox/checkbox.svelte";
-  import { formatBytes } from "src/lib";
 
   import type { ImageBucket, CheckedFile } from "src/types";
   import Tags from "../tags/tags.svelte";
-  import { getOS } from "src/lib/";
+  import { getOS, formatBytes } from "../../lib/";
 
   export let key: string;
   export let url: string;
@@ -44,6 +43,7 @@
       <p class="justify-self-end text-xs mt-1 mr-2">{formatBytes(size)}</p>
     </div>
     <video
+      data-testId="video"
       width="100%"
       height="100%"
       src={`${url}#t=0.1`}

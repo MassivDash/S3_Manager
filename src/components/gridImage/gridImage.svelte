@@ -4,6 +4,7 @@
   import Checkbox from "../checkbox/checkbox.svelte";
   import { formatBytes } from "../../lib/date";
   import Error from "../icons/error.svelte";
+  import Resync from "../icons/sync.svelte";
 
   import Tags from "../tags/tags.svelte";
   import type { ImageBucket, CheckedFile } from "src/types";
@@ -33,7 +34,7 @@
 </script>
 
 <div
-  class="h-[calc(500px+3.5rem)] overflow-hidden bg-orange-50 dark:bg-slate-700 rounded-sm flex flex-col m-2  first:ml-0 last:mr-0 relative"
+  class="h-[calc(500px+3.5rem)] overflow-hidden bg-orange-50 dark:bg-slate-700 rounded-sm flex flex-col m-2 first:ml-0 last:mr-0 relative"
 >
   <div class="flex items-center justify-between">
     <div class="bg-orange-50 dark:bg-slate-700 p-2 h-14 flex items-center">
@@ -64,13 +65,13 @@
       {/if}
       {#if imgError}
         <div
-          class="p-4 mt-4 flex gap-4 h-full w-full  text-red-700 dark:text-red-500"
+          class="p-4 mt-4 flex gap-4 h-full w-full text-red-700 dark:text-red-500"
         >
           <div><Error width={36} height={36} /></div>
           <div class="text-sm">
             <h3>Image not loaded</h3>
             <p>Most probably the presigned url has expired.</p>
-            <p>Try to resync</p>
+            <p class="flex gap-4 mt-4">Try to resync <Resync /></p>
           </div>
         </div>
       {/if}

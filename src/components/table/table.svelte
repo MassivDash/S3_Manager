@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatBytes, formatDate, isImage } from "src/lib";
+  import { formatBytes, formatDate, isImage } from "../../lib";
   import Checkbox from "../checkbox/checkbox.svelte";
   import type { File, CheckedFile, VirtualListArray } from "src/types";
   import VirtualList from "../virtualList/virtualList.svelte";
@@ -38,7 +38,7 @@
 {#if files.length > 0}
   <table class="table-auto w-full flex flex-col border-spacing-3 relative">
     <thead
-      class="pl-4 bg-orange-50 dark:bg-slate-800 dark:text-white px-2 sticky top-32 z-10"
+      class="pl-4 bg-orange-50 dark:bg-slate-800 dark:text-white px-2 sticky top-[63px] z-10"
     >
       <tr class="text-left text-xs">
         <th />
@@ -51,7 +51,7 @@
     <tbody class="block relative w-full">
       <VirtualList items={files} {height} let:item bind:start bind:end>
         <tr
-          class="flex items-center text-gray-700 dark:text-white my-2 py-2 border-orange-100 dark:border-slate-500  border-b-2 "
+          class="flex items-center text-gray-700 dark:text-white my-2 py-2 border-orange-100 dark:border-slate-500 border-b-2"
           on:mouseover={() => (mouseOverImage = null)}
           on:focus={() => (mouseOverImage = null)}
         >
@@ -74,6 +74,8 @@
                 on:blur={() => (mouseOverImage = null)}
                 on:mouseleave={() => (mouseOverImage = null)}
                 on:mouseout={() => (mouseOverImage = null)}
+                role="button"
+                tabindex="0"
                 class="hover:opacity-50"
               >
                 <Preview width={24} height={24} />
