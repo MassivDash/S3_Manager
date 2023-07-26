@@ -17,13 +17,39 @@
   import { showModal } from "../../store/modal";
   import { getFileName } from "../../lib/getFileName";
 
-  let visible = false;
-  let loading = false;
+  import {
+    dropFileFiles,
+    dropFileVisible,
+    dropFileLoading,
+    dropFileProgressList,
+  } from "../../store/dropFiles";
+
+  let visible;
+  let loading;
   let files: string[] = [];
   let currentMultiUploadFileName: string;
-  let buckets: Bucket[];
+  let buckets: Bucket[] = [];
   let bucketName: string;
   let folderName: string;
+  let uploadingFilesList: string[] = [];
+
+  const _unsubscribeVisible = dropFileVisible.subscribe((value: boolean) => {
+    visible = value;
+  });
+
+  const _unsubscribeFiles = dropFileFiles.subscribe((value: string[]) => {
+    files = value;
+  });
+
+  const _unsubscribeLoading = dropFileLoading.subscribe((value: boolean) => {
+    loading = value;
+  });
+
+  const _unsubscribeProgressList = dropFileProgressList.subscribe(
+    (value: string[]) => {
+      uploadingFilesList = value;
+    }
+  );
 
   interface Folder {
     name: string;
@@ -47,9 +73,8 @@
     return res as string[];
   }
 
-  let uploadingFilesList: string[] = [];
   const filesUploaded = listen("event-upload-file", (event) => {
-    uploadingFilesList = [...uploadingFilesList, event.payload as string];
+    dropFileProgressList.set([...uploadingFilesList, event.payload as string]);
   });
 
   const menuListener = listen("event-upload-menu-files", (_event): void => {
@@ -163,7 +188,7 @@
     buckets = res;
 
     // User can drag as many folders and items before they submit
-    files = [...new Set([...files, ...paths])];
+    dropFileFiles.set([...new Set([...files, ...paths])]);
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     [...new Set([...files, ...paths])].forEach(async (file: string) => {
       const getName = getFileName(file);
@@ -182,7 +207,7 @@
         ];
       }
     });
-    visible = true;
+    dropFileVisible.set(true);
   }
 
   async function handleUpload(
@@ -191,7 +216,7 @@
     folderName: string
   ): Promise<void> {
     try {
-      loading = true;
+      dropFileLoading.set(true);
       const upload = await invoke("put_files", {
         bucketName,
         folderName,
@@ -199,14 +224,21 @@
       });
       if (upload) {
         dirs = [];
-        files = [];
+        dropFileFiles.set([]);
         buckets = [];
         uploadingFilesList = [];
-        loading = false;
-        visible = false;
+        dropFileLoading.set(false);
+        dropFileVisible.set(false);
       }
     } catch (err) {
       const { name, message } = err as TauriError;
+      dirs = [];
+      dropFileFiles.set([]);
+      buckets = [];
+      dropFileProgressList.set([]);
+      dropFileLoading.set(false);
+      dropFileVisible.set(false);
+
       showModal({
         title: name,
         message: message,
@@ -281,8 +313,9 @@
         <div
           class="text-gray-800 m-2 p-2 cursor-pointer dark:text-white bg-orange-50 dark:bg-slate-700 hover:bg-amber-100 hover:text-gray-50 hover:dark:bg-slate-900 hover:dark:text-orange-50"
           on:click={() => {
-            visible = false;
-            files = [];
+            dropFileLoading.set(false);
+            dropFileFiles.set([]);
+            dropFileVisible.set(false);
             dirs = [];
             uploadingFilesList = [];
           }}

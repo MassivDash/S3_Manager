@@ -18,6 +18,13 @@
   import { showModal } from "src/store/modal";
   import { files } from "src/store/files";
 
+  import {
+    dropFileFiles,
+    dropFileVisible,
+    dropFileLoading,
+    dropFileProgressList,
+  } from "src/store/dropFiles";
+
   const registerFocus = useFocus();
   let response: Bucket[];
   let filteredList: Bucket[];
@@ -77,6 +84,9 @@
 
     if (selected) {
       try {
+        dropFileLoading.set(true);
+        dropFileFiles.set([...new Set([...selected])]);
+        dropFileVisible.set(true);
         selectedFiles = [...selected];
         const upload = await invoke("put_files", {
           bucketName,
@@ -84,10 +94,18 @@
           files: selectedFiles,
         });
         if (upload) {
+          dropFileLoading.set(false);
+          dropFileFiles.set([]);
+          dropFileVisible.set(false);
+          dropFileProgressList.set([]);
           await handleSync("sync");
         }
       } catch (err) {
         const { name, message } = err as TauriError;
+        dropFileLoading.set(false);
+        dropFileFiles.set([]);
+        dropFileVisible.set(false);
+        dropFileProgressList.set([]);
         showModal({
           title: name,
           message: message,
