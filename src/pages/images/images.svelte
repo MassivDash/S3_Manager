@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { invoke } from "@tauri-apps/api";
+  import { invoke, event } from "@tauri-apps/api";
   import { useFocus } from "svelte-navigator";
   import { open, confirm } from "@tauri-apps/api/dialog";
   import Loader from "src/components/loader/loader.svelte";
@@ -35,6 +35,20 @@
     }
   );
 
+  const listenToFileUpload = event.listen("event-resync", () => {
+    handleSync("sync")
+      .then(() => {
+        console.log("resynced");
+      })
+      .catch((err: TauriError) => {
+        showModal({
+          title: err.name,
+          message: err.message,
+          type: "error",
+        })();
+      });
+  });
+
   // Define loading for rust files call
   let loading = false;
   // Define resync operations (resync, delete)
@@ -65,19 +79,27 @@
 
   // On mount get the files from rust
   // Add grid responsiveness via resize listener
-  onMount(async () => {
+  onMount(() => {
     if (!response) {
-      await handleSync("load");
+      window.addEventListener("resize", onResize);
+      handleSync("load").catch((err) => {
+        const { name, message } = err as TauriError;
+        showModal({
+          title: name,
+          message: message,
+          type: "error",
+        })();
+      });
     }
-
-    window.addEventListener("resize", onResize);
-    //clean up on unmount
-    return () => window.removeEventListener("resize", onResize);
   });
 
-  onDestroy(() => {
+  onDestroy(async () => {
     // Save user gird option
     image_grid_option.set(gridCol);
+    const unlisten = await listenToFileUpload;
+    unlisten();
+
+    window.removeEventListener("resize", onResize);
   });
 
   // Searchbar value and filters
@@ -202,7 +224,7 @@
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div class="mr-12">
+    <div class="mr-10">
       <Tools
         handleGrid={() => (gridCol = handleGrid(gridCol))}
         {resync}

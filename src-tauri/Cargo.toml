@@ -1,6 +1,6 @@
 [package]
 name = "s3_manager"
-version = "0.9.5"
+version = "0.9.6"
 description = "S3 Manager: A tool to manage S3 buckets"
 authors = ["Lukasz Celitan, @SpaceoutPL"]
 license = "MIT"
@@ -18,15 +18,19 @@ tauri-build = { version = "1.2.1", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.2.5", features = ["api-all"] }
-aws-config = "0.53.0"
-aws-sdk-s3 = "0.23.0"
+aws-config = "0.55.3"
+aws-sdk-s3 = "0.28.0"
 tokio-stream = "0.1.11"
 tokio = { version = "1.24.2", features = ["full", "macros"] }
-
-cached = "0.42.0"
+cached = "0.44.0"
 thiserror = "1.0.37"
 itertools = "*"
 walkdir = "*"
+aws-smithy-http = "*"
+
+[target.'cfg(unix)'.dependencies]
+fork = "0.1"
+
 
 [features]
 # by default Tauri runs in production mode

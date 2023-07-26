@@ -19,6 +19,7 @@
   >
   <div class="flex justify-center item-center">
     <select
+      data-testId="select"
       class="required appearance-none outline-none w-full bg-gray-50 text-gray-900 text-sm rounded-lg hover:border hover:ring-orange-500 hover:border-orange-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-orange-500 dark:focus:border-orange-500"
       bind:value
       on:change={handleChange}

@@ -22,7 +22,7 @@
   /**
    * Set to `true` to visually hide the label
    */
-  export let hideLabel = false;
+  export let showLabel = false;
 
   /**
    * Specify an `id` for the `input`
@@ -83,11 +83,11 @@
   aria-labelledby={removeFormAriaAttributes ? null : id}
   on:submit|preventDefault
 >
-  {#if hideLabel}
+  {#if showLabel}
     <label
       id="{id}-label"
       for={id}
-      style={hideLabel &&
+      style={showLabel &&
         "position: absolute;height: 1px;width: 1px;overflow: hidden;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);white-space: nowrap;"}
     >
       <slot name="label">{label}</slot>

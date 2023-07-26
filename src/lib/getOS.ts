@@ -1,15 +1,7 @@
-export const getOS = ():
-  | "Mac/iOS"
-  | "Linux"
-  | "UNIX"
-  | "Windows 10"
-  | "Windows 8.1"
-  | "Windows 8"
-  | "Windows 7"
-  | "Windows Vista"
-  | "Windows XP"
-  | "Windows 2000"
-  | "Unknown" => {
+export type OS = "Mac/iOS" | "Linux" | "UNIX" | "Windows 10" | "Windows 8.1" | "Windows 8" | "Windows 7" | "Windows Vista" | "Windows XP" | "Windows 2000" | "Unknown";
+
+
+export const getOS = (): OS => {
   let OSName: | "Mac/iOS"
   | "Linux"
   | "UNIX"

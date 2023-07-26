@@ -5,18 +5,25 @@
   import Loader from "src/components/loader/loader.svelte";
   import { open, confirm } from "@tauri-apps/api/dialog";
   import { appDir } from "@tauri-apps/api/path";
-  import { formatBytes, searchWithFolders } from "src/lib";
+  import { searchWithFolders } from "src/lib";
   // Open a selection dialog for directories
   import Tools from "src/components/tools/tools.svelte";
-  import NameDivider from "src/components/nameDivider/nameDivider.svelte";
   import FileTable from "src/components/fileTable/fileTable.svelte";
-  import AddFolder from "src/components/addFolder/addFolder.svelte";
   import Scroller from "src/components/scroller/scroller.svelte";
+
+  import Title from "./bucketTitle.svelte";
 
   import type { Bucket, CheckedFile, TauriError } from "src/types";
 
   import { showModal } from "src/store/modal";
   import { files } from "src/store/files";
+
+  import {
+    dropFileFiles,
+    dropFileVisible,
+    dropFileLoading,
+    dropFileProgressList,
+  } from "src/store/dropFiles";
 
   const registerFocus = useFocus();
   let response: Bucket[];
@@ -77,6 +84,9 @@
 
     if (selected) {
       try {
+        dropFileLoading.set(true);
+        dropFileFiles.set([...new Set([...selected])]);
+        dropFileVisible.set(true);
         selectedFiles = [...selected];
         const upload = await invoke("put_files", {
           bucketName,
@@ -84,10 +94,18 @@
           files: selectedFiles,
         });
         if (upload) {
+          dropFileLoading.set(false);
+          dropFileFiles.set([]);
+          dropFileVisible.set(false);
+          dropFileProgressList.set([]);
           await handleSync("sync");
         }
       } catch (err) {
         const { name, message } = err as TauriError;
+        dropFileLoading.set(false);
+        dropFileFiles.set([]);
+        dropFileVisible.set(false);
+        dropFileProgressList.set([]);
         showModal({
           title: name,
           message: message,
@@ -233,7 +251,7 @@
     </div>
   {/if}
   {#if filteredList && filteredList[0].name}
-    <div class="mr-7">
+    <div class="mr-10">
       <Tools
         {resync}
         {handleSync}
@@ -245,28 +263,22 @@
     </div>
     <Scroller>
       {#each filteredList as bucket (bucket.name)}
-        <NameDivider
-          label={`${bucket.name} (${filesCounter[bucket.name]}) ${formatBytes(
-            bucket.total_size
-          )}`}
-        />
-
-        <AddFolder
-          bucketName={bucket.name}
-          handleSync={() => handleSync("sync")}
-        />
-        {#each bucket.folders as folder (folder.name)}
-          <FileTable
-            handleFolderDelete={() =>
-              handleFolderDelete(bucket.name, folder.name)}
-            handleFilesSelect={() =>
-              handleFilesSelect(bucket.name, folder.name)}
-            {folder}
-            {bucket}
-            {handleCheckbox}
-            {checkedFiles}
-          />
-        {/each}
+        <Title {handleSync} {bucket} {filesCounter} />
+        <div class="mr-4 mt-4">
+          {#each bucket.folders as folder (folder.name)}
+            <FileTable
+              handleFolderDelete={() =>
+                handleFolderDelete(bucket.name, folder.name)}
+              handleFilesSelect={() =>
+                handleFilesSelect(bucket.name, folder.name)}
+              {folder}
+              {bucket}
+              {handleCheckbox}
+              {checkedFiles}
+            />
+          {/each}
+        </div>
+        <div class="h-5" />
       {/each}
     </Scroller>
   {/if}

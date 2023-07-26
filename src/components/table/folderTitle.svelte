@@ -20,7 +20,7 @@
 </script>
 
 <div
-  class="flex sticky top-20 bg-orange-50 dark:bg-slate-800 align-middle justify-between items-center min-w-fit w-full h-16 border-b-2 border-orange-400 my-4 rounded-sm z-10"
+  class="flex sticky top-0 bg-orange-50 dark:bg-slate-800 align-middle justify-between items-center min-w-fit w-full h-16 border-b-2 border-orange-400 rounded-sm z-10"
 >
   <div class="ml-3 flex items-center">
     <div class="mr-4 text-orange-500">
@@ -38,12 +38,12 @@
       <Delete />
     </IconButton>
     {#if fold}
-      <IconButton onClick={handleFold}>
+      <IconButton dataTestId="unfold" onClick={handleFold}>
         <Unfold />
       </IconButton>
     {/if}
     {#if !fold}
-      <IconButton onClick={handleFold}>
+      <IconButton dataTestId="fold" onClick={handleFold}>
         <Fold />
       </IconButton>
     {/if}

@@ -10,6 +10,14 @@
   import "./tailwind.css";
   import FadeInRoute from "./components/fadeIn/fadeInRoute.svelte";
   import Modal from "./components/modal/modal.svelte";
+
+  import { onMount } from "svelte";
+  import { invoke } from "@tauri-apps/api";
+
+  // When app is ready, close splashscreen
+  onMount(async () => {
+    await invoke("close_splashscreen");
+  });
 </script>
 
 <Router>
