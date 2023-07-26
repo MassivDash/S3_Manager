@@ -1,5 +1,4 @@
-#[cfg(target_os = "linux")]
-use fork::{daemon, Fork};
+
 use std::process::Command;
 #[cfg(target_os = "linux")]
 use std::{fs::metadata, path::PathBuf};
@@ -21,7 +20,24 @@ pub async fn show_folder(path: String) -> Result<(), ResponseError> {
 
     #[cfg(target_os = "linux")]
     {
-        if path.contains(",") {
+        let image_extents = path.contains(".jpg")
+            || path.contains(".jpeg")
+            || path.contains(".png")
+            || path.contains(".gif")
+            || path.contains(".bmp");
+        let video_extents = path.contains(".mp4")
+            || path.contains(".avi")
+            || path.contains(".mov")
+            || path.contains(".mkv")
+            || path.contains(".wmv")
+            || path.contains(".flv")
+            || path.contains(".webm")
+            || path.contains(".m4v")
+            || path.contains(".mpg")
+            || path.contains(".mpeg")
+            || path.contains(".3gp")
+            || path.contains(".3g2");
+        if image_extents || video_extents || path.contains(",") {
             // see https://gitlab.freedesktop.org/dbus/dbus/-/issues/76
             let new_path = match metadata(&path).unwrap().is_dir() {
                 true => path,
@@ -33,33 +49,23 @@ pub async fn show_folder(path: String) -> Result<(), ResponseError> {
             };
             return match Command::new("xdg-open").arg(&new_path).spawn() {
                 Ok(_) => Ok(()),
-                Err(err) => return Err(create_error("folder open error".into(), err.to_string())),
+                Err(err) => {
+                    return Err(create_error(
+                        "xdg-open folder open error".into(),
+                        err.to_string(),
+                    ))
+                }
             };
         } else {
-            if let Ok(Fork::Child) = daemon(false, false) {
-                match Command::new("dbus-send")
-                    .args([
-                        "--session",
-                        "--dest=org.freedesktop.FileManager1",
-                        "--type=method_call",
-                        "/org/freedesktop/FileManager1",
-                        "org.freedesktop.FileManager1.ShowItems",
-                        format!("array:string:\"file://{path}\"").as_str(),
-                        "string:\"\"",
-                    ])
-                    .spawn()
-                {
-                    Ok(_) => Ok(()),
-                    Err(err) => {
-                        return Err(create_error("folder open error".into(), err.to_string()))
-                    }
+            return match Command::new("xdg-open").arg(&path).spawn() {
+                Ok(_) => Ok(()),
+                Err(err) => {
+                    return Err(create_error(
+                        "xdg-open folder open error".into(),
+                        err.to_string(),
+                    ))
                 }
-            } else {
-                return Err(create_error(
-                    "folder open error".into(),
-                    "Fork error".into(),
-                ));
-            }
+            };
         }
     }
 
