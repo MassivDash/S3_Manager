@@ -11,12 +11,12 @@ describe('CircularProgress', () => {
   });
 
   it('should render with 50% progress', () => {
-    const { getByText } = render(CircularProgress, { progress: 0.5 });
+    const { getByText } = render(CircularProgress, { progress: 50 });
     expect(getByText('50%')).toBeInTheDocument();
   });
 
   it('should render with 100% progress', () => {
-    const { getByText } = render(CircularProgress, { progress: 1 });
+    const { getByText } = render(CircularProgress, { progress: 100 });
     expect(getByText('100%')).toBeInTheDocument();
   });
 });

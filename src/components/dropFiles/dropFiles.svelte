@@ -17,12 +17,39 @@
   import { showModal } from "../../store/modal";
   import { getFileName } from "../../lib/getFileName";
 
-  let visible = false;
-  let loading = false;
+  import {
+    dropFileFiles,
+    dropFileVisible,
+    dropFileLoading,
+    dropFileProgressList,
+  } from "../../store/dropFiles";
+
+  let visible;
+  let loading;
   let files: string[] = [];
-  let buckets: Bucket[];
+  let currentMultiUploadFileName: string;
+  let buckets: Bucket[] = [];
   let bucketName: string;
   let folderName: string;
+  let uploadingFilesList: string[] = [];
+
+  const _unsubscribeVisible = dropFileVisible.subscribe((value: boolean) => {
+    visible = value;
+  });
+
+  const _unsubscribeFiles = dropFileFiles.subscribe((value: string[]) => {
+    files = value;
+  });
+
+  const _unsubscribeLoading = dropFileLoading.subscribe((value: boolean) => {
+    loading = value;
+  });
+
+  const _unsubscribeProgressList = dropFileProgressList.subscribe(
+    (value: string[]) => {
+      uploadingFilesList = value;
+    }
+  );
 
   interface Folder {
     name: string;
@@ -46,9 +73,8 @@
     return res as string[];
   }
 
-  let uploadedFilesList: string[] = [];
   const filesUploaded = listen("event-upload-file", (event) => {
-    uploadedFilesList = [...uploadedFilesList, event.payload as string];
+    dropFileProgressList.set([...uploadingFilesList, event.payload as string]);
   });
 
   const menuListener = listen("event-upload-menu-files", (_event): void => {
@@ -125,7 +151,21 @@
     }
   );
 
+  const multipartUploadListen = listen(
+    "event-multipart-upload-file",
+    (event) => {
+      if (event.payload !== "") {
+        currentMultiUploadFileName = event.payload as string;
+      } else {
+        currentMultiUploadFileName = null;
+      }
+    }
+  );
+
   let dirs: Folder[] = [];
+
+  $: watchUpload =
+    uploadingFilesList.length >= 1 ? uploadingFilesList.length : 1;
   $: dirsLength = dirs.length;
   $: totalFiles =
     dirsLength > 0
@@ -136,7 +176,11 @@
             0
           ) + (files.length - dirsLength > 0 ? files.length - dirsLength : 0)
       : files.length;
-  $: progress = (uploadedFilesList.length / totalFiles).toFixed(2);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  $: progress = (
+    ((Number(watchUpload) - 1) / Number(totalFiles)) *
+    100
+  ).toFixed(0);
 
   async function handleDrop(paths: string[]): Promise<void> {
     // This loads possible folder options
@@ -144,7 +188,7 @@
     buckets = res;
 
     // User can drag as many folders and items before they submit
-    files = [...new Set([...files, ...paths])];
+    dropFileFiles.set([...new Set([...files, ...paths])]);
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     [...new Set([...files, ...paths])].forEach(async (file: string) => {
       const getName = getFileName(file);
@@ -163,7 +207,7 @@
         ];
       }
     });
-    visible = true;
+    dropFileVisible.set(true);
   }
 
   async function handleUpload(
@@ -172,7 +216,7 @@
     folderName: string
   ): Promise<void> {
     try {
-      loading = true;
+      dropFileLoading.set(true);
       const upload = await invoke("put_files", {
         bucketName,
         folderName,
@@ -180,14 +224,21 @@
       });
       if (upload) {
         dirs = [];
-        files = [];
+        dropFileFiles.set([]);
         buckets = [];
-        uploadedFilesList = [];
-        loading = false;
-        visible = false;
+        uploadingFilesList = [];
+        dropFileLoading.set(false);
+        dropFileVisible.set(false);
       }
     } catch (err) {
       const { name, message } = err as TauriError;
+      dirs = [];
+      dropFileFiles.set([]);
+      buckets = [];
+      dropFileProgressList.set([]);
+      dropFileLoading.set(false);
+      dropFileVisible.set(false);
+
       showModal({
         title: name,
         message: message,
@@ -205,9 +256,11 @@
     const unlisten = await filesUploaded;
     const unlistenMenu = await menuListener;
     const unlistenMenuFolders = await menuFoldersListener;
+    const unlistenMultipartUpload = await multipartUploadListen;
     unlisten();
     unlistenMenu();
     unlistenMenuFolders();
+    unlistenMultipartUpload();
   });
 </script>
 
@@ -234,16 +287,22 @@
           <Close />
         </div>
       </div>
-      <div class="w-full h-full flex flex-col justify-center items-center">
+      <div class="w-full h-full flex flex-col justify-center items-center p-4">
         <CircularProgress progress={Number(progress)} />
-        <p class="text-xs m-8">
-          {#if uploadedFilesList.length === 0}
-            starting up ...
-          {/if}
-          {#if uploadedFilesList.length > 0}
-            uploaded: {uploadedFilesList[uploadedFilesList.length - 1]}
-          {/if}
-        </p>
+        {#if uploadingFilesList.length === 0}
+          <p class="text-xs m-8">starting up ...</p>
+        {/if}
+        {#if uploadingFilesList.length > 0}
+          <p class="text-xs m-8">uploading:</p>
+          <p class="text-xs m-8">
+            {uploadingFilesList[uploadingFilesList.length - 1]}
+          </p>
+        {/if}
+        {#if currentMultiUploadFileName}
+          <p class="text-xs m-8">
+            file above 100MB, multipart upload started for {currentMultiUploadFileName}
+          </p>
+        {/if}
       </div>
     {:else}
       <div
@@ -254,10 +313,11 @@
         <div
           class="text-gray-800 m-2 p-2 cursor-pointer dark:text-white bg-orange-50 dark:bg-slate-700 hover:bg-amber-100 hover:text-gray-50 hover:dark:bg-slate-900 hover:dark:text-orange-50"
           on:click={() => {
-            visible = false;
-            files = [];
+            dropFileLoading.set(false);
+            dropFileFiles.set([]);
+            dropFileVisible.set(false);
             dirs = [];
-            uploadedFilesList = [];
+            uploadingFilesList = [];
           }}
           role="button"
           tabindex="0"
