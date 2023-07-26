@@ -3339,6 +3339,7 @@ version = "0.9.6"
 dependencies = [
  "aws-config",
  "aws-sdk-s3",
+ "aws-smithy-http",
  "cached",
  "fork",
  "itertools",
