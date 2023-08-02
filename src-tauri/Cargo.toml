@@ -26,7 +26,7 @@ cached = "0.44.0"
 thiserror = "1.0.37"
 itertools = "*"
 walkdir = "*"
-aws-smithy-http = "*"
+aws-smithy-http = "0.55.3"
 
 [target.'cfg(unix)'.dependencies]
 fork = "0.1"
