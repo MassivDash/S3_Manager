@@ -56,19 +56,19 @@
     },
     "windows": [
       {
+        "width": 1200,
+        "height": 800,
+        "decorations": false,
+        "url": "splashscreen/index.html",
+        "label": "splashscreen"
+      },
+      {
         "fullscreen": false,
         "height": 800,
         "resizable": true,
         "title": "S3 Manager",
         "width": 1200,
         "visible": false
-      },
-      {
-      "width": 1200,
-      "height": 800,
-      "decorations": false,
-      "url": "splashscreen/index.html",
-      "label": "splashscreen"
       }
     ]
   }
