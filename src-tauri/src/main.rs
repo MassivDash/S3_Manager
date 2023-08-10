@@ -20,8 +20,8 @@ use crate::libs::s3::put::tags::set_all_tags;
 use crate::libs::tauri::operations::close_splashscreen::close_splashscreen;
 use crate::libs::tauri::operations::show_folder::show_folder;
 
-use tauri::api::dialog::message;
-use tauri::{CustomMenuItem, Menu, MenuEntry, MenuItem, Submenu};
+use crate::libs::tauri::menu::menu::get_menu;
+use crate::libs::tauri::menu::on_menu_event::on_menu_event_handler;
 
 mod libs;
 
@@ -43,37 +43,8 @@ impl serde::Serialize for Error {
 
 fn main() {
     let context = tauri::generate_context!();
-
-    // let menu = Menu::os_default(&context.package_info().name)
-    // .add_submenu(Submenu::new(
-    //     "About",
-    //     Menu::with_items([
-    //       CustomMenuItem::new("AboutS3", "About S3").into(),
-    //     ])
-    //   ))
-
     tauri::Builder::default()
-        .menu(
-            Menu::os_default(&context.package_info().name)
-                .add_submenu(Submenu::new(
-                    "Operations",
-                    Menu::with_items([
-                        CustomMenuItem::new("resync", "Resync").into(),
-                        MenuEntry::NativeItem(MenuItem::Separator),
-                        CustomMenuItem::new("upload-files", "Upload files").into(),
-                        CustomMenuItem::new("upload-folders", "Upload folders").into(),
-                    ]),
-                ))
-                .add_submenu(Submenu::new(
-                    "Help",
-                    Menu::with_items([
-                        CustomMenuItem::new("docs", "Documentation").into(),
-                        MenuEntry::NativeItem(MenuItem::Separator),
-                        CustomMenuItem::new("AboutS3", "About S3").into(),
-                        CustomMenuItem::new("spaceout", "About spaceout").into(),
-                    ]),
-                )), // add resync to the file menu
-        )
+        .menu(get_menu(&context))
         .invoke_handler(tauri::generate_handler![
             get_files,
             show_folder,
@@ -92,35 +63,7 @@ fn main() {
             set_all_tags,
             close_splashscreen
         ])
-        .on_menu_event(|event| match event.menu_item_id() {
-            "resync" => {
-                event
-                    .window()
-                    .emit("event-resync", "resync menu action")
-                    .unwrap();
-            }
-            "upload-files" => {
-                event
-                    .window()
-                    .emit("event-upload-menu-files", "upload menu action")
-                    .unwrap();
-            }
-            "upload-folders" => {
-                event
-                    .window()
-                    .emit("event-upload-menu-folders", "upload menu action")
-                    .unwrap();
-            }
-            "AboutS3" => message(
-                Some(event.window()),
-                "About S3",
-                "So you want to know more about s3",
-            ),
-            "spaceout" => {
-                event.window().emit("event-menu", "spaceout").unwrap();
-            }
-            _ => {}
-        })
+        .on_menu_event(on_menu_event_handler)
         .run(context)
         .expect("error while running tauri application");
 }
