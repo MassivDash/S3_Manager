@@ -27,6 +27,7 @@ thiserror = "1.0.37"
 itertools = "*"
 walkdir = "*"
 aws-smithy-http = "0.55.3"
+open = "*"
 
 [target.'cfg(unix)'.dependencies]
 fork = "0.1"

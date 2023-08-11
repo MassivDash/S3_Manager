@@ -3386,6 +3386,7 @@ dependencies = [
  "cached",
  "fork",
  "itertools",
+ "open",
  "serde",
  "serde_json",
  "tauri",
