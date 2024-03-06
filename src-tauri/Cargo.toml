@@ -1,6 +1,6 @@
 [package]
 name = "s3_manager"
-version = "0.9.6"
+version = "0.9.7"
 description = "S3 Manager: A tool to manage S3 buckets"
 authors = ["Lukasz Celitan, @SpaceoutPL"]
 license = "MIT"
@@ -22,7 +22,7 @@ aws-config = { version = "1.1.7", features = ["behavior-version-latest"] }
 aws-sdk-s3 = "1.17.0"
 tokio-stream = "0.1.11"
 tokio = { version = "1.24.2", features = ["full", "macros"] }
-cached = { version= "0.49.2", features = [ "async", "proc_macro"] }
+cached = { version = "0.49.2", features = ["async", "proc_macro"] }
 thiserror = "1.0.37"
 itertools = "*"
 walkdir = "*"
@@ -35,7 +35,7 @@ fork = "0.1"
 [features]
 # by default Tauri runs in production mode
 # when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
-default = [ "custom-protocol" ]
+default = ["custom-protocol"]
 # this feature is used used for production builds where `devPath` points to the filesystem
 # DO NOT remove this
-custom-protocol = [ "tauri/custom-protocol" ]
+custom-protocol = ["tauri/custom-protocol"]

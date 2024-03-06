@@ -3517,7 +3517,7 @@ checksum = "fe232bdf6be8c8de797b22184ee71118d63780ea42ac85b61d1baa6d3b782ae9"
 
 [[package]]
 name = "s3_manager"
-version = "0.9.6"
+version = "0.9.7"
 dependencies = [
  "aws-config",
  "aws-sdk-s3",
