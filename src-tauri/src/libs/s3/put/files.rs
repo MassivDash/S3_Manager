@@ -5,7 +5,7 @@ use crate::libs::tauri::operations::get_file_size::get_file_size;
 
 use aws_sdk_s3::types::{CompletedMultipartUpload, CompletedPart};
 use aws_sdk_s3::Client;
-use aws_smithy_http::byte_stream::{ByteStream, Length};
+use aws_smithy_types::byte_stream::{ByteStream, Length};
 use std::{error::Error, fs, path::Path};
 use tauri::Window;
 use walkdir::WalkDir;
@@ -139,12 +139,16 @@ pub async fn put_file(
         // Emit the window event to update the progress bar
         window.emit("event-upload-file", &actual_file_name).unwrap();
 
-        let body = ByteStream::from_path(Path::new(&file_name)).await;
+        let body = ByteStream::read_from()
+            .path(Path::new(&file_name))
+            .build()
+            .await
+            .unwrap();
         client
             .put_object()
             .bucket(bucket_name)
             .key(key)
-            .body(body.unwrap())
+            .body(body)
             .send()
             .await?;
 

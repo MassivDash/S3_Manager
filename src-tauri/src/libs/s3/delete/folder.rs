@@ -1,12 +1,10 @@
+use crate::libs::s3::client::client::create_client;
 use aws_sdk_s3::{
     types::{Delete, Object, ObjectIdentifier},
     Client,
 };
-use std::error::Error;
-use tokio_stream::StreamExt;
-
-use crate::libs::s3::client::client::create_client;
 use serde::{Deserialize, Serialize};
+use std::error::Error;
 use tauri::Window;
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct FilesToDelete {
@@ -44,7 +42,6 @@ async fn remove_folder_with_contents(
     while let Some(page) = resp.next().await {
         let items = page?
             .contents()
-            .unwrap()
             .iter()
             .map(|x| x.clone())
             .collect::<Vec<Object>>();
@@ -53,7 +50,13 @@ async fn remove_folder_with_contents(
 
     for object in objects {
         let obj_id = ObjectIdentifier::builder().set_key(object.key).build();
-        delete_objects.push(obj_id);
+
+        match obj_id {
+            Ok(obj_id) => delete_objects.push(obj_id),
+            Err(err) => {
+                println!("{}", err.to_string());
+            }
+        }
     }
 
     let delete = Delete::builder().set_objects(Some(delete_objects)).build();
@@ -61,7 +64,7 @@ async fn remove_folder_with_contents(
     client
         .delete_objects()
         .bucket(bucket)
-        .delete(delete)
+        .delete(delete?)
         .send()
         .await?;
 

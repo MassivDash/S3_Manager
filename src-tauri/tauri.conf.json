@@ -9,7 +9,7 @@
   },
   "package": {
     "productName": "S3 Manager",
-    "version": "0.9.6"
+    "version": "0.9.7"
   },
   "tauri": {
     "allowlist": {
@@ -64,11 +64,11 @@
         "visible": false
       },
       {
-      "width": 1200,
-      "height": 800,
-      "decorations": false,
-      "url": "splashscreen/index.html",
-      "label": "splashscreen"
+        "width": 1200,
+        "height": 800,
+        "decorations": false,
+        "url": "splashscreen/index.html",
+        "label": "splashscreen"
       }
     ]
   }
