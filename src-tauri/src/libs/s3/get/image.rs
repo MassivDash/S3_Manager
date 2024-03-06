@@ -50,7 +50,7 @@ pub async fn get_image(bucket: String, key: String) -> Result<SingleImgObject, R
         url: get_presigned_url(&client, &bucket, &key, 900)
             .await
             .unwrap(),
-        size: img_atr.object_size(),
+        size: img_atr.object_size().expect("no size"),
         last_modified: img_atr.last_modified().unwrap().secs(),
     };
 

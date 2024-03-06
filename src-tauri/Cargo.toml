@@ -18,15 +18,15 @@ tauri-build = { version = "1.2.1", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.2.5", features = ["api-all"] }
-aws-config = "0.55.3"
-aws-sdk-s3 = "0.28.0"
+aws-config = { version = "1.1.7", features = ["behavior-version-latest"] }
+aws-sdk-s3 = "1.17.0"
 tokio-stream = "0.1.11"
 tokio = { version = "1.24.2", features = ["full", "macros"] }
 cached = { version= "0.49.2", features = [ "async", "proc_macro"] }
 thiserror = "1.0.37"
 itertools = "*"
 walkdir = "*"
-aws-smithy-http = "*"
+aws-smithy-types = "1.1.7"
 
 [target.'cfg(unix)'.dependencies]
 fork = "0.1"

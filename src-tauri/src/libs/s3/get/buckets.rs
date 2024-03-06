@@ -1,9 +1,8 @@
-use serde::{Deserialize, Serialize};
-
 use crate::libs::s3::{
     client::client::create_client,
     utils::response_error::{create_error, ResponseError},
 };
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct BucketInfo {
@@ -38,7 +37,7 @@ pub async fn get_buckets() -> Result<Vec<BucketInfo>, ResponseError> {
         }
     };
 
-    let buckets = resp.buckets().unwrap();
+    let buckets = resp.buckets();
     let mut my_buckets = Vec::new();
 
     for bucket in buckets {

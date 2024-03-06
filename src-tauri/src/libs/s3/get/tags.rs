@@ -45,11 +45,10 @@ pub async fn get_all_tags(bucket: String, key: String) -> Result<Vec<ObjectTag>,
     let aws_tags = match get_tagging(&client, &bucket.to_string(), &key.to_string()).await {
         Ok(output) => output
             .tag_set()
-            .unwrap()
             .into_iter()
             .map(|x| ObjectTag {
-                key: x.key().unwrap().to_string(),
-                value: x.value().unwrap().to_string(),
+                key: x.key().to_string(),
+                value: x.value().to_string(),
             })
             .collect::<Vec<ObjectTag>>(),
         Err(e) => return Err(create_error("tag input error".into(), e.to_string())),

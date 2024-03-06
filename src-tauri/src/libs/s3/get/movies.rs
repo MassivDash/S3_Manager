@@ -7,7 +7,6 @@ use crate::libs::s3::utils::presigned_url::get_presigned_url;
 use crate::libs::s3::utils::response_error::{create_error, ResponseError};
 use aws_sdk_s3::types::Object;
 use std::error::Error;
-use tokio_stream::StreamExt;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ImgBucketObject {
@@ -58,7 +57,7 @@ pub async fn get_all_movies() -> Result<Vec<ImgBucket>, ResponseError> {
             ));
         }
     };
-    let buckets = resp.buckets().unwrap();
+    let buckets = resp.buckets();
     let mut my_buckets = Vec::new();
     for bucket in buckets {
         let files_call = show_objects(&client, bucket.name().unwrap_or_default()).await;
@@ -97,7 +96,6 @@ async fn show_objects(
     while let Some(page) = resp.next().await {
         let items = page?
             .contents()
-            .unwrap()
             .iter()
             .map(|x| x.clone())
             .collect::<Vec<Object>>();
@@ -123,7 +121,7 @@ async fn show_objects(
                 )
                 .await
                 .unwrap(),
-                size: object.size(),
+                size: object.size().expect("no size"),
                 last_modified: object.last_modified().unwrap().clone().secs(),
                 folder: object
                     .key()

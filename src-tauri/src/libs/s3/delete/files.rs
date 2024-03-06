@@ -1,7 +1,6 @@
-use aws_sdk_s3::Client;
-
 use crate::libs::s3::utils::response_error::create_error;
 use crate::libs::s3::{client::client::create_client, utils::response_error::ResponseError};
+use aws_sdk_s3::Client;
 use serde::{Deserialize, Serialize};
 use tauri::Window;
 #[derive(Serialize, Deserialize, Clone, Debug)]

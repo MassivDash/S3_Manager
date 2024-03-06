@@ -3,7 +3,6 @@ use aws_sdk_s3::Client;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
-use tokio_stream::StreamExt;
 
 use crate::libs::s3::{
     client::client::create_client,
@@ -60,7 +59,7 @@ pub async fn get_files() -> Result<Vec<Bucket>, ResponseError> {
         }
     };
 
-    let buckets = resp.buckets().unwrap();
+    let buckets = resp.buckets();
     let mut my_buckets = Vec::new();
 
     for bucket in buckets {
@@ -119,7 +118,6 @@ async fn get_objects(client: &Client, bucket: &str) -> Result<Vec<BucketObject>,
     while let Some(page) = resp.next().await {
         let items = page?
             .contents()
-            .unwrap_or_default()
             .iter()
             .map(|x| x.clone())
             .collect::<Vec<Object>>();
@@ -151,7 +149,7 @@ async fn get_objects(client: &Client, bucket: &str) -> Result<Vec<BucketObject>,
                 .unwrap_or_default()
                 .to_string()
                 .to_lowercase(),
-            size: object.size(),
+            size: object.size().expect("no size").clone(),
             last_modified: object.last_modified().unwrap().clone().secs(),
         });
     }
