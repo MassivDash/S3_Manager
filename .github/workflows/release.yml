@@ -1,4 +1,4 @@
-name: 'publish'
+name: "publish"
 on:
   push:
     branches:
@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest,ubuntu-latest, windows-latest]
+        platform: [macos-latest, ubuntu-latest, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -34,8 +34,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-          releaseName: 'App v__VERSION__latest_os'
-          releaseBody: 'See the assets to download this version and install.'
+          releaseName: "App v__VERSION__latest_os"
+          releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
 
@@ -46,14 +46,14 @@ jobs:
       fail-fast: false
       matrix:
         platform: [ubuntu-20.04, windows-1809]
-      
+
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v3
       - name: setup node
         uses: actions/setup-node@v3
         with:
-            node-version: 16
+          node-version: 18
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
       - name: install dependencies (ubuntu only)
@@ -68,7 +68,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-          releaseName: 'App v__VERSION__lagacy_os'
-          releaseBody: 'See the assets to download this version and install.'
+          releaseName: "App v__VERSION__lagacy_os"
+          releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
