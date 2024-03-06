@@ -29,9 +29,9 @@ pub struct ImgBucket {
 }
 
 #[tauri::command]
-#[once(time = 900)] // 15 minutes
-pub async fn get_cached_images() -> Vec<ImgBucket> {
-    return get_all_images().await.unwrap();
+#[once(time = 900, option = true, sync_writes = true)] // 15 minutes
+pub async fn get_cached_images() -> Option<Vec<ImgBucket>> {
+    Some(get_all_images().await.unwrap())
 }
 
 #[tauri::command]
