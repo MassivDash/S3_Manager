@@ -26,10 +26,7 @@ pub async fn set_all_tags(
     let mut new_options: Option<Vec<Tag>> = Option::None;
     let mut new_tags: Vec<Tag> = Vec::new();
     for tag_key in &tag_keys {
-        let tag = Tag::builder()
-            .key(tag_key.clone())
-            .value("true".to_string())
-            .build();
+        let tag = Tag::builder().key(tag_key.clone()).value("").build();
 
         match tag {
             Ok(tag) => new_tags.push(tag),

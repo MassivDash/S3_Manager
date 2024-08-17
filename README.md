@@ -1,8 +1,35 @@
 # S3 Manager 
 
+<p>
+  <img alt="Version" src="https://img.shields.io/badge/version-0.9.8-blue.svg?cacheSeconds=2592000" />
+  <a href="https://github.com/MassivDash/astrox" target="_blank">
+    <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
+  </a>
+  <a href="#" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
+  </a>
+  <a href="https://twitter.com/SpaceoutPl" target="_blank">
+    <img alt="Twitter: SpaceoutPl" src="https://img.shields.io/twitter/follow/SpaceoutPl.svg?style=social" />
+  </a>
+</p>
+
+
 A graphical user interface to aws s3 service. 
 
 This project is standalone application for connecting to your AWS S3 service.
+
+**Backend**
+
+![tauri](https://img.shields.io/badge/tauri-1.7.0-yellow.svg?cacheSeconds=2592000) ![rust](https://img.shields.io/badge/rust-1.80.0-orange.svg?cacheSeconds=2592000)
+
+**Frontend**
+
+![svelte](https://img.shields.io/badge/svelte-4.2.0-yellow.svg?cacheSeconds=2592000) ![tailwind](https://img.shields.io/badge/tailwind-4.2.0-yellow.svg?cacheSeconds=2592000)
+
+**Platforms**
+
+![windows](https://img.shields.io/badge/Platform-Windows-blue) ![linux](https://img.shields.io/badge/Platform-Linux-blue) ![macOs](https://img.shields.io/badge/Platform-MacOs-blue)
+
 Tested on Mac, Linux, Win 10. 
 
 ## Installation files
