@@ -7,7 +7,7 @@ license = "MIT"
 repository = ""
 default-run = "s3_manager"
 edition = "2021"
-rust-version = "1.63"
+rust-version = "1.80"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -17,19 +17,19 @@ tauri-build = { version = "1.2.1", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.2.5", features = ["api-all"] }
+tauri = { version = "1.7.1", features = ["api-all"] }
 aws-config = { version = "1.1.7", features = ["behavior-version-latest"] }
-aws-sdk-s3 = "1.17.0"
-tokio-stream = "0.1.11"
-tokio = { version = "1.24.2", features = ["full", "macros"] }
-cached = { version = "0.49.2", features = ["async", "proc_macro"] }
-thiserror = "1.0.37"
+aws-sdk-s3 = "1.44.0"
+tokio-stream = "0.1.15"
+tokio = { version = "1.39", features = ["full", "macros"] }
+cached = { version = "0.53.1", features = ["async", "proc_macro"] }
+thiserror = "1.0"
 itertools = "*"
 walkdir = "*"
 aws-smithy-types = "1.1.7"
 
 [target.'cfg(unix)'.dependencies]
-fork = "0.1"
+fork = "0.2"
 
 
 [features]

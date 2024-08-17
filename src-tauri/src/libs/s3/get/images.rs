@@ -79,7 +79,7 @@ pub async fn get_all_images() -> Result<Vec<ImgBucket>, ResponseError> {
         let files = files
             .into_iter()
             .sorted_by(|a, b| a.folder.cmp(&b.folder))
-            .group_by(|a| a.folder.clone())
+            .chunk_by(|a| a.folder.clone())
             .into_iter()
             .map(|(_, group)| {
                 group
